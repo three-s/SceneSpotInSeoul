@@ -45,6 +45,7 @@ abstract class AppDatabase : RoomDatabase() {
         @Volatile
         private var instance: AppDatabase? = null
 
+        @JvmStatic
         fun getInstance(context: Context): AppDatabase {
             return instance ?: synchronized(this) {
                 instance
