@@ -58,7 +58,7 @@ abstract class AppDatabase : RoomDatabase() {
                 .addCallback(object : Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         super.onCreate(db)
-                        AppExecutors().diskIO.execute {
+                        AppExecutors().diskIO().execute {
                             with(getInstance(context)) {
                                 if (BuildConfig.DEBUG) {
                                     clearAllTables()

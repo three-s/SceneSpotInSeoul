@@ -8,10 +8,15 @@ import java.util.concurrent.Executors
 const val THREAD_COUNT = 3
 
 class AppExecutors(
-    val diskIO: Executor = DiskIOThreadExecutor(),
-    val networkIO: Executor = Executors.newFixedThreadPool(THREAD_COUNT),
-    val mainThread: Executor = MainThreadExecutor()
+    private val diskIO: Executor = DiskIOThreadExecutor(),
+    private val networkIO: Executor = Executors.newFixedThreadPool(THREAD_COUNT),
+    private val mainThread: Executor = MainThreadExecutor()
 ) {
+    fun diskIO(): Executor = diskIO
+
+    fun networkIO(): Executor = networkIO
+
+    fun mainThread(): Executor = mainThread
 
     private class MainThreadExecutor : Executor {
         private val mainThreadHandler = Handler(Looper.getMainLooper())
