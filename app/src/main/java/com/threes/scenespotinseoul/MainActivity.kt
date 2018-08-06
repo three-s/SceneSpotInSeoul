@@ -1,34 +1,17 @@
 package com.threes.scenespotinseoul
 
 import android.os.Bundle
-import android.support.design.widget.BottomNavigationView
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentPagerAdapter
+import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import com.threes.scenespotinseoul.ui.gallery.GalleryFragment
 import com.threes.scenespotinseoul.ui.main.MainFragment
 import com.threes.scenespotinseoul.ui.map.MapFragment
-import com.threes.scenespotinseoul.utilities.addFragment
-import com.threes.scenespotinseoul.utilities.replaceFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
-
-    private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-        when (item.itemId) {
-            R.id.navigation_home -> {
-                replaceFragment(R.id.container, MainFragment())
-                return@OnNavigationItemSelectedListener true
-            }
-            R.id.navigation_map -> {
-                replaceFragment(R.id.container, MapFragment())
-                return@OnNavigationItemSelectedListener true
-            }
-            R.id.navigation_gallery -> {
-                replaceFragment(R.id.container, GalleryFragment())
-                return@OnNavigationItemSelectedListener true
-            }
-        }
-        false
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +20,52 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-        addFragment(R.id.container, MainFragment())
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+        view_pager.adapter = MainPagerAdapter(supportFragmentManager, listOf(
+            MainFragment(),
+            MapFragment(),
+            GalleryFragment()
+        ))
+
+        view_pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageSelected(position: Int) {
+                bottom_nav.menu.getItem(position).isChecked = true
+            }
+
+            override fun onPageScrollStateChanged(state: Int) {
+                // No-op
+            }
+
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+                // No-op
+            }
+        })
+
+        bottom_nav.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_home -> {
+                    view_pager.currentItem = 0
+                    true
+                }
+                R.id.navigation_map -> {
+                    view_pager.currentItem = 1
+                    true
+                }
+                R.id.navigation_gallery -> {
+                    view_pager.currentItem = 2
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+
+    inner class MainPagerAdapter(
+        fragmentManager: FragmentManager,
+        private val fragments: List<Fragment>
+    ) :
+        FragmentPagerAdapter(fragmentManager) {
+        override fun getItem(position: Int): Fragment = fragments[position]
+
+        override fun getCount(): Int = fragments.size
     }
 }

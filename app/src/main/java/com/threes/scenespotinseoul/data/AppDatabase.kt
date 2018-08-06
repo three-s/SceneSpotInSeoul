@@ -5,7 +5,6 @@ import android.arch.persistence.room.Database
 import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.content.Context
-import com.threes.scenespotinseoul.BuildConfig
 import com.threes.scenespotinseoul.data.dao.LocationDao
 import com.threes.scenespotinseoul.data.dao.LocationTagDao
 import com.threes.scenespotinseoul.data.dao.MediaDao
@@ -60,9 +59,6 @@ abstract class AppDatabase : RoomDatabase() {
                         super.onCreate(db)
                         AppExecutors().diskIO().execute {
                             with(getInstance(context)) {
-                                if (BuildConfig.DEBUG) {
-                                    clearAllTables()
-                                }
                                 locationDao().insertAll(DataRepository.populateLocationData())
                                 mediaDao().insertAll(DataRepository.populateMediaData())
                                 sceneDao().insertAll(DataRepository.populateSceneData())
