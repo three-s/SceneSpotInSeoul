@@ -47,7 +47,7 @@ subprojects {
     spotless {
         kotlin {
             target '**/*.kt'
-            ktlint(ext.ktlintVersion)
+            ktlint(ktlintVersion)
         }
         java {
             target '**/*.java'
