@@ -11,10 +11,13 @@ import com.threes.scenespotinseoul.R;
 
 public class GalleryFragment extends Fragment {
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_gallery, container, false);
-        return rootView;
-    }
+  @Nullable
+  @Override
+  public View onCreateView(
+      @NonNull LayoutInflater inflater,
+      @Nullable ViewGroup container,
+      @Nullable Bundle savedInstanceState) {
+    View rootView = inflater.inflate(R.layout.fragment_gallery, container, false);
+    return rootView;
+  }
 }
