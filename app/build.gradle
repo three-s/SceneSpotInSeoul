@@ -23,9 +23,10 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    kapt {
-        generateStubs = true
-    }
+}
+
+kapt {
+    mapDiagnosticLocations = true
 }
 
 dependencies {
@@ -36,6 +37,8 @@ dependencies {
     implementation "com.android.support.constraint:constraint-layout:$rootProject.constraintLayoutVersion"
     // Lifecycle library
     implementation "android.arch.lifecycle:extensions:$rootProject.lifecycleVersion"
+    kapt "android.arch.lifecycle:compiler:$rootProject.lifecycleVersion"
+    annotationProcessor "android.arch.lifecycle:compiler:$rootProject.lifecycleVersion"
     // Room persistent library
     implementation "android.arch.persistence.room:runtime:$rootProject.roomVersion"
     kapt "android.arch.persistence.room:compiler:$rootProject.roomVersion"
