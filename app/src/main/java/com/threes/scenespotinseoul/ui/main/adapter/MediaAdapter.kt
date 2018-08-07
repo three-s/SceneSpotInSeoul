@@ -1,4 +1,4 @@
-package com.threes.scenespotinseoul.ui.main
+package com.threes.scenespotinseoul.ui.main.adapter
 
 import android.support.v7.recyclerview.extensions.ListAdapter
 import android.support.v7.util.DiffUtil

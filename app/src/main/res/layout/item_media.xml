@@ -2,6 +2,6 @@
 <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/iv_media"
     android:gravity="center"
-    android:layout_width="80dp"
-    android:layout_height="match_parent"
+    android:layout_width="@dimen/list_media_width"
+    android:layout_height="@dimen/list_media_height"
     android:background="@android:color/darker_gray" />

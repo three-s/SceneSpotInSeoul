@@ -4,4 +4,5 @@
     <string name="title_home">홈</string>
     <string name="title_map">지도</string>
     <string name="title_gallery">갤러리</string>
+    <string name="hint_search">검색</string>
 </resources>
