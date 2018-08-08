@@ -10,18 +10,28 @@ import com.threes.scenespotinseoul.data.dao.LocationTagDao
 import com.threes.scenespotinseoul.data.dao.MediaDao
 import com.threes.scenespotinseoul.data.dao.MediaTagDao
 import com.threes.scenespotinseoul.data.dao.SceneDao
+import com.threes.scenespotinseoul.data.dao.SceneTagDao
 import com.threes.scenespotinseoul.data.dao.TagDao
 import com.threes.scenespotinseoul.data.model.Location
 import com.threes.scenespotinseoul.data.model.LocationTag
 import com.threes.scenespotinseoul.data.model.Media
 import com.threes.scenespotinseoul.data.model.MediaTag
 import com.threes.scenespotinseoul.data.model.Scene
+import com.threes.scenespotinseoul.data.model.SceneTag
 import com.threes.scenespotinseoul.data.model.Tag
 import com.threes.scenespotinseoul.utilities.AppExecutors
 import com.threes.scenespotinseoul.utilities.DATABASE_NAME
 
 @Database(
-    entities = [Location::class, LocationTag::class, Media::class, MediaTag::class, Scene::class, Tag::class],
+    entities = [
+        Location::class,
+        LocationTag::class,
+        Media::class,
+        MediaTag::class,
+        Scene::class,
+        SceneTag::class,
+        Tag::class
+    ],
     version = 1,
     exportSchema = false
 )
@@ -36,6 +46,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun mediaTagDao(): MediaTagDao
 
     abstract fun sceneDao(): SceneDao
+
+    abstract fun sceneTagDao(): SceneTagDao
 
     abstract fun tagDao(): TagDao
 
@@ -59,12 +71,13 @@ abstract class AppDatabase : RoomDatabase() {
                         super.onCreate(db)
                         AppExecutors().diskIO().execute {
                             with(getInstance(context)) {
-                                locationDao().insertAll(DataRepository.populateLocationData())
-                                mediaDao().insertAll(DataRepository.populateMediaData())
-                                sceneDao().insertAll(DataRepository.populateSceneData())
-                                tagDao().insertAll(DataRepository.populateTagData())
-                                locationTagDao().insertAll(DataRepository.populateLocationTagData())
-                                mediaTagDao().insertAll(DataRepository.populateMediaTagData())
+                                locationDao().insertAll(DummyDataRepository.populateLocationData())
+                                mediaDao().insertAll(DummyDataRepository.populateMediaData())
+                                sceneDao().insertAll(DummyDataRepository.populateSceneData())
+                                tagDao().insertAll(DummyDataRepository.populateTagData())
+                                locationTagDao().insertAll(DummyDataRepository.populateLocationTagData())
+                                mediaTagDao().insertAll(DummyDataRepository.populateMediaTagData())
+                                sceneTagDao().insertAll(DummyDataRepository.populateSceneTagData())
                             }
                         }
                     }

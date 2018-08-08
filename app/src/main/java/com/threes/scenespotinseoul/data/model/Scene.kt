@@ -3,11 +3,11 @@ package com.threes.scenespotinseoul.data.model
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.ForeignKey
 import android.arch.persistence.room.Index
+import android.arch.persistence.room.PrimaryKey
 
 @Entity(
     tableName = "scenes",
     indices = [Index("mediaId"), Index("locationId")],
-    primaryKeys = ["mediaId", "locationId"],
     foreignKeys = [
         ForeignKey(
             entity = Media::class,
@@ -22,10 +22,11 @@ import android.arch.persistence.room.Index
     ]
 )
 data class Scene(
+    @PrimaryKey(autoGenerate = true) val id: Int,
     val mediaId: Int,
     val locationId: Int,
-    var isCaptured: Boolean,
     val image: String,
     val desc: String,
-    val capturedImage: String
+    var isCaptured: Boolean = false,
+    var capturedImage: String?
 )
