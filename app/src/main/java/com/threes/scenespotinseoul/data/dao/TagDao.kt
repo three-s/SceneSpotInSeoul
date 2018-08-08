@@ -18,10 +18,10 @@ interface TagDao {
     @Query("SELECT * FROM tags WHERE name = :name")
     fun loadByExactlyName(name: String): Tag
 
-    @Query("SELECT * FROM tags WHERE name LIKE :name")
+    @Query("SELECT * FROM tags WHERE name LIKE :name ORDER BY LENGTH(name) ASC")
     fun loadBySimilarName(name: String): List<Tag>
 
-    @Query("SELECT * FROM tags WHERE name LIKE :name LIMIT :limit OFFSET :offset")
+    @Query("SELECT * FROM tags WHERE name LIKE :name ORDER BY LENGTH(name) ASC LIMIT :limit OFFSET :offset")
     fun loadBySimilarName(name: String, limit: Int, offset: Int = 0): List<Tag>
 
     @Query("SELECT * FROM tags")
