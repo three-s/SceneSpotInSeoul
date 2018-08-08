@@ -17,8 +17,11 @@ interface SceneDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(scenes: List<Scene>)
 
+    @Query("SELECT * FROM scenes WHERE id = :sceneId")
+    fun loadById(sceneId: Int): Scene
+
     @Query("SELECT * FROM scenes WHERE locationId = :locationId AND mediaId = :mediaId")
-    fun loadById(locationId: Int, mediaId: Int): Scene
+    fun loadByLocationAndMediaId(locationId: Int, mediaId: Int): Scene
 
     @Transaction
     @Query("SELECT * FROM scenes WHERE isCaptured = 1")
