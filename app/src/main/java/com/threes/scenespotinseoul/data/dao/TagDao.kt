@@ -16,11 +16,17 @@ interface TagDao {
     fun insertAll(tags: List<Tag>)
 
     @Query("SELECT * FROM tags WHERE name = :name")
-    fun loadByExactlyName(name: String): List<Tag>
+    fun loadByExactlyName(name: String): Tag
 
     @Query("SELECT * FROM tags WHERE name LIKE :name")
     fun loadBySimilarName(name: String): List<Tag>
 
+    @Query("SELECT * FROM tags WHERE name LIKE :name LIMIT :limit OFFSET :offset")
+    fun loadBySimilarName(name: String, limit: Int, offset: Int = 0): List<Tag>
+
     @Query("SELECT * FROM tags")
     fun loadAll(): List<Tag>
+
+    @Query("SELECT * FROM tags LIMIT :limit OFFSET :offset")
+    fun loadAll(limit: Int, offset: Int = 0): List<Tag>
 }
