@@ -9,7 +9,6 @@ import com.threes.scenespotinseoul.data.AppDatabase
 import com.threes.scenespotinseoul.data.model.Location
 import com.threes.scenespotinseoul.data.model.Media
 import com.threes.scenespotinseoul.data.model.Scene
-import com.threes.scenespotinseoul.data.model.Tag
 import com.threes.scenespotinseoul.ui.main.adapter.MediaCategory
 import com.threes.scenespotinseoul.utilities.AppExecutors
 import com.threes.scenespotinseoul.utilities.runOnDiskIO
@@ -27,12 +26,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private var db: AppDatabase = AppDatabase.getInstance(application)
     private var executors: AppExecutors = AppExecutors()
 
-    private val _tagAutoCompleteData = MutableLiveData<List<Tag>>()
+    private val _tagAutoCompleteData = MutableLiveData<List<String>>()
     private val _mediaCategoryData = MutableLiveData<List<MediaCategory>>()
 
     private val _showSearchResult = MutableLiveData<Boolean>()
 
-    val tagAutoCompleteData: LiveData<List<Tag>>
+    val tagAutoCompleteData: LiveData<List<String>>
         get() = _tagAutoCompleteData
 
     val mediaCategory: LiveData<List<MediaCategory>>
@@ -73,7 +72,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             executors.diskIO().execute {
                 val tags = db.tagDao().loadBySimilarName("%$keyword%", 5)
                 executors.mainThread().execute {
-                    _tagAutoCompleteData.value = tags
+                    _tagAutoCompleteData.value = tags.map { it.name }
                 }
             }
         }
@@ -81,9 +80,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun requestSearch(@RequestType requestType: String, keyword: String) {
         when (requestType) {
-            Companion.TYPE_EXACTLY -> {
+            TYPE_EXACTLY -> {
                 runOnDiskIO {
-                    val tag = db.tagDao().loadByExactlyName(keyword)
+                    val tag = db.tagDao().loadByExactlyName(keyword.trim())
 
                     val mediaTags = db.mediaTagDao().loadByTagId(tag.id)
                     val media = mediaTags.map {
@@ -110,7 +109,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }
             else -> {
                 runOnDiskIO {
-                    val tags = db.tagDao().loadBySimilarName("%$keyword%")
+                    val tags = db.tagDao().loadBySimilarName("%${keyword.trim()}%")
 
                     val media = tags
                         .flatMap { db.mediaTagDao().loadByTagId(it.id) }

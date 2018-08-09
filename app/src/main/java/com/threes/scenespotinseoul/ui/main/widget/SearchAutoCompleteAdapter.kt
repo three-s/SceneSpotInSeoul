@@ -1,33 +1,32 @@
-package com.threes.scenespotinseoul.ui.main.adapter
+package com.threes.scenespotinseoul.ui.main.widget
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
 import com.threes.scenespotinseoul.R
-import com.threes.scenespotinseoul.data.model.Tag
 import kotlinx.android.synthetic.main.item_search_complete.view.*
 
-class SearchAutoCompleteAdapter(private var tags: List<Tag> = listOf()) :
+class SearchAutoCompleteAdapter(private var items: List<String> = listOf()) :
     RecyclerView.Adapter<SearchAutoCompleteAdapter.SearchCompleteViewHolder>() {
-    lateinit var itemSelectListener: (Tag) -> Unit?
+    lateinit var itemSelectListener: (String) -> Unit?
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchCompleteViewHolder =
         SearchCompleteViewHolder(parent)
 
     override fun onBindViewHolder(holder: SearchCompleteViewHolder, position: Int) {
-        with(tags[position]) {
-            holder.tvResult.text = name
+        with(items[position]) {
+            holder.tvResult.text = this
             holder.itemView.setOnClickListener {
                 itemSelectListener(this)
             }
         }
     }
 
-    override fun getItemCount(): Int = tags.size
+    override fun getItemCount(): Int = items.size
 
-    fun submitList(newTags: List<Tag>) {
-        tags = newTags
+    fun submitList(newItems: List<String>) {
+        items = newItems
         notifyDataSetChanged()
     }
 
