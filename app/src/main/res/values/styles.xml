@@ -9,7 +9,7 @@
     </style>
 
     <style name="Widget.AppTheme.Main.CategoryText" parent="">
-        <item name="android:gravity">bottom</item>
+        <item name="android:gravity">center_vertical</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Subhead</item>
         <item name="android:textColor">@color/colorAccent</item>
         <item name="android:paddingBottom">2dp</item>

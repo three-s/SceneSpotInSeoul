@@ -4,5 +4,9 @@
     <string name="title_home">홈</string>
     <string name="title_map">지도</string>
     <string name="title_gallery">갤러리</string>
+    <string name="category_media">미디어</string>
+    <string name="category_scene">장면</string>
+    <string name="category_location">장소</string>
+    <string name="no_results">결과가 없습니다</string>
     <string name="hint_search">검색</string>
 </resources>

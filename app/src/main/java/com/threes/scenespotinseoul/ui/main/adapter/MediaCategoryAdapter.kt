@@ -9,13 +9,16 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
 import com.threes.scenespotinseoul.R
+import com.threes.scenespotinseoul.data.model.Media
 import com.threes.scenespotinseoul.utilities.DIR_RIGHT
 import com.threes.scenespotinseoul.utilities.ItemOffsetDecoration
-import com.threes.scenespotinseoul.utilities.OFFSET_SMALL
+import com.threes.scenespotinseoul.utilities.OFFSET_NORMAL
 import kotlinx.android.synthetic.main.item_media_category.view.*
 
 class MediaCategoryAdapter(itemCallback: DiffUtil.ItemCallback<MediaCategory> = MediaCategoryDiffCallback()) :
     ListAdapter<MediaCategory, MediaCategoryAdapter.MediaCategoryViewHolder>(itemCallback) {
+
+    var innerItemSelectListener: ((Media) -> Unit)? = null
 
     // 스크롤 성능을 향상시키기 위해 ViewPool 생성
     // https://proandroiddev.com/optimizing-nested-recyclerview-a9b7830a4ba7
@@ -23,7 +26,7 @@ class MediaCategoryAdapter(itemCallback: DiffUtil.ItemCallback<MediaCategory> = 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaCategoryViewHolder {
         val viewHolder = MediaCategoryViewHolder(parent)
-        viewHolder.listMedia.setRecycledViewPool(viewPool)
+        viewHolder.listMedia.recycledViewPool = viewPool
         return viewHolder
     }
 
@@ -42,8 +45,9 @@ class MediaCategoryAdapter(itemCallback: DiffUtil.ItemCallback<MediaCategory> = 
         val tvCategoryName: TextView = itemView.tv_category_name
         val listMedia: RecyclerView = itemView.list_media.apply {
             setHasFixedSize(true)
-            addItemDecoration(ItemOffsetDecoration(DIR_RIGHT, OFFSET_SMALL))
+            addItemDecoration(ItemOffsetDecoration(DIR_RIGHT, OFFSET_NORMAL))
             layoutManager = LinearLayoutManager(context, HORIZONTAL, false)
+            mediaAdapter.itemSelectListener = innerItemSelectListener
             adapter = mediaAdapter
         }
     }
