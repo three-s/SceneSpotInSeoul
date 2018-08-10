@@ -109,14 +109,17 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     val media = tags
                         .flatMap { db.mediaTagDao().loadByTagId(it.id) }
                         .map { db.mediaDao().loadById(it.mediaId) }
+                        .distinctBy { it.id }
 
                     val locations = tags
                         .flatMap { db.locationTagDao().loadByTagId(it.id) }
                         .map { db.locationDao().loadById(it.locationId) }
+                        .distinctBy { it.id }
 
                     val scenes = tags
                         .flatMap { db.sceneTagDao().loadByTagId(it.id) }
                         .map { db.sceneDao().loadById(it.sceneId) }
+                        .distinctBy { it.id }
 
                     runOnMain {
                         searchResultMediaData = media
