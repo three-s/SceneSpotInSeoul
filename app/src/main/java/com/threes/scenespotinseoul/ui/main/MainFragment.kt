@@ -44,6 +44,9 @@ class MainFragment : Fragment() {
                     viewModel.searchResultLocationData
                 )
                 list_media_category.adapter = searchResultCategoryAdapter
+            } else {
+                view_search.hideBackButton()
+                list_media_category.adapter = mediaCategoryAdapter
             }
         })
     }
@@ -75,8 +78,7 @@ class MainFragment : Fragment() {
             viewModel.requestSearch(TYPE_EXACTLY, it)
         }
         view_search.backButtonClickListener = {
-            view_search.hideBackButton()
-            list_media_category.adapter = mediaCategoryAdapter
+            viewModel.hideSearchResult()
         }
     }
 }
