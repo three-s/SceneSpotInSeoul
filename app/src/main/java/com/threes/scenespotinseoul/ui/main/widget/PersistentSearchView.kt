@@ -121,19 +121,11 @@ class PersistentSearchView @JvmOverloads constructor(
     }
 
     private fun expandSearchView() {
-        TransitionManager.beginDelayedTransition(layout_search)
-        val set = ConstraintSet()
-        set.clone(layout_search)
-        set.setVisibility(list_search_autocomplete.id, ConstraintSet.VISIBLE)
-        set.applyTo(layout_search)
+        list_search_autocomplete.visibility = VISIBLE
     }
 
     private fun collapseSearchView() {
-        TransitionManager.beginDelayedTransition(layout_search)
-        val set = ConstraintSet()
-        set.clone(layout_search)
-        set.setVisibility(list_search_autocomplete.id, ConstraintSet.GONE)
-        set.applyTo(layout_search)
+        list_search_autocomplete.visibility = GONE
     }
 
     private fun hideKeyboard() {
