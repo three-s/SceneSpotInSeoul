@@ -8,4 +8,7 @@
   <color name="colorAccentDark">#102027</color>
   <color name="colorOnPrimary">#000000</color>
   <color name="colorOnSecondary">#FFFFFF</color>
+  <color name="activeFocusedIcon">#87000000</color>
+  <color name="activeUnfocusedIcon">#54000000</color>
+  <color name="inactiveIcon">#38000000</color>
 </resources>

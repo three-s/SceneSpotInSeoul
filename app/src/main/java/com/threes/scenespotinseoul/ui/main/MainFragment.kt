@@ -32,6 +32,9 @@ class MainFragment : Fragment() {
         viewModel.mediaCategory.observe(this, Observer {
             mediaCategoryAdapter.submitList(it)
         })
+        viewModel.showSearchResult.observe(this, Observer {
+            view_search.showBackButton()
+        })
     }
 
     private fun initViews() {
@@ -50,6 +53,9 @@ class MainFragment : Fragment() {
         }
         view_search.autoCompleteSelectListener = {
             viewModel.requestSearch(TYPE_EXACTLY, it)
+        }
+        view_search.backButtonClickListener = {
+            view_search.hideBackButton()
         }
     }
 }

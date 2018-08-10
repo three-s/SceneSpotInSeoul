@@ -16,13 +16,6 @@ import com.threes.scenespotinseoul.utilities.runOnMain
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
-    @Retention(AnnotationRetention.SOURCE)
-    @StringDef(
-        TYPE_SIMILAR,
-        TYPE_EXACTLY
-    )
-    annotation class RequestType
-
     private var db: AppDatabase = AppDatabase.getInstance(application)
     private var executors: AppExecutors = AppExecutors()
 
@@ -81,6 +74,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun requestSearch(@RequestType requestType: String, keyword: String) {
         when (requestType) {
             TYPE_EXACTLY -> {
+                _showSearchResult.value = false
                 runOnDiskIO {
                     val tag = db.tagDao().loadByExactlyName(keyword.trim())
 
@@ -108,6 +102,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 }
             }
             else -> {
+                _showSearchResult.value = false
                 runOnDiskIO {
                     val tags = db.tagDao().loadBySimilarName("%${keyword.trim()}%")
 
@@ -133,6 +128,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
+
+    @Retention(AnnotationRetention.SOURCE)
+    @StringDef(
+        TYPE_SIMILAR,
+        TYPE_EXACTLY
+    )
+    annotation class RequestType
 
     companion object {
         const val TYPE_SIMILAR = "type_similar"

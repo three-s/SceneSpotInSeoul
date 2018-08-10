@@ -5,7 +5,6 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.content.Context
 import android.support.constraint.ConstraintSet
-import android.support.transition.ChangeBounds
 import android.support.transition.TransitionManager
 import android.support.v7.widget.CardView
 import android.support.v7.widget.LinearLayoutManager
@@ -26,12 +25,27 @@ class PersistentSearchView @JvmOverloads constructor(
 ) : CardView(context, attrs, defStyleAttr) {
 
     private var autoCompleteAdapter: SearchAutoCompleteAdapter
+    private var searchTextWatcher: TextWatcher = object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            expandSearchView()
+            editBeforeTextChangeListener?.invoke(s.toString(), start, count, after)
+        }
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            editOnTextChangeListener?.invoke(s.toString(), start, before, count)
+        }
+
+        override fun afterTextChanged(s: Editable?) {
+            editAfterTextChangeListener?.invoke(s)
+        }
+    }
 
     var autoCompleteSelectListener: ((String) -> Unit)? = null
     var editActionListener: ((String) -> Unit)? = null
     var editBeforeTextChangeListener: ((String, Int, Int, Int) -> Unit)? = null
     var editOnTextChangeListener: ((String, Int, Int, Int) -> Unit)? = null
     var editAfterTextChangeListener: ((Editable?) -> Unit)? = null
+    var backButtonClickListener: ((View) -> Unit)? = null
 
     init {
         View.inflate(context, R.layout.persistent_search_view, this)
@@ -41,8 +55,9 @@ class PersistentSearchView @JvmOverloads constructor(
 
         autoCompleteAdapter = SearchAutoCompleteAdapter()
         autoCompleteAdapter.itemSelectListener = {
-            edit_search.setText(it)
+            setAutoCompletedText(it)
             collapseSearchView()
+            clearAutoComplete()
             hideKeyboard()
             autoCompleteSelectListener?.invoke(it)
         }
@@ -50,25 +65,13 @@ class PersistentSearchView @JvmOverloads constructor(
         list_search_autocomplete.layoutManager = LinearLayoutManager(context)
         list_search_autocomplete.adapter = autoCompleteAdapter
 
-        edit_search.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                expandSearchView()
-                editBeforeTextChangeListener?.invoke(s.toString(), start, count, after)
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                editOnTextChangeListener?.invoke(s.toString(), start, before, count)
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                editAfterTextChangeListener?.invoke(s)
-            }
-        })
+        edit_search.addTextChangedListener(searchTextWatcher)
 
         edit_search.setOnEditorActionListener { view, actionId, _ ->
             when (actionId) {
                 EditorInfo.IME_ACTION_SEARCH -> {
                     collapseSearchView()
+                    clearAutoComplete()
                     hideKeyboard()
                     editActionListener?.invoke(view.text.toString())
                     true
@@ -76,6 +79,29 @@ class PersistentSearchView @JvmOverloads constructor(
                 else -> false
             }
         }
+
+        btn_back.setOnClickListener {
+            backButtonClickListener?.invoke(it)
+        }
+    }
+
+    fun showBackButton() {
+        TransitionManager.beginDelayedTransition(layout_search)
+        val set = ConstraintSet()
+        set.clone(layout_search)
+        set.setVisibility(iv_search_icon.id, ConstraintSet.INVISIBLE)
+        set.setVisibility(btn_back.id, ConstraintSet.VISIBLE)
+        set.applyTo(layout_search)
+    }
+
+    fun hideBackButton() {
+        TransitionManager.beginDelayedTransition(layout_search)
+        val set = ConstraintSet()
+        set.clone(layout_search)
+        set.setVisibility(iv_search_icon.id, ConstraintSet.VISIBLE)
+        set.setVisibility(btn_back.id, ConstraintSet.INVISIBLE)
+        set.applyTo(layout_search)
+        edit_search.setText("")
     }
 
     fun setAutoCompleteData(lifeCycleOwner: LifecycleOwner, data: LiveData<List<String>>) {
@@ -84,8 +110,18 @@ class PersistentSearchView @JvmOverloads constructor(
         })
     }
 
+    private fun setAutoCompletedText(autoCompletedText: String) {
+        edit_search.removeTextChangedListener(searchTextWatcher)
+        edit_search.setText(autoCompletedText)
+        edit_search.addTextChangedListener(searchTextWatcher)
+    }
+
+    private fun clearAutoComplete() {
+        autoCompleteAdapter.submitList(listOf())
+    }
+
     private fun expandSearchView() {
-        TransitionManager.beginDelayedTransition(layout_search, ChangeBounds())
+        TransitionManager.beginDelayedTransition(layout_search)
         val set = ConstraintSet()
         set.clone(layout_search)
         set.setVisibility(list_search_autocomplete.id, ConstraintSet.VISIBLE)
@@ -93,7 +129,7 @@ class PersistentSearchView @JvmOverloads constructor(
     }
 
     private fun collapseSearchView() {
-        TransitionManager.beginDelayedTransition(layout_search, ChangeBounds())
+        TransitionManager.beginDelayedTransition(layout_search)
         val set = ConstraintSet()
         set.clone(layout_search)
         set.setVisibility(list_search_autocomplete.id, ConstraintSet.GONE)
