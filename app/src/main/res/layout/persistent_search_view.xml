@@ -16,7 +16,7 @@
         android:layout_marginStart="@dimen/key_line_normal"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/guideline"
+        app:layout_constraintBottom_toTopOf="@id/view_divider"
         tools:ignore="ContentDescription" />
 
     <ImageButton
@@ -25,12 +25,13 @@
         android:layout_height="wrap_content"
         android:tint="@color/activeUnfocusedIcon"
         android:src="@drawable/ic_round_arrow_back"
-        android:background="?attr/selectableItemBackground"
+        android:background="@null"
         android:layout_marginStart="@dimen/key_line_normal"
         android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/guideline"
+        app:layout_constraintBottom_toTopOf="@id/view_divider"
+        tools:visibility="visible"
         tools:ignore="ContentDescription" />
 
     <EditText
@@ -43,12 +44,14 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
-    <android.support.constraint.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="@dimen/search_collapse_height" />
+    <View
+        android:id="@+id/view_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/dividerOnWhite"
+        android:layout_marginTop="@dimen/search_collapse_height"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list_search_autocomplete"
@@ -58,6 +61,6 @@
         android:isScrollContainer="false"
         android:overScrollMode="never"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/guideline" />
+        app:layout_constraintTop_toBottomOf="@id/view_divider" />
 
 </android.support.constraint.ConstraintLayout>

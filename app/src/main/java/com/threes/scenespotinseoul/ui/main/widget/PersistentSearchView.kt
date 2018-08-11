@@ -122,10 +122,12 @@ class PersistentSearchView @JvmOverloads constructor(
 
     private fun expandSearchView() {
         list_search_autocomplete.visibility = VISIBLE
+        view_divider.visibility = VISIBLE
     }
 
     private fun collapseSearchView() {
         list_search_autocomplete.visibility = GONE
+        view_divider.visibility = INVISIBLE
     }
 
     private fun hideKeyboard() {
