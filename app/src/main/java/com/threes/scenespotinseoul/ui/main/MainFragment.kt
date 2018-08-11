@@ -37,7 +37,6 @@ class MainFragment : Fragment() {
         })
         viewModel.showSearchResult.observe(this, Observer {
             if (it == true) {
-                view_search.showBackButton()
                 searchResultCategoryAdapter.submitData(
                     viewModel.searchResultMediaData,
                     viewModel.searchResultSceneData,
@@ -45,7 +44,6 @@ class MainFragment : Fragment() {
                 )
                 list_media_category.adapter = searchResultCategoryAdapter
             } else {
-                view_search.hideBackButton()
                 list_media_category.adapter = mediaCategoryAdapter
             }
         })
