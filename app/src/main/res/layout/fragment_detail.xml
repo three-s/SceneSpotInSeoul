@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/media_image"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        />
+
+    <View
+        android:id="@+id/line1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#445963"
+        app:layout_constraintTop_toBottomOf="@id/media_image"
+        android:layout_marginTop="10dp"
+        />
+
+    <ImageView
+        android:id="@+id/picture"
+        android:layout_width="210dp"
+        android:layout_height="210dp"
+        android:layout_marginTop="30dp"
+        app:layout_constraintTop_toBottomOf="@id/line1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginLeft="30dp"
+        />
+
+
+    <ImageButton
+        android:id="@+id/camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/outline_add_a_photo_black_18dp"
+        app:layout_constraintLeft_toRightOf="@+id/picture"
+        android:layout_marginTop="40dp"
+        app:layout_constraintTop_toBottomOf="@+id/line1"
+        android:layout_marginLeft="30dp"
+        />
+    <ImageButton
+        android:id="@+id/upload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/outline_add_black_18dp"
+        app:layout_constraintTop_toBottomOf="@+id/camera"
+        android:layout_marginTop="40dp"
+        app:layout_constraintLeft_toRightOf="@+id/picture"
+        android:layout_marginLeft="30dp"
+        />
+
+</android.support.constraint.ConstraintLayout>
