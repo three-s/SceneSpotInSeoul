@@ -4,7 +4,6 @@ import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
-import android.arch.persistence.room.Transaction
 import android.arch.persistence.room.Update
 import com.threes.scenespotinseoul.data.model.Scene
 
@@ -12,10 +11,10 @@ import com.threes.scenespotinseoul.data.model.Scene
 interface SceneDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(scene: Scene)
+    fun insert(scene: Scene): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(scenes: List<Scene>)
+    fun insertAll(scenes: List<Scene>): List<Long>
 
     @Query("SELECT * FROM scenes WHERE id = :sceneId")
     fun loadById(sceneId: Int): Scene
@@ -26,11 +25,9 @@ interface SceneDao {
     @Query("SELECT * FROM scenes WHERE locationId = :locationId AND mediaId = :mediaId")
     fun loadByLocationAndMediaId(locationId: Int, mediaId: Int): List<Scene>
 
-    @Transaction
     @Query("SELECT * FROM scenes WHERE isCaptured = 1")
     fun loadAllAreCaptured(): List<Scene>
 
-    @Transaction
     @Query("SELECT * FROM scenes")
     fun loadAll(): List<Scene>
 

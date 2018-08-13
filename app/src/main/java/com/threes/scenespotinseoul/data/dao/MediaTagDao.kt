@@ -10,10 +10,10 @@ import com.threes.scenespotinseoul.data.model.MediaTag
 interface MediaTagDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(mediaTag: MediaTag)
+    fun insert(mediaTag: MediaTag): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(mediaTags: List<MediaTag>)
+    fun insertAll(mediaTags: List<MediaTag>): List<Long>
 
     @Query("SELECT * FROM media_tags WHERE mediaId = :mediaId")
     fun loadByMediaId(mediaId: Int): List<MediaTag>

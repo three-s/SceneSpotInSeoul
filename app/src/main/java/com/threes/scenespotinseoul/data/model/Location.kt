@@ -8,8 +8,9 @@ data class Location(
     @PrimaryKey(autoGenerate = true) val id: Int,
     val lat: Double,
     val lon: Double,
-    val address: String,
+    val name: String,
     val desc: String,
+    val address: String,
     val image: String,
     var isCaptured: Boolean = false
 )

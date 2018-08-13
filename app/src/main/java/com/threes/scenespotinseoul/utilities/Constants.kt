@@ -1,3 +1,3 @@
 package com.threes.scenespotinseoul.utilities
 
-const val DATABASE_NAME = "scene-spot-db1"
+const val DATABASE_NAME = "scene-spot-db"

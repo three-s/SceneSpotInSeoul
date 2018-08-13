@@ -10,10 +10,10 @@ import com.threes.scenespotinseoul.data.model.LocationTag
 interface LocationTagDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(locationTag: LocationTag)
+    fun insert(locationTag: LocationTag): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(locationTags: List<LocationTag>)
+    fun insertAll(locationTags: List<LocationTag>): List<Long>
 
     @Query("SELECT * FROM location_tags WHERE locationId = :locationId")
     fun loadByLocationId(locationId: Int): List<LocationTag>

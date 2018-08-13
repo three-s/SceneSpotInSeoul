@@ -7,6 +7,6 @@ import android.arch.persistence.room.PrimaryKey
 data class Media(
     @PrimaryKey(autoGenerate = true) val id: Int,
     val name: String,
-    val image: String,
-    val desc: String
+    val desc: String,
+    val image: String
 )
