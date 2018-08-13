@@ -25,8 +25,8 @@ data class Scene(
     @PrimaryKey(autoGenerate = true) val id: Int,
     val mediaId: Int,
     val locationId: Int,
-    val image: String,
     val desc: String,
+    val image: String,
     var isCaptured: Boolean = false,
     var capturedImage: String?
 )

@@ -10,10 +10,10 @@ import com.threes.scenespotinseoul.data.model.Tag
 interface TagDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(tag: Tag)
+    fun insert(tag: Tag): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(tags: List<Tag>)
+    fun insertAll(tags: List<Tag>): List<Long>
 
     @Query("SELECT * FROM tags WHERE name = :name")
     fun loadByExactlyName(name: String): Tag

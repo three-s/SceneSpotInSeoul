@@ -19,8 +19,8 @@ import com.threes.scenespotinseoul.data.model.MediaTag
 import com.threes.scenespotinseoul.data.model.Scene
 import com.threes.scenespotinseoul.data.model.SceneTag
 import com.threes.scenespotinseoul.data.model.Tag
-import com.threes.scenespotinseoul.utilities.AppExecutors
 import com.threes.scenespotinseoul.utilities.DATABASE_NAME
+import com.threes.scenespotinseoul.utilities.runOnDiskIO
 
 @Database(
     entities = [
@@ -69,16 +69,8 @@ abstract class AppDatabase : RoomDatabase() {
                 .addCallback(object : Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         super.onCreate(db)
-                        AppExecutors().diskIO().execute {
-                            with(getInstance(context)) {
-                                locationDao().insertAll(DummyDataRepository.populateLocationData())
-                                mediaDao().insertAll(DummyDataRepository.populateMediaData())
-                                sceneDao().insertAll(DummyDataRepository.populateSceneData())
-                                tagDao().insertAll(DummyDataRepository.populateTagData())
-                                locationTagDao().insertAll(DummyDataRepository.populateLocationTagData())
-                                mediaTagDao().insertAll(DummyDataRepository.populateMediaTagData())
-                                sceneTagDao().insertAll(DummyDataRepository.populateSceneTagData())
-                            }
+                        runOnDiskIO {
+                            PopulateDataRepository(getInstance(context)).populateData()
                         }
                     }
                 })
