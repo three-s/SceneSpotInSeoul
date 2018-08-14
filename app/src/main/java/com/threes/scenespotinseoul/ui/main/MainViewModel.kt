@@ -75,19 +75,20 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         when (requestType) {
             TYPE_EXACTLY -> {
                 runOnDiskIO {
-                    val tag = db.tagDao().loadByExactlyName(keyword.trim())
+                    val tag = db.tagDao().loadByName(keyword.trim())
+                    val tagId = tag?.id!!
 
-                    val mediaTags = db.mediaTagDao().loadByTagId(tag.id)
+                    val mediaTags = db.mediaTagDao().loadByTagId(tagId)
                     val media = mediaTags.map {
                         db.mediaDao().loadById(it.mediaId)
                     }
 
-                    val locationTags = db.locationTagDao().loadByTagId(tag.id)
+                    val locationTags = db.locationTagDao().loadByTagId(tagId)
                     val locations = locationTags.map {
                         db.locationDao().loadById(it.locationId)
                     }
 
-                    val sceneTags = db.sceneTagDao().loadByTagId(tag.id)
+                    val sceneTags = db.sceneTagDao().loadByTagId(tagId)
                     val scenes = sceneTags.map {
                         db.sceneDao().loadById(it.sceneId)
                     }
