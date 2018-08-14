@@ -42,6 +42,8 @@ dependencies {
     // Room persistent library
     implementation "android.arch.persistence.room:runtime:$rootProject.roomVersion"
     kapt "android.arch.persistence.room:compiler:$rootProject.roomVersion"
+    // Debugging library
+    debugImplementation "com.amitshekhar.android:debug-db:$rootProject.debugDbVersion"
     // Testing library
     testImplementation "junit:junit:$rootProject.junitVersion"
     androidTestImplementation "com.android.support.test:runner:$rootProject.runnerVersion"
