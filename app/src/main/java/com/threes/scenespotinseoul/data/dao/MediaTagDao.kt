@@ -9,10 +9,10 @@ import com.threes.scenespotinseoul.data.model.MediaTag
 @Dao
 interface MediaTagDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(mediaTag: MediaTag): Long
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertAll(mediaTags: List<MediaTag>): List<Long>
 
     @Query("SELECT * FROM media_tags WHERE mediaId = :mediaId")

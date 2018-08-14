@@ -11,26 +11,56 @@ import com.threes.scenespotinseoul.data.model.Tag
 object PopulateDataHelper {
 
     fun insertLocation(db: AppDatabase, location: Location, tags: List<String>) {
-        val locationId = db.locationDao().insert(location)
+        val locationRowId = db.locationDao().insert(location)
+        val locationId = db.locationDao().loadByRowId(locationRowId).id
         tags.forEach {
-            val tagId = db.tagDao().insert(Tag(0, it))
-            db.locationTagDao().insert(LocationTag(tagId.toInt(), locationId.toInt()))
+            val tag = db.tagDao().loadByExactlyName(it)
+            var tagId = 0
+            if (tag.isEmpty()) {
+                val tagRowId = db.tagDao().insert(Tag(0, it))
+                if (tagRowId != -1L) {
+                    tagId = db.tagDao().loadByRowId(tagRowId).id
+                }
+            } else {
+                tagId = tag[0].id
+            }
+            db.locationTagDao().insert(LocationTag(tagId, locationId))
         }
     }
 
     fun insertMedia(db: AppDatabase, media: Media, tags: List<String>) {
-        val mediaId = db.mediaDao().insert(media)
+        val mediaRowId = db.mediaDao().insert(media)
+        val mediaId = db.mediaDao().loadByRowId(mediaRowId).id
         tags.forEach {
-            val tagId = db.tagDao().insert(Tag(0, it))
-            db.mediaTagDao().insert(MediaTag(tagId.toInt(), mediaId.toInt()))
+            val tag = db.tagDao().loadByExactlyName(it)
+            var tagId = 0
+            if (tag.isEmpty()) {
+                val tagRowId = db.tagDao().insert(Tag(0, it))
+                if (tagRowId != -1L) {
+                    tagId = db.tagDao().loadByRowId(tagRowId).id
+                }
+            } else {
+                tagId = tag[0].id
+            }
+            db.mediaTagDao().insert(MediaTag(tagId, mediaId))
         }
     }
 
     fun insertScene(db: AppDatabase, scene: Scene, tags: List<String>) {
-        val sceneId = db.sceneDao().insert(scene)
+        val sceneRowId = db.sceneDao().insert(scene)
+        val sceneId = db.sceneDao().loadByRowId(sceneRowId).id
         tags.forEach {
-            val tagId = db.tagDao().insert(Tag(0, it))
-            db.sceneTagDao().insert(SceneTag(tagId.toInt(), sceneId.toInt()))
+            val tag = db.tagDao().loadByExactlyName(it)
+            var tagId = 0
+            if (tag.isEmpty()) {
+                val tagRowId = db.tagDao().insert(Tag(0, it))
+                if (tagRowId != -1L) {
+                    tagId = db.tagDao().loadByRowId(tagRowId).id
+                }
+            } else {
+                tagId = tag[0].id
+            }
+            db.sceneTagDao().insert(SceneTag(tagId, sceneId))
         }
     }
 

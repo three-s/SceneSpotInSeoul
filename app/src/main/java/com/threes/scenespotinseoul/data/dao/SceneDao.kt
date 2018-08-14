@@ -16,6 +16,9 @@ interface SceneDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(scenes: List<Scene>): List<Long>
 
+    @Query("SELECT * FROM scenes WHERE ROWID = :rowId")
+    fun loadByRowId(rowId: Long): Scene
+
     @Query("SELECT * FROM scenes WHERE id = :sceneId")
     fun loadById(sceneId: Int): Scene
 
