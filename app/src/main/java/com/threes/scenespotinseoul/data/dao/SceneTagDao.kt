@@ -9,10 +9,10 @@ import com.threes.scenespotinseoul.data.model.SceneTag
 @Dao
 interface SceneTagDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(sceneTag: SceneTag): Long
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertAll(sceneTags: List<SceneTag>): List<Long>
 
     @Query("SELECT * FROM scene_tags WHERE sceneId = :sceneId")

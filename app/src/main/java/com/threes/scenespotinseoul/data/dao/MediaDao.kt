@@ -15,6 +15,9 @@ interface MediaDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(media: List<Media>): List<Long>
 
+    @Query("SELECT * FROM media WHERE ROWID = :rowId")
+    fun loadByRowId(rowId: Long): Media
+
     @Query("SELECT * FROM media WHERE id = :mediaId")
     fun loadById(mediaId: Int): Media
 

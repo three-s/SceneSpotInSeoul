@@ -16,6 +16,9 @@ interface LocationDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(locations: List<Location>): List<Long>
 
+    @Query("SELECT * FROM locations WHERE ROWID = :rowId")
+    fun loadByRowId(rowId: Long): Location
+
     @Query("SELECT * FROM locations WHERE id = :locationId")
     fun loadById(locationId: Int): Location
 
