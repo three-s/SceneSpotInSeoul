@@ -19,7 +19,7 @@ interface TagDao {
     fun loadByRowId(rowId: Long): Tag
 
     @Query("SELECT * FROM tags WHERE name = :name")
-    fun loadByExactlyName(name: String): Tag
+    fun loadByName(name: String): Tag?
 
     @Query("SELECT * FROM tags WHERE name LIKE :name ORDER BY LENGTH(name) ASC")
     fun loadBySimilarName(name: String): List<Tag>
