@@ -2,21 +2,22 @@
 buildscript {
     ext {
         // Sdk and tools
-        compileSdkVersion = 27
+        compileSdkVersion = 28
         minSdkVersion = 23
-        targetSdkVersion = 27
+        targetSdkVersion = 28
+        buildToolsVersion = '28.0.2'
 
         // App dependencies
         kotlinVersion = '1.2.60'
-        supportLibraryVersion = '27.1.1'
-        constraintLayoutVersion = '1.1.2'
+        gradleVersion = '3.2.0-beta05'
+        supportLibraryVersion = '1.0.0-rc01'
+        constraintLayoutVersion = '2.0.0-alpha2'
+        lifecycleVersion = '2.0.0-rc01'
+        roomVersion = '2.0.0-rc01'
         debugDbVersion = '1.0.4'
-        roomVersion = '1.1.1'
-        lifecycleVersion = '1.1.1'
-        gradleVersion = '3.1.4'
         junitVersion = '4.12'
-        runnerVersion = '1.0.2'
-        espressoVersion = '3.0.2'
+        runnerVersion = '1.1.0-alpha4'
+        espressoVersion = '3.1.0-alpha4'
         ktlintVersion = '0.24.0'
     }
     repositories {
