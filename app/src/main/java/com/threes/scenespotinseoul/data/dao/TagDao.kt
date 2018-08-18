@@ -18,6 +18,9 @@ interface TagDao {
     @Query("SELECT * FROM tags WHERE ROWID = :rowId")
     fun loadByRowId(rowId: Long): Tag
 
+    @Query("SELECT * FROM tags WHERE id = :tagId")
+    fun loadById(tagId: Int): Tag
+
     @Query("SELECT * FROM tags WHERE name = :name")
     fun loadByName(name: String): Tag?
 
