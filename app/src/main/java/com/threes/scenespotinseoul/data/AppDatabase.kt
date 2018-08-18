@@ -5,6 +5,7 @@ import android.arch.persistence.room.Database
 import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.content.Context
+import com.threes.scenespotinseoul.data.dao.DataInfoDao
 import com.threes.scenespotinseoul.data.dao.LocationDao
 import com.threes.scenespotinseoul.data.dao.LocationTagDao
 import com.threes.scenespotinseoul.data.dao.MediaDao
@@ -12,6 +13,7 @@ import com.threes.scenespotinseoul.data.dao.MediaTagDao
 import com.threes.scenespotinseoul.data.dao.SceneDao
 import com.threes.scenespotinseoul.data.dao.SceneTagDao
 import com.threes.scenespotinseoul.data.dao.TagDao
+import com.threes.scenespotinseoul.data.model.DataInfo
 import com.threes.scenespotinseoul.data.model.Location
 import com.threes.scenespotinseoul.data.model.LocationTag
 import com.threes.scenespotinseoul.data.model.Media
@@ -30,7 +32,8 @@ import com.threes.scenespotinseoul.utilities.runOnDiskIO
         MediaTag::class,
         Scene::class,
         SceneTag::class,
-        Tag::class
+        Tag::class,
+        DataInfo::class
     ],
     version = 1,
     exportSchema = false
@@ -51,6 +54,8 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun tagDao(): TagDao
 
+    abstract fun dataInfoDao(): DataInfoDao
+
     companion object {
 
         @Volatile
@@ -70,7 +75,7 @@ abstract class AppDatabase : RoomDatabase() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         super.onCreate(db)
                         runOnDiskIO {
-                            PopulateDataRepository(getInstance(context)).populateData()
+                            AppDataRepository(context, getInstance(context)).populateFromLocal()
                         }
                     }
                 })
