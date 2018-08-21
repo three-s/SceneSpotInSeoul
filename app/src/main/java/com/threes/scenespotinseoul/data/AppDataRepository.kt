@@ -14,9 +14,11 @@ import com.threes.scenespotinseoul.data.model.Location
 import com.threes.scenespotinseoul.data.model.Media
 import com.threes.scenespotinseoul.data.model.Scene
 
-class AppDataRepository(private var context: Context, private var db: AppDatabase) {
+class AppDataRepository(private var context: Context) {
 
-    fun populateFromLocal() {
+    private var db: AppDatabase = AppDatabase.getInstance(context)
+
+    fun populateFromResources() {
         val gson = Gson()
         val locationStream = context.resources.openRawResource(R.raw.data_location)
         writeLocation(gson, locationStream.bufferedReader().use { it.readText() })
@@ -24,6 +26,7 @@ class AppDataRepository(private var context: Context, private var db: AppDatabas
         writeMedia(gson, mediaStream.bufferedReader().use { it.readText() })
         val sceneStream = context.resources.openRawResource(R.raw.data_scene)
         writeScene(gson, sceneStream.bufferedReader().use { it.readText() })
+        writeDataInfo()
     }
 
     fun populateFromRemote() {
@@ -58,25 +61,14 @@ class AppDataRepository(private var context: Context, private var db: AppDatabas
         }
     }
 
-    fun isOutOfDate(): Boolean {
+    private fun writeDataInfo() {
         val info = db.dataInfoDao().load()
-        return if (info == null) {
+        if (info == null) {
             db.dataInfoDao().insert(DataInfo(updatedDate = System.currentTimeMillis()))
-            true
         } else {
-            val currentDate = System.currentTimeMillis()
-            if (currentDate - info.updatedDate < RETAINING_DATE) {
-                false
-            } else {
-                info.updatedDate = System.currentTimeMillis()
-                db.dataInfoDao().update(info)
-                true
-            }
+            info.updatedDate = System.currentTimeMillis()
+            db.dataInfoDao().update(info)
         }
-    }
-
-    companion object {
-        const val RETAINING_DATE = 60 * 60 * 24 * 1000
     }
 
     data class LocationWrapper(@SerializedName("data") val location: Location, val tags: List<String>)

@@ -5,6 +5,7 @@ import android.arch.persistence.room.Database
 import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.content.Context
+import android.util.Log
 import com.threes.scenespotinseoul.data.dao.DataInfoDao
 import com.threes.scenespotinseoul.data.dao.LocationDao
 import com.threes.scenespotinseoul.data.dao.LocationTagDao
@@ -75,8 +76,9 @@ abstract class AppDatabase : RoomDatabase() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         super.onCreate(db)
                         runOnDiskIO {
-                            AppDataRepository(context, getInstance(context)).populateFromLocal()
+                            AppDataRepository(context).populateFromResources()
                         }
+                        Log.d("AppDatabase", "Pre-Populate data from resources.")
                     }
                 })
                 .fallbackToDestructiveMigration()
