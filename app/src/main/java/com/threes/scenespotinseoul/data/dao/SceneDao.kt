@@ -20,8 +20,14 @@ interface SceneDao {
     @Query("SELECT * FROM scenes WHERE ROWID = :rowId")
     fun loadByRowId(rowId: Long): Scene
 
+    @Query("SELECT * FROM scenes WHERE ROWID = :rowId")
+    fun loadByRowIdWithLive(rowId: Long): LiveData<Scene>
+
     @Query("SELECT * FROM scenes WHERE id = :sceneId")
     fun loadById(sceneId: Int): Scene
+
+    @Query("SELECT * FROM scenes WHERE id = :sceneId")
+    fun loadByIdWithLive(sceneId: Int): LiveData<Scene>
 
     @Query("SELECT * FROM scenes WHERE mediaId = :mediaId")
     fun loadByMediaId(mediaId: Int): List<Scene>
@@ -32,12 +38,11 @@ interface SceneDao {
     @Query("SELECT * FROM scenes WHERE isCaptured = 1")
     fun loadAllAreCaptured(): List<Scene>
 
-    @Deprecated(message = "각 아이템 변경에 대응하기 위해 loadAllWithLive() 사용 권장")
-    @Query("SELECT * FROM scenes")
-    fun loadAll(): List<Scene>
+    @Query("SELECT * FROM scenes WHERE isCaptured = 1")
+    fun loadAllAreCapturedWithLive(): LiveData<List<Scene>>
 
     @Query("SELECT * FROM scenes")
-    fun loadAllWithLive(): LiveData<List<Scene>>
+    fun loadAll(): List<Scene>
 
     @Update
     fun update(scene: Scene)
