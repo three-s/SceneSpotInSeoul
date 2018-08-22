@@ -29,7 +29,6 @@ interface LocationDao {
     @Query("SELECT * FROM locations WHERE isCaptured = 1")
     fun loadAllAreCaptured(): List<Location>
 
-    @Deprecated(message = "각 아이템 변경에 대응하기 위해 loadAllWithLive() 사용 권장")
     @Query("SELECT * FROM locations")
     fun loadAll(): List<Location>
 
