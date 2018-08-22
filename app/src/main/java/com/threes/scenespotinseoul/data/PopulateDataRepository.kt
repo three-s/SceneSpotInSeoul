@@ -97,7 +97,7 @@ class PopulateDataRepository(private var db: AppDatabase) {
                 locationId = findLocationIdByName(db, "낙산공원과 서울성곽"),
                 mediaId = findMediaIdByName(db, "무한도전"),
                 desc = "명장면1",
-                image = "",
+                image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5UaHW6i84IR5w-RXd-sSPmyetuzKDN1_BrmRK_EpIQ1_Qx-6NzQ",
                 isCaptured = false,
                 capturedImage = null
             ),

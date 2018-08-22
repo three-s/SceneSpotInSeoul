@@ -1,8 +1,6 @@
 package com.threes.scenespotinseoul.ui.media;
 
-import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnDiskIO;
-import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnMain;
-
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,136 +8,107 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.support.v7.app.ActionBar;
+import android.widget.Toast;
+
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.threes.scenespotinseoul.R;
 import com.threes.scenespotinseoul.data.AppDatabase;
 import com.threes.scenespotinseoul.data.model.Media;
 import com.threes.scenespotinseoul.data.model.Scene;
+
+import java.util.ArrayList;
 import java.util.List;
+
+import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnDiskIO;
+import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnMain;
 
 public class MediaDetailActivity extends AppCompatActivity {
 
-  private int media_id;
+    private int media_id;
 
-  private Bitmap bt;
+    private Bitmap bt;
 
-  private ImageView mMedia_image;
-  private TextView mMedia_hash_tag;
-  private TextView mMedia_title;
-  private TextView mMedia_detail;
-  //  private HashTagHelper mHashTagHelper;
+    private ImageView mMedia_image;
+    private TextView mMedia_hash_tag;
+    private TextView mMedia_title;
+    private TextView mMedia_detail;
+    //  private HashTagHelper mHashTagHelper;
+    private ActionBar mActionBar;
 
-  @Override
-  protected void onCreate(@Nullable Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_media_detail);
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_media_detail);
 
-    mMedia_image = (ImageView) findViewById(R.id.media_image);
-    mMedia_hash_tag = (TextView) findViewById(R.id.media_hash_tag);
-    mMedia_title = (TextView) findViewById(R.id.media_title);
-    mMedia_detail = (TextView) findViewById(R.id.media_detail);
+        mMedia_image = findViewById(R.id.media_image);
+        mMedia_hash_tag = findViewById(R.id.media_hash_tag);
+        mMedia_title = findViewById(R.id.media_title);
+        mMedia_detail = findViewById(R.id.media_detail);
 
-    // media_id = getIntent().getIntExtra("mediaID", 1); //"mediaID" 키값으로 아이디 값을 받아옴, 디폴트 값은 1
-    media_id = 0; // 임의로 아이디값 설정
+        // media_id = getIntent().getIntExtra("mediaID", 1); //"mediaID" 키값으로 아이디 값을 받아옴, 디폴트 값은 1
+        media_id = 0; // 임의로 아이디값 설정
 
-    // 해당 미디어 명장면 리사이클러뷰 처리
-    RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        // 해당 미디어 명장면 리사이클러뷰 처리
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
 
-    // 미디어 데이터 가져옴 Executor 사용
-    AppDatabase db = AppDatabase.getInstance(this);
-    runOnDiskIO(
-        () -> {
-          // List<Media> media = db.mediaDao().loadAll();
-          Media mMedia = db.mediaDao().loadByName("무한도전");
-          List<Scene> scene = db.sceneDao().loadByMediaId(media_id);
-          MediaAdapter adapter = new MediaAdapter(scene);
-          recyclerView.setAdapter(adapter);
-          recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-          recyclerView.setHasFixedSize(true);
+        //뒤로가기 버튼 추가
+        mActionBar = getSupportActionBar();
+        mActionBar.setDisplayHomeAsUpEnabled(true);
+        mActionBar.setHomeButtonEnabled(true);
 
-          //            //그리드뷰 세팅
-          //            MediaGridAdapter adapter = new MediaGridAdapter(getApplicationContext(),
-          // R.layout.media_detail_gridview_item, scene);
-          //            GridView gridView = (GridView) findViewById(R.id.gridVIew);
-          //            gridView.setAdapter(adapter);
+        // 미디어 데이터 가져옴 Executor 사용
+        AppDatabase db = AppDatabase.getInstance(this);
+        runOnDiskIO(
+                () -> {
+                    // List<Media> media = db.mediaDao().loadAll();
+                    Media mMedia = db.mediaDao().loadByName("무한도전");
+                    Log.e("scene", Integer.toString(mMedia.getId()));
+                    List<Scene> scene = new ArrayList<>();
+                    for (int i = 0; i < 30; i++)
+                        scene.add(db.sceneDao().loadByMediaId(mMedia.getId()).get(0));
 
-          runOnMain(
-              () -> {
-                // 미디어 대표 이미지 세팅
-                Glide.with(this).load(mMedia.getImage()).into(mMedia_image);
+                    db.mediaTagDao().loadByMediaId(mMedia.getId());
 
-                // 미디어 타이틀 세팅
-                mMedia_title.setText(mMedia.getName());
+                    runOnMain(
+                            () -> {
+                                MediaAdapter adapter = new MediaAdapter(scene);
+                                recyclerView.setAdapter(adapter);
+                                recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+                                recyclerView.setHasFixedSize(true);
 
-                // 미디어 상세설명 세팅
-                mMedia_detail.setText(mMedia.getDesc());
-              });
-        });
-    //        executors.diskIO().execute(() -> {
-    //            MediaDao mediaDao = db.mediaDao();
-    //            mMedia = mediaDao.loadById(1);
-    //            executors.mainThread().execute(() -> {
-    //                String s = mMedia.getName();
-    //                Log.e("테스트", s);
-    //            });
-    //        });
+                                // 미디어 대표 이미지 세팅
+                                RequestOptions requestOptions = new RequestOptions()
+                                        .placeholder(android.R.color.darker_gray)
+                                        .centerCrop();
 
-    //        MediaDao mDao = db.mediaDao();
-    //        media = mDao.loadAll();
-    //        mMedia = mDao.loadById(media_id); // 아이디값으로 그아이디에 해당하는 미디어 데이터를 받아옴
-    //        media = mDao.loadAll();
+                                Glide.with(this)
+                                        .load(mMedia.getImage())
+                                        .apply(requestOptions)
+                                        .into(mMedia_image);
 
-    //        //미디어 대표이미지 세팅
-    //        Thread thread = new Thread() {
-    //            @Override
-    //            public void run() {
-    //                try {
-    //                    URL url = new URL(mMedia.getImage());
-    //
-    //                    HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-    //                    connection.setDoInput(true);
-    //                    connection.connect();
-    //
-    //                    InputStream inputStream = connection.getInputStream();
-    //                    bt = BitmapFactory.decodeStream(inputStream);
-    //
-    //                } catch (Exception e) {
-    //                    e.printStackTrace();
-    //                }
-    //            }
-    //        };
-    //        thread.start();
-    //
-    //        try {
-    //            thread.join();
-    //            mMedia_image.setImageBitmap(bt);
-    //        } catch(InterruptedException e) {
-    //            e.printStackTrace();
-    //        }
-    //
-    //        //미디어 타이틀 세팅
-    //        mMedia_title.setText(mMedia.getName());
-    //
-    //        //미디어 상세설명 세팅
-    //        mMedia_detail.setText(mMedia.getDesc());
-    //
+                                // 미디어 타이틀 세팅
+                                mMedia_title.setText(mMedia.getName());
 
-    //
-    //        // 해시태그 처리
-    //
-    //        mHashTagHelper =
-    // HashTagHelper.Creator.create(getResources().getColor(R.color.colorPrimary),
-    //                new HashTagHelper.OnHashTagClickListener() {
-    //                    @Override
-    //                    public void onHashTagClicked(String hashTag) {
-    //                        // 이벤트 처리
-    //                        if(hashTag.equals("무한도전")) {
-    //
-    //                        }
-    //                    }
-    //        });
-    //        mHashTagHelper.handle(mMedia_hash_tag);
-  }
+                                // 미디어 상세설명 세팅
+                                mMedia_detail.setText(mMedia.getDesc());
+
+                            });
+                });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Toast.makeText(this, "뒤로가기 이벤트", Toast.LENGTH_LONG).show();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }
