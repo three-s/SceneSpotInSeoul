@@ -1,15 +1,15 @@
 package com.threes.scenespotinseoul.ui.media;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.support.v7.app.ActionBar;
@@ -20,7 +20,10 @@ import com.bumptech.glide.request.RequestOptions;
 import com.threes.scenespotinseoul.R;
 import com.threes.scenespotinseoul.data.AppDatabase;
 import com.threes.scenespotinseoul.data.model.Media;
+import com.threes.scenespotinseoul.data.model.MediaTag;
 import com.threes.scenespotinseoul.data.model.Scene;
+import com.threes.scenespotinseoul.data.model.Tag;
+import com.volokh.danylo.hashtaghelper.HashTagHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +41,7 @@ public class MediaDetailActivity extends AppCompatActivity {
     private TextView mMedia_hash_tag;
     private TextView mMedia_title;
     private TextView mMedia_detail;
-    //  private HashTagHelper mHashTagHelper;
+    private HashTagHelper mHashTagHelper;
     private ActionBar mActionBar;
 
     @Override
@@ -62,6 +65,14 @@ public class MediaDetailActivity extends AppCompatActivity {
         mActionBar.setDisplayHomeAsUpEnabled(true);
         mActionBar.setHomeButtonEnabled(true);
 
+        // 해시태그 헬퍼 시도해봄
+//        mHashTagHelper = HashTagHelper.Creator.create(getResources().getColor(R.color.colorPrimary), new HashTagHelper.OnHashTagClickListener() {
+//            @Override
+//            public void onHashTagClicked(String hashTag) {
+//                Toast.makeText(getApplicationContext(), hashTag, Toast.LENGTH_SHORT).show();
+//            }
+//        });
+
         // 미디어 데이터 가져옴 Executor 사용
         AppDatabase db = AppDatabase.getInstance(this);
         runOnDiskIO(
@@ -74,6 +85,12 @@ public class MediaDetailActivity extends AppCompatActivity {
                         scene.add(db.sceneDao().loadByMediaId(mMedia.getId()).get(0));
 
                     db.mediaTagDao().loadByMediaId(mMedia.getId());
+
+                    List<MediaTag> mediaTags = db.mediaTagDao().loadByMediaId(mMedia.getId());
+                    int media_tag_id = mediaTags.get(0).getTagId();
+                    Log.e("미디어 태그 테스트", String.valueOf(media_tag_id));
+                    Tag media_tag = db.tagDao().loadById(media_tag_id);
+                    Log.e("미디어 태그", media_tag.getName());
 
                     runOnMain(
                             () -> {
@@ -97,6 +114,20 @@ public class MediaDetailActivity extends AppCompatActivity {
 
                                 // 미디어 상세설명 세팅
                                 mMedia_detail.setText(mMedia.getDesc());
+                                int tLineCount = mMedia_detail.getLineCount();
+                                mMedia_detail.setMaxLines(2);
+                                mMedia_detail.setEllipsize(TextUtils.TruncateAt.END);
+
+                                mMedia_detail.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        mMedia_detail.setMaxLines(tLineCount);
+                                    }
+                                });
+
+                                // 미디어 해시티그 세팅
+                                mMedia_hash_tag.setText(media_tag.getName());
+//                                mHashTagHelper.handle(mMedia_hash_tag);
 
                             });
                 });
