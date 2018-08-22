@@ -43,6 +43,7 @@ public class MediaDetailActivity extends AppCompatActivity {
     private TextView mMedia_detail;
     private HashTagHelper mHashTagHelper;
     private ActionBar mActionBar;
+    private TextView mMedia_simpleText;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,6 +54,10 @@ public class MediaDetailActivity extends AppCompatActivity {
         mMedia_hash_tag = findViewById(R.id.media_hash_tag);
         mMedia_title = findViewById(R.id.media_title);
         mMedia_detail = findViewById(R.id.media_detail);
+        mMedia_simpleText = findViewById(R.id.simple);
+        mMedia_simpleText.setText("간략히보기");
+        mMedia_simpleText.setVisibility(View.GONE);
+
 
         // media_id = getIntent().getIntExtra("mediaID", 1); //"mediaID" 키값으로 아이디 값을 받아옴, 디폴트 값은 1
         media_id = 0; // 임의로 아이디값 설정
@@ -122,13 +127,22 @@ public class MediaDetailActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(View v) {
                                         mMedia_detail.setMaxLines(tLineCount);
+                                        mMedia_simpleText.setVisibility(View.VISIBLE);
+                                    }
+                                });
+
+                                //미디어 간략히보기 이벤트
+                                mMedia_simpleText.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        mMedia_detail.setMaxLines(2);
+                                        mMedia_simpleText.setVisibility(View.GONE);
                                     }
                                 });
 
                                 // 미디어 해시티그 세팅
                                 mMedia_hash_tag.setText(media_tag.getName());
 //                                mHashTagHelper.handle(mMedia_hash_tag);
-
                             });
                 });
     }
