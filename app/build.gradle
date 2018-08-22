@@ -42,6 +42,8 @@ dependencies {
     // Room persistent library
     implementation "android.arch.persistence.room:runtime:$rootProject.roomVersion"
     kapt "android.arch.persistence.room:compiler:$rootProject.roomVersion"
+    // 3rd-party library
+    implementation "com.google.code.gson:gson:$rootProject.gsonVersion"
     // Debugging library
     debugImplementation "com.amitshekhar.android:debug-db:$rootProject.debugDbVersion"
     // Testing library
