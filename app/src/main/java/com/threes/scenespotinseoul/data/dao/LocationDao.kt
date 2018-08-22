@@ -1,5 +1,6 @@
 package com.threes.scenespotinseoul.data.dao
 
+import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
@@ -28,8 +29,12 @@ interface LocationDao {
     @Query("SELECT * FROM locations WHERE isCaptured = 1")
     fun loadAllAreCaptured(): List<Location>
 
+    @Deprecated(message = "각 아이템 변경에 대응하기 위해 loadAllWithLive() 사용 권장")
     @Query("SELECT * FROM locations")
     fun loadAll(): List<Location>
+
+    @Query("SELECT * FROM locations")
+    fun loadAllWithLive(): LiveData<List<Location>>
 
     @Update
     fun update(location: Location)
