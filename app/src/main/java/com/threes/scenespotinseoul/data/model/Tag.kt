@@ -9,6 +9,6 @@ import android.arch.persistence.room.PrimaryKey
     indices = [Index("name", unique = true)]
 )
 data class Tag(
-    @PrimaryKey(autoGenerate = true) val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val name: String
 )
