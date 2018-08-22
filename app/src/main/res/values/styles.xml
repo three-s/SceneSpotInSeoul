@@ -26,4 +26,8 @@
         <item name="android:layout_marginRight">@dimen/key_line_small</item>
     </style>
 
+  <style name="AppTheme.Splash" parent="Theme.AppCompat.Light.NoActionBar">
+    <item name="android:windowBackground">@drawable/layer_splash</item>
+  </style>
+
 </resources>

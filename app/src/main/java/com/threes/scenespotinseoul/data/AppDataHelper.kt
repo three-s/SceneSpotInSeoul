@@ -8,7 +8,7 @@ import com.threes.scenespotinseoul.data.model.Scene
 import com.threes.scenespotinseoul.data.model.SceneTag
 import com.threes.scenespotinseoul.data.model.Tag
 
-object PopulateDataHelper {
+object AppDataHelper {
 
     fun insertLocation(db: AppDatabase, location: Location, tags: List<String>) {
         val locationRowId = db.locationDao().insert(location)
