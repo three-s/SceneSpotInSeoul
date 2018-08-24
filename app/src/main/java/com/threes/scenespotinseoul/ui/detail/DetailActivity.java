@@ -74,9 +74,6 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceStat);
         setContentView(R.layout.activity_detail);
         hasPermissions();
-
-
-
         mediaM = (ImageView)findViewById(R.id.media_image);
         pic = (ImageButton)findViewById(R.id.picture);
         line1 = (View)findViewById(R.id.line1);
@@ -86,7 +83,7 @@ public class DetailActivity extends AppCompatActivity {
         guid= (TextView)findViewById(R.id.guide);
         fab = (FloatingActionButton)findViewById(R.id.fab);
 
-
+        //데이터베이스 작업
         AppDatabase db = AppDatabase.getInstance(this);
 
         db.sceneDao().loadByRowIdWithLive(0).observe(
