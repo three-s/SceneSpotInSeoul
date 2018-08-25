@@ -9,15 +9,18 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import com.threes.scenespotinseoul.R
+import com.threes.scenespotinseoul.data.model.Media
+import com.threes.scenespotinseoul.data.model.Scene
 import com.threes.scenespotinseoul.ui.main.MainViewModel.Companion.TYPE_EXACTLY
 import com.threes.scenespotinseoul.ui.main.MainViewModel.Companion.TYPE_SIMILAR
 import com.threes.scenespotinseoul.ui.main.adapter.MediaCategoryAdapter
 import com.threes.scenespotinseoul.ui.main.adapter.SearchResultCategoryAdapter
 import com.threes.scenespotinseoul.ui.media.MediaDetailActivity
+import com.threes.scenespotinseoul.ui.scene.SceneDetailActivity
 import com.threes.scenespotinseoul.utilities.DIR_BOTTOM
 import com.threes.scenespotinseoul.utilities.EXTRA_MEDIA_ID
+import com.threes.scenespotinseoul.utilities.EXTRA_SCENE_ID
 import com.threes.scenespotinseoul.utilities.ItemOffsetDecoration
 import com.threes.scenespotinseoul.utilities.OFFSET_NORMAL
 import kotlinx.android.synthetic.main.fragment_main.*
@@ -55,9 +58,7 @@ class MainFragment : Fragment() {
     private fun initViews() {
         mediaCategoryAdapter = MediaCategoryAdapter()
         mediaCategoryAdapter.innerItemSelectListener = {
-            val intent = Intent(context, MediaDetailActivity::class.java)
-            intent.putExtra(EXTRA_MEDIA_ID, it.id)
-            startActivity(intent)
+            navigateMediaDetail(it)
         }
 
         list_media_category.setHasFixedSize(true)
@@ -67,7 +68,10 @@ class MainFragment : Fragment() {
 
         searchResultCategoryAdapter = SearchResultCategoryAdapter()
         searchResultCategoryAdapter.innerItemSelectListener = {
-            Toast.makeText(context, it.toString(), Toast.LENGTH_SHORT).show()
+            when (it) {
+                is Media -> navigateMediaDetail(it)
+                is Scene -> navigateSceneDetail(it)
+            }
         }
 
         view_search.setAutoCompleteData(this, viewModel.tagAutoCompleteData)
@@ -83,5 +87,17 @@ class MainFragment : Fragment() {
         view_search.backButtonClickListener = {
             viewModel.hideSearchResult()
         }
+    }
+
+    private fun navigateMediaDetail(it: Media) {
+        val intent = Intent(context, MediaDetailActivity::class.java)
+        intent.putExtra(EXTRA_MEDIA_ID, it.id)
+        startActivity(intent)
+    }
+
+    private fun navigateSceneDetail(it: Scene) {
+        val intent = Intent(context, SceneDetailActivity::class.java)
+        intent.putExtra(EXTRA_SCENE_ID, it.id)
+        startActivity(intent)
     }
 }

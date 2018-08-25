@@ -1,18 +1,22 @@
 package com.threes.scenespotinseoul.ui.media;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.threes.scenespotinseoul.R;
 import com.threes.scenespotinseoul.data.model.Scene;
+import com.threes.scenespotinseoul.ui.scene.SceneDetailActivity;
+
 import java.util.List;
+
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SCENE_ID;
 
 public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.mediaViewHolder> {
 
@@ -43,15 +47,11 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.mediaViewHol
         .into(holder.media_good_face_image);
 
     holder.itemView.setOnClickListener(
-        new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            Toast.makeText(v.getContext(), "상세 명장면 보기", Toast.LENGTH_SHORT).show();
-            // 명장면 상세 액티비티로 장면 아이디 값 넘김
-            //                Intent intent = new Intent(v.getContext(), AnotherActivity.class);
-            //                intent.putExtra("Scene", media_good_face.get(position).getId());
-            //                startActivity(intent);
-          }
+        v -> {
+          // 명장면 상세 액티비티로 장면 아이디 값 넘김
+          Intent intent = new Intent(context, SceneDetailActivity.class);
+          intent.putExtra(EXTRA_SCENE_ID, media_good_face.get(position).getId());
+          context.startActivity(intent);
         });
   }
 

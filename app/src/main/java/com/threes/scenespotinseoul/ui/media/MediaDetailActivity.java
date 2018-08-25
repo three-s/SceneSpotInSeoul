@@ -1,5 +1,9 @@
 package com.threes.scenespotinseoul.ui.media;
 
+import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnDiskIO;
+import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnMain;
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_MEDIA_ID;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -23,13 +27,8 @@ import com.threes.scenespotinseoul.data.model.MediaTag;
 import com.threes.scenespotinseoul.data.model.Scene;
 import com.threes.scenespotinseoul.data.model.Tag;
 import com.volokh.danylo.hashtaghelper.HashTagHelper;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnDiskIO;
-import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnMain;
-import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_MEDIA_ID;
 
 public class MediaDetailActivity extends AppCompatActivity {
 
