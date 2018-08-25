@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
-import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import com.threes.scenespotinseoul.ui.gallery.GalleryFragment
 import com.threes.scenespotinseoul.ui.main.MainFragment
@@ -25,20 +24,6 @@ class MainActivity : AppCompatActivity() {
             MapFragment(),
             GalleryFragment()
         ))
-
-        view_pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageSelected(position: Int) {
-                bottom_nav.menu.getItem(position).isChecked = true
-            }
-
-            override fun onPageScrollStateChanged(state: Int) {
-                // No-op
-            }
-
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-                // No-op
-            }
-        })
 
         bottom_nav.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
