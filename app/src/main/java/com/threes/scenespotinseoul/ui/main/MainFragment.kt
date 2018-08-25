@@ -2,6 +2,7 @@ package com.threes.scenespotinseoul.ui.main
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -14,7 +15,9 @@ import com.threes.scenespotinseoul.ui.main.MainViewModel.Companion.TYPE_EXACTLY
 import com.threes.scenespotinseoul.ui.main.MainViewModel.Companion.TYPE_SIMILAR
 import com.threes.scenespotinseoul.ui.main.adapter.MediaCategoryAdapter
 import com.threes.scenespotinseoul.ui.main.adapter.SearchResultCategoryAdapter
+import com.threes.scenespotinseoul.ui.media.MediaDetailActivity
 import com.threes.scenespotinseoul.utilities.DIR_BOTTOM
+import com.threes.scenespotinseoul.utilities.EXTRA_MEDIA_ID
 import com.threes.scenespotinseoul.utilities.ItemOffsetDecoration
 import com.threes.scenespotinseoul.utilities.OFFSET_NORMAL
 import kotlinx.android.synthetic.main.fragment_main.*
@@ -52,7 +55,9 @@ class MainFragment : Fragment() {
     private fun initViews() {
         mediaCategoryAdapter = MediaCategoryAdapter()
         mediaCategoryAdapter.innerItemSelectListener = {
-            Toast.makeText(context, it.toString(), Toast.LENGTH_SHORT).show()
+            val intent = Intent(context, MediaDetailActivity::class.java)
+            intent.putExtra(EXTRA_MEDIA_ID, it.id)
+            startActivity(intent)
         }
 
         list_media_category.setHasFixedSize(true)
