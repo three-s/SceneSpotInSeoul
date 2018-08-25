@@ -1,5 +1,6 @@
 package com.threes.scenespotinseoul.data.dao
 
+import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
@@ -19,8 +20,14 @@ interface SceneDao {
     @Query("SELECT * FROM scenes WHERE ROWID = :rowId")
     fun loadByRowId(rowId: Long): Scene
 
+    @Query("SELECT * FROM scenes WHERE ROWID = :rowId")
+    fun loadByRowIdWithLive(rowId: Long): LiveData<Scene>
+
     @Query("SELECT * FROM scenes WHERE id = :sceneId")
     fun loadById(sceneId: Int): Scene
+
+    @Query("SELECT * FROM scenes WHERE id = :sceneId")
+    fun loadByIdWithLive(sceneId: Int): LiveData<Scene>
 
     @Query("SELECT * FROM scenes WHERE mediaId = :mediaId")
     fun loadByMediaId(mediaId: Int): List<Scene>
@@ -30,6 +37,9 @@ interface SceneDao {
 
     @Query("SELECT * FROM scenes WHERE isCaptured = 1")
     fun loadAllAreCaptured(): List<Scene>
+
+    @Query("SELECT * FROM scenes WHERE isCaptured = 1")
+    fun loadAllAreCapturedWithLive(): LiveData<List<Scene>>
 
     @Query("SELECT * FROM scenes")
     fun loadAll(): List<Scene>

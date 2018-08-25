@@ -22,11 +22,11 @@ import android.arch.persistence.room.PrimaryKey
     ]
 )
 data class Scene(
-    @PrimaryKey(autoGenerate = true) val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val mediaId: Int,
     val locationId: Int,
     val desc: String,
     val image: String,
     var isCaptured: Boolean = false,
-    var capturedImage: String?
+    var capturedImage: String? = null
 )
