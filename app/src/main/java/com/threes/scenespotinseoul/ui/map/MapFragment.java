@@ -3,9 +3,6 @@ package com.threes.scenespotinseoul.ui.map;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
@@ -23,7 +20,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.nhn.android.maps.NMapContext;
@@ -43,14 +39,7 @@ import com.threes.scenespotinseoul.data.model.Location;
 import com.threes.scenespotinseoul.data.model.LocationTag;
 import com.threes.scenespotinseoul.data.model.Tag;
 import com.threes.scenespotinseoul.utilities.AppExecutors;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class MapFragment extends Fragment {
@@ -101,12 +90,13 @@ public class MapFragment extends Fragment {
     title = (TextView) rootView.findViewById(R.id.title);
     tag = (TextView) rootView.findViewById(R.id.tag);
     godetail = (TextView) rootView.findViewById(R.id.godetail);
-    godetail.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            //상세보기 화면 인텐트 전환
-        }
-    });
+    godetail.setOnClickListener(
+        new View.OnClickListener() {
+          @Override
+          public void onClick(View view) {
+            // 상세보기 화면 인텐트 전환
+          }
+        });
     image = (ImageView) rootView.findViewById(R.id.image);
     frameLayout = (FrameLayout) rootView.findViewById(R.id.detailLayout);
     cardView = (CardView) rootView.findViewById(R.id.cardview);
@@ -294,33 +284,33 @@ public class MapFragment extends Fragment {
         .diskIO()
         .execute(
             () -> {
-                List<Location> locations = db.locationDao().loadAll();
-                List<LocationTag> locationTags = db.locationTagDao().loadByLocationId(locations.get(id).getId());
-                List<Tag> tags = new ArrayList<>();
-                for(int i=0; i<locationTags.size(); i++) {
-                    tags.add(db.tagDao().loadById(locationTags.get(i).getTagId()));
-                }
-                executors
-                        .mainThread()
-                        .execute(
-                                () -> {
-                                    // 메인 스레드에서 데이터 처리
-                                    //List<LocationTag> locationtag = db.locationTagDao().loadByLocationId(locations.get(id).getId());
+              List<Location> locations = db.locationDao().loadAll();
+              List<LocationTag> locationTags =
+                  db.locationTagDao().loadByLocationId(locations.get(id).getId());
+              List<Tag> tags = new ArrayList<>();
+              for (int i = 0; i < locationTags.size(); i++) {
+                tags.add(db.tagDao().loadById(locationTags.get(i).getTagId()));
+              }
+              executors
+                  .mainThread()
+                  .execute(
+                      () -> {
+                        // 메인 스레드에서 데이터 처리
+                        // List<LocationTag> locationtag =
+                        // db.locationTagDao().loadByLocationId(locations.get(id).getId());
 
-                                    //List<Tag> tag = db.tagDao().loadAll();
-                                    String tag_name = "";
-                                    for (Tag tag : tags) {
-                                        tag_name += "#" + tag.getName() + " ";
-                                    }
-                                    this.title.setText(locations.get(id).getName());
-                                    this.tag.setText(tag_name);
-                                    Glide.with(getContext())
-                                            .load(locations.get(id).getImage())
-                                            .apply(RequestOptions.centerCropTransform())
-                                            .into(image);
-                                });
-
-
+                        // List<Tag> tag = db.tagDao().loadAll();
+                        String tag_name = "";
+                        for (Tag tag : tags) {
+                          tag_name += "#" + tag.getName() + " ";
+                        }
+                        this.title.setText(locations.get(id).getName());
+                        this.tag.setText(tag_name);
+                        Glide.with(getContext())
+                            .load(locations.get(id).getImage())
+                            .apply(RequestOptions.centerCropTransform())
+                            .into(image);
+                      });
             });
   }
 }
