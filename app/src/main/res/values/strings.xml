@@ -1,6 +1,11 @@
 <resources>
-  <string name="app_name">SceneSpotInSeoul</string>
-  <string name="title_home">Home</string>
-  <string name="title_map">Map</string>
-  <string name="title_gallery">Gallery</string>
+    <string name="app_name">SceneSpotInSeoul</string>
+    <string name="title_home">Home</string>
+    <string name="title_map">Map</string>
+    <string name="title_gallery">Gallery</string>
+    <string name="category_media">Media</string>
+    <string name="category_scene">Scene</string>
+    <string name="category_location">Location</string>
+    <string name="no_results">No results</string>
+    <string name="hint_search">Search</string>
 </resources>
