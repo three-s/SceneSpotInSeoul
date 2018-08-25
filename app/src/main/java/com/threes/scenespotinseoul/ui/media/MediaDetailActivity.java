@@ -92,10 +92,11 @@ public class MediaDetailActivity extends AppCompatActivity {
                     db.mediaTagDao().loadByMediaId(mMedia.getId());
 
                     List<MediaTag> mediaTags = db.mediaTagDao().loadByMediaId(mMedia.getId());
-                    int media_tag_id = mediaTags.get(0).getTagId();
-                    Log.e("미디어 태그 테스트", String.valueOf(media_tag_id));
-                    Tag media_tag = db.tagDao().loadById(media_tag_id);
-                    Log.e("미디어 태그", media_tag.getName());
+                    List<Tag> tags = new ArrayList<>();
+                    for(int i = 0; i < mediaTags.size(); i++) {
+                        tags.add(db.tagDao().loadById(mediaTags.get(i).getTagId()));
+                        Log.e("태그", tags.get(i).getName());
+                    }
 
                     runOnMain(
                             () -> {
@@ -141,8 +142,11 @@ public class MediaDetailActivity extends AppCompatActivity {
                                 });
 
                                 // 미디어 해시티그 세팅
-                                mMedia_hash_tag.setText(media_tag.getName());
-//                                mHashTagHelper.handle(mMedia_hash_tag);
+                                String mTag = "";
+                                for(Tag tag : tags) {
+                                    mTag += "#" + tag.getName() + " ";
+                                }
+                                mMedia_hash_tag.setText(mTag);
                             });
                 });
     }
