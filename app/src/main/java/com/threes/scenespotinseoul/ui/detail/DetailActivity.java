@@ -2,6 +2,7 @@ package com.threes.scenespotinseoul.ui.detail;
 
 
 
+import static android.widget.ImageView.ScaleType.CENTER_CROP;
 import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnDiskIO;
 import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnMain;
 
@@ -43,11 +44,13 @@ import com.threes.scenespotinseoul.data.dao.MediaDao;
 import com.threes.scenespotinseoul.data.dao.SceneDao;
 import com.threes.scenespotinseoul.data.model.Media;
 import com.threes.scenespotinseoul.data.model.Scene;
+import com.threes.scenespotinseoul.data.model.SceneTag;
 import com.threes.scenespotinseoul.data.model.Tag;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -86,22 +89,47 @@ public class DetailActivity extends AppCompatActivity {
         //데이터베이스 작업
         AppDatabase db = AppDatabase.getInstance(this);
 
-        db.sceneDao().loadByRowIdWithLive(0).observe(
-                this,Scene -> {
-                    Glide.with(this).load(Uri.parse(Scene.getImage().toString()))
-                            .into(mediaM);
+        runOnDiskIO(
+                ()->{
+                    Scene se = db.sceneDao().loadById(1);
+                    List <SceneTag> st = db.sceneTagDao().loadBySceneId(se.getId());
+                    List <Tag> tags = new ArrayList<>();
+                    for(int i=0;i<st.size();i++){
+                        tags.add(db.tagDao().loadById(st.get(i).getTagId()));
+                    }
+//                    int scene_tag_id = st.get(0).getTagId();
+//                    Tag scene_tag = db.tagDao().loadById(scene_tag_id);
+
+                    runOnMain(() -> {
+                        String textTag=null;
+                        for(int i=0;i<tags.size();i++){
+                            textTag = ""+tags.get(i).getName();
+                        }
+
+                        TagName.setText(textTag);
+                        SceneName.setText(se.getDesc());
+                    });
+
         });
 
-//
-//        runOnDiskIO(() -> {
-//
-//            runOnMain(() -> {
-//                Glide.with(this)
-//                        .load(Uri.parse(db.sceneDao().loadByRowId(0).getImage()))
-//                        .into(mediaM);
-//
-//            });
-//        });
+        db.sceneDao().loadByIdWithLive(1).observe(
+                this,Scene -> {
+                    if(Scene != null) {
+                        Log.v("URL--------------------", Scene.getImage());
+                        Glide.with(this).load(Uri.parse(Scene.getImage())).centerCrop()
+                                .into(mediaM);
+
+                    }
+                    if(Scene.getCapturedImage()!=null){
+                        //Log.v("이미지 URL","NULL");
+                        Glide.with(this).load(Uri.parse(Scene.getCapturedImage())).centerCrop()
+                                .into(pic);
+                    }
+
+
+        });
+
+
 
 
 
@@ -184,21 +212,31 @@ public class DetailActivity extends AppCompatActivity {
 
 
     }
-    @Override
-   protected void onResume() {
-        super.onResume();
 
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == CAMERACODE && resultCode == RESULT_OK){
-            getPictureForPhoto(data.getData());
+            getPictureForPhoto();
+            //setImage(data.getData());
         }
         else if(requestCode == GALLERY_CODE && resultCode ==RESULT_OK){
             sendPicture(data.getData());
+            //setImage(data.getData());
         }
     }
+
+//    private void setImage(Uri photoUri){
+//
+//        AppDatabase db = AppDatabase.getInstance(this);
+//        db.sceneDao().loadByRowIdWithLive(0).observe(
+//                this,Scene -> {
+//                    if(Scene.getCapturedImage()!=null){
+//                        Glide.with(this).load(Uri.parse(Scene.getCapturedImage()))
+//                                .into(mediaM);
+//                    }
+//                });
+//    }
 
     private  void selectPhoto(){
         String state = Environment.getExternalStorageState();
@@ -236,40 +274,38 @@ public class DetailActivity extends AppCompatActivity {
     }
 
 
-    private void getPictureForPhoto(Uri photoUri){
-        Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath);
-        ExifInterface exif = null;
-        try{
-            exif = new ExifInterface(currentPhotoPath);
-        }
-        catch(IOException e){
-            e.printStackTrace();;
-        }
-        int exifOrientation;
-        int exifDegree;
-
-        if(exif != null){
-
-            exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,ExifInterface.ORIENTATION_NORMAL);
-            exifDegree = exifOrientationToDegrees(exifOrientation);
-        }
-        else{
-            exifDegree=0;
-        }
-        ((ImageView) findViewById(R.id.picture)).setImageBitmap(rotate(bitmap,exifDegree));
-        ((ImageView) findViewById(R.id.picture)).setScaleType(ImageView.ScaleType.CENTER_CROP);
-
-//        runOnDiskIO(() -> {
-//            AppDatabase db = AppDatabase.getInstance(this);
-//            db.sceneDao().loadByRowId(0).setCaptured(true);
-//            db.sceneDao().loadByRowId(0).setCapturedImage(photoUri.toString());
-//            runOnMain(() -> {
-//                Glide.with(this)
-//                        .load(Uri.parse(db.sceneDao().loadByRowId(0).getCapturedImage()))
-//                        .into(pic);
+    private void getPictureForPhoto(){
+//        Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath);
+//        ExifInterface exif = null;
+//        try{
+//            exif = new ExifInterface(currentPhotoPath);
+//        }
+//        catch(IOException e){
+//            e.printStackTrace();;
+//        }
+//        int exifOrientation;
+//        int exifDegree;
 //
-//            });
-//        });
+//        if(exif != null){
+//
+//            exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,ExifInterface.ORIENTATION_NORMAL);
+//            exifDegree = exifOrientationToDegrees(exifOrientation);
+//        }
+//        else{
+//            exifDegree=0;
+//        }
+//        ((ImageView) findViewById(R.id.picture)).setImageBitmap(rotate(bitmap,exifDegree));
+//        ((ImageView) findViewById(R.id.picture)).setScaleType(ImageView.ScaleType.CENTER_CROP);
+//
+
+        AppDatabase db = AppDatabase.getInstance(this);
+        runOnDiskIO(() -> {
+            Scene se= db.sceneDao().loadById(1);
+
+            se.setCaptured(true);
+            se.setCapturedImage(photoUri.toString());
+            db.sceneDao().update(se);
+        });
     }
 
 
@@ -288,33 +324,35 @@ public class DetailActivity extends AppCompatActivity {
 
 
     private void sendPicture(Uri imgUri){
-        String imagePath = getRealPathFromURI(imgUri);
-        ExifInterface exif = null;
-        try{
-            exif = new ExifInterface(imagePath);
-        }
-        catch(IOException e){
-            e.printStackTrace();
-        }
-        int exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,ExifInterface.ORIENTATION_NORMAL);
-        int exifDegree = exifOrientationToDegrees(exifOrientation);
-
-        Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-        ((ImageView) findViewById(R.id.picture)).setImageBitmap(rotate(bitmap,exifDegree));
-        ((ImageView) findViewById(R.id.picture)).setScaleType(ImageView.ScaleType.CENTER_CROP);
-
+//        String imagePath = getRealPathFromURI(imgUri);
+//        ExifInterface exif = null;
+//        try{
+//            exif = new ExifInterface(imagePath);
+//        }
+//        catch(IOException e){
+//            e.printStackTrace();
+//        }
+//        int exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,ExifInterface.ORIENTATION_NORMAL);
+//        int exifDegree = exifOrientationToDegrees(exifOrientation);
 //
-//        runOnDiskIO(() -> {
-//            AppDatabase db = AppDatabase.getInstance(this);
-//            db.sceneDao().loadByRowId(0).setCaptured(true);
-//            db.sceneDao().loadByRowId(0).setCapturedImage(imgUri.toString());
-//            runOnMain(() -> {
-//                Glide.with(this)
-//                        .load(Uri.parse(db.sceneDao().loadByRowId(0).getCapturedImage()))
-//                        .into(pic);
-//
-//            });
-//        });
+//        Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+//        ((ImageView) findViewById(R.id.picture)).setImageBitmap(rotate(bitmap,exifDegree));
+        //((ImageView) findViewById(R.id.picture)).setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+
+        AppDatabase db = AppDatabase.getInstance(this);
+        runOnDiskIO(() -> {
+            Scene se= db.sceneDao().loadById(1);
+
+            se.setCaptured(true);
+
+            se.setCapturedImage(imgUri.toString());
+            db.sceneDao().update(se);
+
+
+
+        });
+
     }
 
     private int exifOrientationToDegrees(int exifOrientation){
