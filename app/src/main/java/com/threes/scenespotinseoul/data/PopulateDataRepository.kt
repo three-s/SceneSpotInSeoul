@@ -16,8 +16,8 @@ class PopulateDataRepository(private var db: AppDatabase) {
             db,
             Location(
                 id = 0,
-                lat = 37.5806712,
-                lon = 127.0052719,
+                lat = 127.0052719,
+                lon = 37.5806712,
                 name = "낙산공원과 서울성곽",
                 desc = "-",
                 address = "서울특별시 종로구 낙산길 54",
@@ -30,8 +30,8 @@ class PopulateDataRepository(private var db: AppDatabase) {
             db,
             Location(
                 id = 0,
-                lat = 37.577983,
-                lon = 127.0050028,
+                lat = 127.0050028,
+                lon = 37.577983,
                 name = "이화동 벽화마을",
                 desc = "-",
                 address = "서울특별시 종로구 낙산4길 49",
@@ -44,8 +44,8 @@ class PopulateDataRepository(private var db: AppDatabase) {
             db,
             Location(
                 id = 0,
-                lat = 37.5667292,
-                lon = 127.0073173,
+                lat = 127.0073173,
+                lon = 37.5667292,
                 name = "DDP",
                 desc = "-",
                 address = "서울특별시 중구 을지로 281",
