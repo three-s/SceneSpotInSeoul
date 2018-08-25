@@ -1,8 +1,10 @@
 package com.threes.scenespotinseoul.ui.media;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,9 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.support.v7.app.ActionBar;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.threes.scenespotinseoul.R;
@@ -30,6 +30,7 @@ import java.util.List;
 
 import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnDiskIO;
 import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnMain;
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_MEDIA_ID;
 
 public class MediaDetailActivity extends AppCompatActivity {
 
@@ -58,9 +59,10 @@ public class MediaDetailActivity extends AppCompatActivity {
         mMedia_simpleText.setText("간략히보기");
         mMedia_simpleText.setVisibility(View.GONE);
 
-
-        // media_id = getIntent().getIntExtra("mediaID", 1); //"mediaID" 키값으로 아이디 값을 받아옴, 디폴트 값은 1
-        media_id = 0; // 임의로 아이디값 설정
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra(EXTRA_MEDIA_ID)) {
+            media_id = intent.getIntExtra(EXTRA_MEDIA_ID, 0);
+        }
 
         // 해당 미디어 명장면 리사이클러뷰 처리
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
