@@ -117,30 +117,24 @@ public class MediaDetailActivity extends AppCompatActivity {
                 mMedia_detail.setEllipsize(TextUtils.TruncateAt.END);
 
                 mMedia_detail.setOnClickListener(
-                    new View.OnClickListener() {
-                      @Override
-                      public void onClick(View v) {
-                        mMedia_detail.setMaxLines(tLineCount);
-                        mMedia_simpleText.setVisibility(View.VISIBLE);
-                      }
+                    v -> {
+                      mMedia_detail.setMaxLines(tLineCount);
+                      mMedia_simpleText.setVisibility(View.VISIBLE);
                     });
 
                 // 미디어 간략히보기 이벤트
                 mMedia_simpleText.setOnClickListener(
-                    new View.OnClickListener() {
-                      @Override
-                      public void onClick(View v) {
-                        mMedia_detail.setMaxLines(2);
-                        mMedia_simpleText.setVisibility(View.GONE);
-                      }
+                    v -> {
+                      mMedia_detail.setMaxLines(2);
+                      mMedia_simpleText.setVisibility(View.GONE);
                     });
 
                 // 미디어 해시티그 세팅
-                String mTag = "";
+                StringBuilder mTag = new StringBuilder();
                 for (Tag tag : tags) {
-                  mTag += "#" + tag.getName() + " ";
+                  mTag.append("#").append(tag.getName()).append(" ");
                 }
-                mMedia_hash_tag.setText(mTag);
+                mMedia_hash_tag.setText(mTag.toString());
               });
         });
   }

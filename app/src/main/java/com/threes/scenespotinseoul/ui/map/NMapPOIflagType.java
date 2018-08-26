@@ -47,9 +47,7 @@ public class NMapPOIflagType {
   }
 
   public static int getMarkerId(int poiFlagType, int iconIndex) {
-    int markerId = poiFlagType + iconIndex;
-
-    return markerId;
+    return poiFlagType + iconIndex;
   }
 
   public static int getPOIflagType(int markerId) {

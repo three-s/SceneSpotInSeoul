@@ -1,5 +1,7 @@
 package com.threes.scenespotinseoul.ui.media;
 
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SCENE_ID;
+
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -13,10 +15,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.threes.scenespotinseoul.R;
 import com.threes.scenespotinseoul.data.model.Scene;
 import com.threes.scenespotinseoul.ui.scene.SceneDetailActivity;
-
 import java.util.List;
-
-import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SCENE_ID;
 
 public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.mediaViewHolder> {
 

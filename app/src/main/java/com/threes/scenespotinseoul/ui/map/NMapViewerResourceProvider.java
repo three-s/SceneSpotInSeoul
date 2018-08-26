@@ -11,6 +11,7 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -73,11 +74,11 @@ public class NMapViewerResourceProvider extends NMapResourceProvider
    * @return
    */
   public Drawable getDrawable(int markerId, boolean focused, NMapOverlayItem item) {
-    Drawable marker = null;
+    Drawable marker;
 
     int resourceId = findResourceIdForMarker(markerId, focused);
     if (resourceId > 0) {
-      marker = mContext.getResources().getDrawable(resourceId);
+      marker = ContextCompat.getDrawable(mContext, resourceId);
     } else {
       resourceId = 4 * markerId;
       if (focused) {
@@ -130,7 +131,7 @@ public class NMapViewerResourceProvider extends NMapResourceProvider
 
     Drawable marker = null;
     if (resourceId > 0) {
-      marker = mContext.getResources().getDrawable(resourceId);
+      marker = ContextCompat.getDrawable(mContext, resourceId);
     }
 
     if (marker != null) {
@@ -249,14 +250,14 @@ public class NMapViewerResourceProvider extends NMapResourceProvider
   public Drawable[] getLocationDot() {
     Drawable[] drawable = new Drawable[2];
 
-    drawable[0] = mContext.getResources().getDrawable(R.drawable.pubtrans_ic_mylocation_off);
-    drawable[1] = mContext.getResources().getDrawable(R.drawable.pubtrans_ic_mylocation_on);
+    drawable[0] = ContextCompat.getDrawable(mContext, R.drawable.pubtrans_ic_mylocation_off);
+    drawable[1] = ContextCompat.getDrawable(mContext, R.drawable.pubtrans_ic_mylocation_on);
 
-    for (int i = 0; i < drawable.length; i++) {
-      int w = drawable[i].getIntrinsicWidth() / 2;
-      int h = drawable[i].getIntrinsicHeight() / 2;
+    for (Drawable aDrawable : drawable) {
+      int w = aDrawable.getIntrinsicWidth() / 2;
+      int h = aDrawable.getIntrinsicHeight() / 2;
 
-      drawable[i].setBounds(-w, -h, w, h);
+      aDrawable.setBounds(-w, -h, w, h);
     }
 
     return drawable;
@@ -265,7 +266,7 @@ public class NMapViewerResourceProvider extends NMapResourceProvider
   @Override
   public Drawable getDirectionArrow() {
 
-    Drawable drawable = mContext.getResources().getDrawable(R.drawable.ic_angle);
+    Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.ic_angle);
 
     if (drawable != null) {
       int w = drawable.getIntrinsicWidth() / 2;
@@ -378,19 +379,14 @@ public class NMapViewerResourceProvider extends NMapResourceProvider
 
   @Override
   public Drawable getCalloutBackground(NMapOverlayItem item) {
-
     if (item instanceof NMapPOIitem) {
       Log.e("result.info", "here");
       NMapPOIitem poiItem = (NMapPOIitem) item;
       if (poiItem.showRightButton()) {
-        Drawable drawable = mContext.getResources().getDrawable(R.drawable.bg_speech);
-        return drawable;
+        return ContextCompat.getDrawable(mContext, R.drawable.bg_speech);
       }
     }
-
-    Drawable drawable = mContext.getResources().getDrawable(R.drawable.pin_ballon_bg);
-
-    return drawable;
+    return ContextCompat.getDrawable(mContext, R.drawable.pin_ballon_bg);
   }
 
   @Override
@@ -404,7 +400,6 @@ public class NMapViewerResourceProvider extends NMapResourceProvider
         return mContext.getResources().getString(R.string.app_name);
       }
     }
-
     return null;
   }
 
@@ -417,9 +412,9 @@ public class NMapViewerResourceProvider extends NMapResourceProvider
       if (poiItem.showRightButton()) {
         Drawable[] drawable = new Drawable[3];
 
-        drawable[0] = mContext.getResources().getDrawable(R.drawable.btn_green_normal);
-        drawable[1] = mContext.getResources().getDrawable(R.drawable.btn_green_pressed);
-        drawable[2] = mContext.getResources().getDrawable(R.drawable.btn_green_highlight);
+        drawable[0] = ContextCompat.getDrawable(mContext, R.drawable.btn_green_normal);
+        drawable[1] = ContextCompat.getDrawable(mContext, R.drawable.btn_green_pressed);
+        drawable[2] = ContextCompat.getDrawable(mContext, R.drawable.btn_green_highlight);
 
         return drawable;
       }

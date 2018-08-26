@@ -41,12 +41,14 @@ import com.threes.scenespotinseoul.data.model.Tag;
 import com.threes.scenespotinseoul.utilities.AppExecutors;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MapFragment extends Fragment {
 
+  private static final String CLIENT_ID = "bu0cuRVRS2yONcn8FGxq"; // 애플리케이션 클라이언트 아이디 값
+
   private ImageButton myloc;
   private NMapContext mMapContext;
-  private static final String CLIENT_ID = "bu0cuRVRS2yONcn8FGxq"; // 애플리케이션 클라이언트 아이디 값
   private NMapView mapView;
   private NMapOverlayManager nMapOverlayManager;
   private NMapResourceProvider mMapViewerResourceProvider;
@@ -55,15 +57,15 @@ public class MapFragment extends Fragment {
   private NMapLocationManager nMapLocationManager;
   private NMapPOIdataOverlay nMapPOIdataOverlay;
   private NMapPOIdata poiData;
-  public Gpsinfo gps;
+  private Gpsinfo gps;
   private double mylat = 0;
   private double mylon = 0;
 
   private TextView title, tag, godetail;
   private ImageView image;
-  public FrameLayout frameLayout;
-  CardView cardView;
-  Handler handler = new Handler();
+  private  FrameLayout frameLayout;
+  private CardView cardView;
+  private Handler handler = new Handler();
 
   @SuppressLint("ClickableViewAccessibility")
   @Nullable
@@ -74,46 +76,40 @@ public class MapFragment extends Fragment {
       @Nullable Bundle savedInstanceState) {
     View rootView = inflater.inflate(R.layout.fragment_map, container, false);
     gps = new Gpsinfo(rootView.getContext());
-    myloc = (ImageButton) rootView.findViewById(R.id.myloc);
+    myloc = rootView.findViewById(R.id.myloc);
     myloc.setOnClickListener(
-        new View.OnClickListener() {
-          @Override
-          public void onClick(View view) {
-            mylat = gps.getLocation().getLatitude();
-            mylon = gps.getLocation().getLongitude();
-            Log.e("result.info", String.valueOf(mylon + " , " + mylat));
-            mapController.setMapCenter(mylon, mylat);
-            mapController.setZoomLevel(10);
-          }
+        view -> {
+          mylat = gps.getLocation().getLatitude();
+          mylon = gps.getLocation().getLongitude();
+          Log.e("result.info", String.valueOf(mylon + " , " + mylat));
+          mapController.setMapCenter(mylon, mylat);
+          mapController.setZoomLevel(10);
         });
 
-    title = (TextView) rootView.findViewById(R.id.title);
-    tag = (TextView) rootView.findViewById(R.id.tag);
-    godetail = (TextView) rootView.findViewById(R.id.godetail);
+    title = rootView.findViewById(R.id.title);
+    tag = rootView.findViewById(R.id.tag);
+    godetail = rootView.findViewById(R.id.godetail);
     godetail.setOnClickListener(
-        new View.OnClickListener() {
-          @Override
-          public void onClick(View view) {
-            // 상세보기 화면 인텐트 전환
-          }
+        view -> {
+          // 상세보기 화면 인텐트 전환
         });
-    image = (ImageView) rootView.findViewById(R.id.image);
-    frameLayout = (FrameLayout) rootView.findViewById(R.id.detailLayout);
-    cardView = (CardView) rootView.findViewById(R.id.cardview);
+    image = rootView.findViewById(R.id.image);
+    frameLayout = rootView.findViewById(R.id.detailLayout);
+    cardView = rootView.findViewById(R.id.cardview);
     return rootView;
   }
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    mMapContext = new NMapContext(super.getActivity());
+    mMapContext = new NMapContext(Objects.requireNonNull(getActivity()));
     mMapContext.onCreate();
   }
 
   @Override
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
-    mapView = (NMapView) getView().findViewById(R.id.mapView);
+    mapView = Objects.requireNonNull(getView()).findViewById(R.id.mapView);
     mapView.setClientId(CLIENT_ID); // 클라이언트 아이디 설정
     mMapContext.setupMapView(mapView);
   }
@@ -130,19 +126,10 @@ public class MapFragment extends Fragment {
     // mapView.requestFocus();
     // mapView.setOnMapStateChangeListener(OnMapViewStateChangeListener); //리스너 등록
     mapController = mapView.getMapController();
-    mMapViewerResourceProvider =
-        new NMapViewerResourceProvider(
-            getContext(),
-            new NMapViewerResourceProvider.OnMarkerEventListener() {
-
-              @Override
-              public void onClicked(int id) {
-                showLayout(id);
-              }
-            });
+    mMapViewerResourceProvider = new NMapViewerResourceProvider(getContext(), this::showLayout);
     nMapOverlayManager =
         new NMapOverlayManager(
-            getContext(),
+            Objects.requireNonNull(getContext()),
             mapView,
             mMapViewerResourceProvider); // null 자리에 mMapViewerResourceProiveder 로 오버레이 아이템들을 내맘대로
     // 꾸밀 수 있다.
@@ -221,7 +208,6 @@ public class MapFragment extends Fragment {
           public void onMapInitHandler(NMapView nMapView, NMapError nMapError) {
             if (nMapError == null) {
               startMyLocation();
-            } else {
             }
           } // 맵 초기화
 
@@ -248,7 +234,6 @@ public class MapFragment extends Fragment {
     if (!isMyLocationEnabled) {
       Intent goToSettings = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
       startActivity(goToSettings);
-    } else {
     }
   }
 
@@ -278,7 +263,7 @@ public class MapFragment extends Fragment {
     cardView.setVisibility(View.VISIBLE);
     String imgurl;
 
-    AppDatabase db = AppDatabase.getInstance(getContext());
+    AppDatabase db = AppDatabase.getInstance(Objects.requireNonNull(getContext()));
     AppExecutors executors = new AppExecutors();
     executors
         .diskIO()
@@ -300,12 +285,12 @@ public class MapFragment extends Fragment {
                         // db.locationTagDao().loadByLocationId(locations.get(id).getId());
 
                         // List<Tag> tag = db.tagDao().loadAll();
-                        String tag_name = "";
+                        StringBuilder tag_name = new StringBuilder();
                         for (Tag tag : tags) {
-                          tag_name += "#" + tag.getName() + " ";
+                          tag_name.append("#").append(tag.getName()).append(" ");
                         }
                         this.title.setText(locations.get(id).getName());
-                        this.tag.setText(tag_name);
+                        this.tag.setText(tag_name.toString());
                         Glide.with(getContext())
                             .load(locations.get(id).getImage())
                             .apply(RequestOptions.centerCropTransform())

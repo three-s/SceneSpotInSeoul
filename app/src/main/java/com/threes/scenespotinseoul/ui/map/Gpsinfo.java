@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Service;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -38,7 +37,7 @@ public class Gpsinfo extends Service implements LocationListener {
   private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
 
   // 최소 GPS 정보 업데이트 시간 밀리세컨이므로 1분
-  private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1;
+  private static final long MIN_TIME_BW_UPDATES = 1000 * 60;
 
   protected LocationManager locationManager;
 
@@ -153,20 +152,12 @@ public class Gpsinfo extends Service implements LocationListener {
     // OK 를 누르게 되면 설정창으로 이동합니다.
     alertDialog.setPositiveButton(
         "Settings",
-        new DialogInterface.OnClickListener() {
-          public void onClick(DialogInterface dialog, int which) {
-            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            mContext.startActivity(intent);
-          }
+        (dialog, which) -> {
+          Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+          mContext.startActivity(intent);
         });
     // Cancle 하면 종료 합니다.
-    alertDialog.setNegativeButton(
-        "Cancel",
-        new DialogInterface.OnClickListener() {
-          public void onClick(DialogInterface dialog, int which) {
-            dialog.cancel();
-          }
-        });
+    alertDialog.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
 
     alertDialog.show();
   }

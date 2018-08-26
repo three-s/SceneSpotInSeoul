@@ -13,10 +13,11 @@ import com.nhn.android.maps.NMapOverlayItem;
 import com.nhn.android.maps.NMapView;
 import com.nhn.android.mapviewer.overlay.NMapCalloutOverlay;
 import com.nhn.android.mapviewer.overlay.NMapResourceProvider;
+import java.util.Objects;
 
 /** Created by Chun on 2018-08-15. */
 public class NMapCalloutCustomOldOverlay extends NMapCalloutOverlay {
-  private static final String LOG_TAG = "NMapCalloutCustomOverlay";
+  private static final String LOG_TAG = "NMapCalloutOverlay";
   private static final boolean DEBUG = false;
 
   private static final int CALLOUT_TEXT_COLOR = 0xFFFFFFFF;
@@ -66,15 +67,15 @@ public class NMapCalloutCustomOldOverlay extends NMapCalloutOverlay {
   private float mTailTextWidth;
 
   /** Resource provider should implement this interface */
-  public static interface ResourceProvider {
+  public interface ResourceProvider {
 
-    public Drawable getCalloutBackground(NMapOverlayItem item);
+    Drawable getCalloutBackground(NMapOverlayItem item);
 
-    public String getCalloutRightButtonText(NMapOverlayItem item);
+    String getCalloutRightButtonText(NMapOverlayItem item);
 
-    public Drawable[] getCalloutRightButton(NMapOverlayItem item);
+    Drawable[] getCalloutRightButton(NMapOverlayItem item);
 
-    public Drawable[] getCalloutRightAccessory(NMapOverlayItem item);
+    Drawable[] getCalloutRightAccessory(NMapOverlayItem item);
   }
 
   public NMapCalloutCustomOldOverlay(
@@ -163,7 +164,7 @@ public class NMapCalloutCustomOldOverlay extends NMapCalloutOverlay {
 
   @Override
   protected boolean isTitleTruncated() {
-    return (mTitleTruncated != mOverlayItem.getTitle());
+    return (!Objects.equals(mTitleTruncated, mOverlayItem.getTitle()));
   }
 
   @Override

@@ -19,9 +19,9 @@ import java.util.List;
 public class DetailToMapActivity extends NMapActivity {
   private NMapView mapView; // 지도 화면 View
   private final String CLIENT_ID = "bu0cuRVRS2yONcn8FGxq";
-  NMapPOIdata poiData;
-  NMapOverlayManager nMapOverlayManager;
-  NMapViewerResourceProvider mMapViewerResourceProvider;
+  private NMapPOIdata poiData;
+  private NMapOverlayManager nMapOverlayManager;
+  private NMapViewerResourceProvider mMapViewerResourceProvider;
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,14 +37,7 @@ public class DetailToMapActivity extends NMapActivity {
     mapView.setFocusableInTouchMode(true);
     mapView.requestFocus();
 
-    mMapViewerResourceProvider =
-        new NMapViewerResourceProvider(
-            this,
-            new NMapViewerResourceProvider.OnMarkerEventListener() {
-
-              @Override
-              public void onClicked(int id) {}
-            });
+    mMapViewerResourceProvider = new NMapViewerResourceProvider(this, id -> {});
 
     nMapOverlayManager =
         new NMapOverlayManager(
