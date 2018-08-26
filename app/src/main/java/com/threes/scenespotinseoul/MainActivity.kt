@@ -28,15 +28,15 @@ class MainActivity : AppCompatActivity() {
         bottom_nav.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home -> {
-                    view_pager.currentItem = 0
+                    view_pager.setCurrentItem(0, false)
                     true
                 }
                 R.id.navigation_map -> {
-                    view_pager.currentItem = 1
+                    view_pager.setCurrentItem(1, false)
                     true
                 }
                 R.id.navigation_gallery -> {
-                    view_pager.currentItem = 2
+                    view_pager.setCurrentItem(2, false)
                     true
                 }
                 else -> false
