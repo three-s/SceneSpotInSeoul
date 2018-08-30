@@ -63,7 +63,7 @@ public class MapFragment extends Fragment {
 
   private TextView title, tag, godetail;
   private ImageView image;
-  private  FrameLayout frameLayout;
+  private FrameLayout frameLayout;
   private CardView cardView;
   private Handler handler = new Handler();
 
