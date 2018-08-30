@@ -58,6 +58,8 @@ public class SceneDetailActivity extends AppCompatActivity {
   private Uri photoUri;
   private FloatingActionButton fab;
 
+  private int mSceneId;
+
   public void onCreate(Bundle savedInstanceStat) {
     super.onCreate(savedInstanceStat);
     setContentView(R.layout.activity_scene_detail);
@@ -70,14 +72,14 @@ public class SceneDetailActivity extends AppCompatActivity {
 
     Intent intent = getIntent();
     if (intent != null && intent.hasExtra(EXTRA_SCENE_ID)) {
-      int sceneId = intent.getIntExtra(EXTRA_SCENE_ID, 0);
-      if (sceneId == 0) {
+      mSceneId = intent.getIntExtra(EXTRA_SCENE_ID, 0);
+      if (mSceneId == 0) {
         Log.e("DetailActivity", "Can't receive scene id");
         finish();
       }
       AppDatabase db = AppDatabase.getInstance(this);
       db.sceneDao()
-          .loadByIdWithLive(sceneId)
+          .loadByIdWithLive(mSceneId)
           .observe(
               this,
               scene -> {
@@ -205,7 +207,7 @@ public class SceneDetailActivity extends AppCompatActivity {
     AppDatabase db = AppDatabase.getInstance(this);
     runOnDiskIO(
         () -> {
-          Scene scene = db.sceneDao().loadById(1);
+          Scene scene = db.sceneDao().loadById(mSceneId);
           scene.setCaptured(true);
           scene.setCapturedImage(photoUri.toString());
           db.sceneDao().update(scene);
@@ -223,12 +225,10 @@ public class SceneDetailActivity extends AppCompatActivity {
     AppDatabase db = AppDatabase.getInstance(this);
     runOnDiskIO(
         () -> {
-          Scene se = db.sceneDao().loadById(1);
-
-          se.setCaptured(true);
-
-          se.setCapturedImage(imgUri.toString());
-          db.sceneDao().update(se);
+          Scene scene = db.sceneDao().loadById(mSceneId);
+          scene.setCaptured(true);
+          scene.setCapturedImage(imgUri.toString());
+          db.sceneDao().update(scene);
         });
   }
 
