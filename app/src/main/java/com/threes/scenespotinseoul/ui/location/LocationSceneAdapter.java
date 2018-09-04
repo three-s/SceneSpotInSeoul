@@ -23,8 +23,8 @@ public class LocationSceneAdapter extends RecyclerView.Adapter<LocationSceneAdap
 
   private List<Scene> scene_relation_L;
 
-  LocationSceneAdapter(List<Scene> scene_relation_L) {
-    this.scene_relation_L = scene_relation_L;
+  LocationSceneAdapter(List<Scene> scene_relation) {
+    this.scene_relation_L = scene_relation;
   }
 
   @NonNull

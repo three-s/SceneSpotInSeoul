@@ -56,7 +56,7 @@ public class LocationMediaAdapter extends RecyclerView.Adapter<LocationMediaAdap
     Glide.with(context)
         .load(media_relation_L.get(position).getImage())
         .apply(requestOptions)
-        .into(holder.media_good_face_image);
+        .into(holder.location_media_item_image);
     holder.itemView.setOnClickListener(
         v -> {
           // 명장면 상세 액티비티로 장면 아이디 값 넘김
@@ -73,11 +73,11 @@ public class LocationMediaAdapter extends RecyclerView.Adapter<LocationMediaAdap
   }
 
   class mediaViewHolder extends RecyclerView.ViewHolder {
-    ImageView media_good_face_image;
+    ImageView location_media_item_image;
 
     private mediaViewHolder(View itemView) {
       super(itemView);
-      media_good_face_image = itemView.findViewById(R.id.location_recycler_image_media);
+      location_media_item_image = itemView.findViewById(R.id.location_recycler_image_media);
     }
   }
 }

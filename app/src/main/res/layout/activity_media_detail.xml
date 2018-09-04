@@ -97,7 +97,7 @@
     android:layout_marginTop="8dp"
     android:layout_marginStart="16dp"
     android:layout_marginEnd="16dp"
-    android:text="명장면"
+    android:text="이 미디어의 명장면"
     android:textColor="@color/colorAccent"
     android:textSize="14sp"
     app:layout_constraintEnd_toEndOf="parent"
@@ -105,16 +105,55 @@
     app:layout_constraintTop_toBottomOf="@+id/media_line"/>
 
   <android.support.v7.widget.RecyclerView
-    android:id="@+id/recyclerView"
+    android:id="@+id/media_recyclerView_scene"
     android:layout_width="match_parent"
     android:layout_height="0dp"
     android:layout_marginTop="8dp"
     android:layout_marginLeft="12dp"
     android:layout_marginRight="12dp"
-    app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/media_good_face_text"
-    tools:listitem="@layout/item_media_detail_recyclerview"/>
+    tools:listitem="@layout/item_media_scene_detail_recyclerview"/>
+
+  <View
+      android:id="@+id/media_line2"
+      android:layout_width="match_parent"
+      android:layout_height="1dp"
+      android:layout_marginTop="8dp"
+      android:layout_marginStart="16dp"
+      android:layout_marginEnd="16dp"
+      android:background="#12000000"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/media_recyclerView_scene"/>
+
+  <TextView
+      android:id="@+id/media_location_text"
+      android:textStyle="bold"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="8dp"
+      android:layout_marginStart="16dp"
+      android:layout_marginEnd="16dp"
+      android:text="이 미디어가 촬영된 장소"
+      android:textColor="@color/colorAccent"
+      android:textSize="14sp"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/media_line2"/>
+
+  <android.support.v7.widget.RecyclerView
+      android:id="@+id/media_recyclerView_location"
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_marginTop="8dp"
+      android:layout_marginLeft="12dp"
+      android:layout_marginRight="12dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/media_location_text"
+      tools:listitem="@layout/item_media_location_detail_recyclerview"/>
 
 </android.support.constraint.ConstraintLayout>

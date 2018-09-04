@@ -1,5 +1,6 @@
 package com.threes.scenespotinseoul.ui.location;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashSet;
 
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_LOCATION_ID;
 import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnDiskIO;
 import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnMain;
 
@@ -62,12 +64,10 @@ public class LocationDetailActivity extends AppCompatActivity {
     mLocation_simpleText.setVisibility(View.GONE);
 
     //TEST를 위한 주석처리
-    //Intent intent = getIntent();
-    //if (intent != null && intent.hasExtra(EXTRA_LOCATION_ID)) {
-    //  location_id = intent.getIntExtra(EXTRA_LOCATION_ID, 0);
-    //}
-
-    location_id = 1;
+    Intent intent = getIntent();
+    if (intent != null && intent.hasExtra(EXTRA_LOCATION_ID)) {
+      location_id = intent.getIntExtra(EXTRA_LOCATION_ID, 0);
+    }
 
     // 해당 미디어 명장면 리사이클러뷰 처리
     RecyclerView recyclerView_scene = findViewById(R.id.location_recyclerView_scene);

@@ -24,11 +24,13 @@ import com.threes.scenespotinseoul.R;
 import com.threes.scenespotinseoul.data.AppDatabase;
 import com.threes.scenespotinseoul.data.model.Media;
 import com.threes.scenespotinseoul.data.model.MediaTag;
+import com.threes.scenespotinseoul.data.model.Location;
 import com.threes.scenespotinseoul.data.model.Scene;
 import com.threes.scenespotinseoul.data.model.Tag;
 import com.volokh.danylo.hashtaghelper.HashTagHelper;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashSet;
 
 public class MediaDetailActivity extends AppCompatActivity {
 
@@ -63,7 +65,8 @@ public class MediaDetailActivity extends AppCompatActivity {
     }
 
     // 해당 미디어 명장면 리사이클러뷰 처리
-    RecyclerView recyclerView = findViewById(R.id.recyclerView);
+    RecyclerView recyclerView_scene = findViewById(R.id.media_recyclerView_scene);
+    RecyclerView recyclerView_location = findViewById(R.id.media_recyclerView_location);
 
     // 뒤로가기 버튼 추가
     mActionBar = getSupportActionBar();
@@ -88,6 +91,10 @@ public class MediaDetailActivity extends AppCompatActivity {
           Media mMedia = db.mediaDao().loadById(media_id);
           List<Scene> scenes = db.sceneDao().loadByMediaId(media_id);
           List<MediaTag> mediaTags = db.mediaTagDao().loadByMediaId(mMedia.getId());
+          HashSet<Location> locations = new HashSet<>();
+          for (Scene _scene : scenes){
+              locations.add(db.locationDao().loadById(_scene.getLocationId()));
+          }
           List<Tag> tags = new ArrayList<>();
           for (int i = 0; i < mediaTags.size(); i++) {
             tags.add(db.tagDao().loadById(mediaTags.get(i).getTagId()));
@@ -96,10 +103,14 @@ public class MediaDetailActivity extends AppCompatActivity {
 
           runOnMain(
               () -> {
-                MediaAdapter adapter = new MediaAdapter(scenes);
-                recyclerView.setAdapter(adapter);
-                recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-                recyclerView.setHasFixedSize(true);
+                MediaSceneAdapter adapter_scene = new MediaSceneAdapter(scenes);
+                recyclerView_scene.setAdapter(adapter_scene);
+                recyclerView_scene.setLayoutManager(new GridLayoutManager(this, 3));
+                recyclerView_scene.setHasFixedSize(true);
+                MediaLocationAdapter adapter = new MediaLocationAdapter(locations);
+                recyclerView_location.setAdapter(adapter);
+                recyclerView_location.setLayoutManager(new GridLayoutManager(this, 3));
+                recyclerView_location.setHasFixedSize(true);
 
                 // 미디어 대표 이미지 세팅
                 RequestOptions requestOptions =

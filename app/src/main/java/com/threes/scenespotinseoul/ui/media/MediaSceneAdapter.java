@@ -17,12 +17,12 @@ import com.threes.scenespotinseoul.data.model.Scene;
 import com.threes.scenespotinseoul.ui.scene.SceneDetailActivity;
 import java.util.List;
 
-public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.mediaViewHolder> {
+public class MediaSceneAdapter extends RecyclerView.Adapter<MediaSceneAdapter.mediaViewHolder> {
 
-  private List<Scene> media_good_face;
+  private List<Scene> scene_relation_L;
 
-  MediaAdapter(List<Scene> media_good_face) {
-    this.media_good_face = media_good_face;
+  MediaSceneAdapter(List<Scene> scene_relation) {
+    this.scene_relation_L = scene_relation;
   }
 
   @NonNull
@@ -30,7 +30,7 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.mediaViewHol
   public mediaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     View view =
         LayoutInflater.from(parent.getContext())
-            .inflate(R.layout.item_media_detail_recyclerview, parent, false);
+            .inflate(R.layout.item_media_scene_detail_recyclerview, parent, false);
     return new mediaViewHolder(view);
   }
 
@@ -41,31 +41,31 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.mediaViewHol
     RequestOptions requestOptions = new RequestOptions().centerCrop();
 
     Glide.with(context)
-        .load(media_good_face.get(position).getImage())
+        .load(scene_relation_L.get(position).getImage())
         .apply(requestOptions)
-        .into(holder.media_good_face_image);
+        .into(holder.media_scene_item_image);
 
     holder.itemView.setOnClickListener(
         v -> {
           // 명장면 상세 액티비티로 장면 아이디 값 넘김
           Intent intent = new Intent(context, SceneDetailActivity.class);
-          intent.putExtra(EXTRA_SCENE_ID, media_good_face.get(position).getId());
+          intent.putExtra(EXTRA_SCENE_ID, scene_relation_L.get(position).getId());
           context.startActivity(intent);
         });
   }
 
   @Override
   public int getItemCount() {
-    if (media_good_face != null) return media_good_face.size();
+    if (scene_relation_L != null) return scene_relation_L.size();
     else return 0;
   }
 
   class mediaViewHolder extends RecyclerView.ViewHolder {
-    ImageView media_good_face_image;
+    ImageView media_scene_item_image;
 
     private mediaViewHolder(View itemView) {
       super(itemView);
-      media_good_face_image = itemView.findViewById(R.id.media_recycler_image);
+      media_scene_item_image = itemView.findViewById(R.id.media_scene_recycler_image);
     }
   }
 }
