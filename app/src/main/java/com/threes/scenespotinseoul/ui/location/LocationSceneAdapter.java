@@ -19,55 +19,55 @@ import java.util.List;
 
 import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SCENE_ID;
 
-public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.mediaViewHolder> {
+public class LocationSceneAdapter extends RecyclerView.Adapter<LocationSceneAdapter.sceneViewHolder> {
 
-  private List<Scene> media_good_face;
+  private List<Scene> scene_relation_L;
 
-  LocationAdapter(List<Scene> media_good_face) {
-    this.media_good_face = media_good_face;
+  LocationSceneAdapter(List<Scene> scene_relation_L) {
+    this.scene_relation_L = scene_relation_L;
   }
 
   @NonNull
   @Override
-  public mediaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+  public sceneViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     View view =
         LayoutInflater.from(parent.getContext())
-            .inflate(R.layout.item_location_detail_recyclerview, parent, false);
-    return new mediaViewHolder(view);
+            .inflate(R.layout.item_location_scene_detail_recyclerview, parent, false);
+    return new sceneViewHolder(view);
   }
 
   @Override
-  public void onBindViewHolder(@NonNull mediaViewHolder holder, int position) {
+  public void onBindViewHolder(@NonNull sceneViewHolder holder, int position) {
     Context context = holder.itemView.getContext();
 
     RequestOptions requestOptions = new RequestOptions().centerCrop();
 
     Glide.with(context)
-        .load(media_good_face.get(position).getImage())
+        .load(scene_relation_L.get(position).getImage())
         .apply(requestOptions)
-        .into(holder.media_good_face_image);
+        .into(holder.location_media_item_image);
 
     holder.itemView.setOnClickListener(
         v -> {
           // 명장면 상세 액티비티로 장면 아이디 값 넘김
           Intent intent = new Intent(context, SceneDetailActivity.class);
-          intent.putExtra(EXTRA_SCENE_ID, media_good_face.get(position).getId());
+          intent.putExtra(EXTRA_SCENE_ID, scene_relation_L.get(position).getId());
           context.startActivity(intent);
         });
   }
 
   @Override
   public int getItemCount() {
-    if (media_good_face != null) return media_good_face.size();
+    if (scene_relation_L != null) return scene_relation_L.size();
     else return 0;
   }
 
-  class mediaViewHolder extends RecyclerView.ViewHolder {
-    ImageView media_good_face_image;
+  class sceneViewHolder extends RecyclerView.ViewHolder {
+    ImageView location_media_item_image;
 
-    private mediaViewHolder(View itemView) {
+    private sceneViewHolder(View itemView) {
       super(itemView);
-      media_good_face_image = itemView.findViewById(R.id.location_recycler_image);
+      location_media_item_image = itemView.findViewById(R.id.location_recycler_image_scene);
     }
   }
 }

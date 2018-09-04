@@ -1,6 +1,5 @@
 package com.threes.scenespotinseoul.ui.location;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,18 +21,16 @@ import com.threes.scenespotinseoul.data.AppDatabase;
 import com.threes.scenespotinseoul.data.model.Location;
 import com.threes.scenespotinseoul.data.model.LocationTag;
 import com.threes.scenespotinseoul.data.model.Media;
-import com.threes.scenespotinseoul.data.model.MediaTag;
 import com.threes.scenespotinseoul.data.model.Scene;
 import com.threes.scenespotinseoul.data.model.Tag;
 import com.volokh.danylo.hashtaghelper.HashTagHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashSet;
 
 import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnDiskIO;
 import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnMain;
-import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_LOCATION_ID;
-import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_MEDIA_ID;
 
 public class LocationDetailActivity extends AppCompatActivity {
 
@@ -73,7 +70,8 @@ public class LocationDetailActivity extends AppCompatActivity {
     location_id = 1;
 
     // 해당 미디어 명장면 리사이클러뷰 처리
-    RecyclerView recyclerView = findViewById(R.id.location_recyclerView);
+    RecyclerView recyclerView_scene = findViewById(R.id.location_recyclerView_scene);
+    RecyclerView recyclerView_media = findViewById(R.id.location_recyclerView_media);
 
     // 뒤로가기 버튼 추가
     mActionBar = getSupportActionBar();
@@ -98,6 +96,10 @@ public class LocationDetailActivity extends AppCompatActivity {
           Location mLocation = db.locationDao().loadById(location_id);
           List<Scene> scenes = db.sceneDao().loadByLocationId(location_id);
           List<LocationTag> locationTags = db.locationTagDao().loadByLocationId(mLocation.getId());
+          HashSet<Media> medias = new HashSet<>();
+          for (Scene _scene : scenes){
+              medias.add(db.mediaDao().loadById(_scene.getMediaId()));
+          }
           List<Tag> tags = new ArrayList<>();
           for (int i = 0; i < locationTags.size(); i++) {
             tags.add(db.tagDao().loadById(locationTags.get(i).getTagId()));
@@ -106,10 +108,16 @@ public class LocationDetailActivity extends AppCompatActivity {
 
           runOnMain(
               () -> {
-                LocationAdapter adapter = new LocationAdapter(scenes);
-                recyclerView.setAdapter(adapter);
-                recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-                recyclerView.setHasFixedSize(true);
+                LocationSceneAdapter adapter_scene = new LocationSceneAdapter(scenes);
+                recyclerView_scene.setAdapter(adapter_scene);
+                recyclerView_scene.setLayoutManager(new GridLayoutManager(this, 3));
+                recyclerView_scene.setHasFixedSize(true);
+                LocationMediaAdapter adapter_media = new LocationMediaAdapter(medias);
+                recyclerView_media.setAdapter(adapter_media);
+                recyclerView_media.setLayoutManager(new GridLayoutManager(this, 3));
+                recyclerView_media.setHasFixedSize(true);
+
+                //LocationMediaAdapter
 
                 // 미디어 대표 이미지 세팅
                 RequestOptions requestOptions =
