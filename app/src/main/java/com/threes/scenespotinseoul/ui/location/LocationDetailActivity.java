@@ -44,6 +44,7 @@ public class LocationDetailActivity extends AppCompatActivity {
   private ImageView mLocation_image;
   private TextView mLocation_hash_tag;
   private TextView mLocation_name;
+  private TextView mLocation_address;
   private TextView mLocation_detail;
   private HashTagHelper mHashTagHelper;
   private ActionBar mActionBar;
@@ -57,15 +58,19 @@ public class LocationDetailActivity extends AppCompatActivity {
     mLocation_image = findViewById(R.id.location_image);
     mLocation_hash_tag = findViewById(R.id.location_hash_tag);
     mLocation_name = findViewById(R.id.location_name);
+    mLocation_address = findViewById(R.id.location_address);
     mLocation_detail = findViewById(R.id.location_detail);
     mLocation_simpleText = findViewById(R.id.location_simple);
     mLocation_simpleText.setText("간략히보기");
     mLocation_simpleText.setVisibility(View.GONE);
 
-    Intent intent = getIntent();
-    if (intent != null && intent.hasExtra(EXTRA_LOCATION_ID)) {
-      location_id = intent.getIntExtra(EXTRA_LOCATION_ID, 0);
-    }
+    //TEST를 위한 주석처리
+    //Intent intent = getIntent();
+    //if (intent != null && intent.hasExtra(EXTRA_LOCATION_ID)) {
+    //  location_id = intent.getIntExtra(EXTRA_LOCATION_ID, 0);
+    //}
+
+    location_id = 1;
 
     // 해당 미디어 명장면 리사이클러뷰 처리
     RecyclerView recyclerView = findViewById(R.id.location_recyclerView);
@@ -114,6 +119,8 @@ public class LocationDetailActivity extends AppCompatActivity {
 
                 // 미디어 타이틀 세팅
                 mLocation_name.setText(mLocation.getName());
+
+                mLocation_address.setText(mLocation.getAddress());
 
                 // 미디어 상세설명 세팅
                 mLocation_detail.setText(mLocation.getDesc());
