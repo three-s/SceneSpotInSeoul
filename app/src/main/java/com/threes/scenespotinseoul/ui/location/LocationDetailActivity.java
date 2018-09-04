@@ -106,10 +106,10 @@ public class LocationDetailActivity extends AppCompatActivity {
 
           runOnMain(
               () -> {
-                //LocationAdapter adapter = new LocationAdapter(scenes);
-                //recyclerView.setAdapter(adapter);
-                //recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-                //recyclerView.setHasFixedSize(true);
+                LocationAdapter adapter = new LocationAdapter(scenes);
+                recyclerView.setAdapter(adapter);
+                recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+                recyclerView.setHasFixedSize(true);
 
                 // 미디어 대표 이미지 세팅
                 RequestOptions requestOptions =
