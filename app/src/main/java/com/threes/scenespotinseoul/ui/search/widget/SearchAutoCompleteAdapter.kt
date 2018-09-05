@@ -1,4 +1,4 @@
-package com.threes.scenespotinseoul.ui.main.widget
+package com.threes.scenespotinseoul.ui.search.widget
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
