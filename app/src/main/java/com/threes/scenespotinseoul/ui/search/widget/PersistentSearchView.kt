@@ -23,6 +23,7 @@ class PersistentSearchView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : CardView(context, attrs, defStyleAttr) {
 
+    private var editTextFocus = false
     private var iconMode = 0
     private var isExpanded = false
     private var autoCompleteAdapter: SearchAutoCompleteAdapter
@@ -54,6 +55,7 @@ class PersistentSearchView @JvmOverloads constructor(
                 R.styleable.SearchView,
                 0, 0).apply {
             try {
+                editTextFocus = getBoolean(R.styleable.SearchView_editTextFocus, false)
                 iconMode = getInteger(R.styleable.SearchView_iconMode, 0)
             } finally {
                 recycle()
@@ -84,6 +86,10 @@ class PersistentSearchView @JvmOverloads constructor(
 
         list_search_autocomplete.layoutManager = LinearLayoutManager(context)
         list_search_autocomplete.adapter = autoCompleteAdapter
+
+        if (editTextFocus) {
+            edit_search.requestFocus()
+        }
 
         edit_search.addTextChangedListener(searchTextWatcher)
 

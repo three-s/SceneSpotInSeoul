@@ -12,6 +12,7 @@
     android:layout_marginLeft="@dimen/key_line_small"
     android:layout_marginRight="@dimen/key_line_small"
     app:layout_constraintTop_toTopOf="parent"
+    app:editTextFocus="true"
     app:iconMode="back" />
 
   <android.support.v7.widget.RecyclerView
