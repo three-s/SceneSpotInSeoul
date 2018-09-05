@@ -18,9 +18,9 @@ import com.threes.scenespotinseoul.R
 import kotlinx.android.synthetic.main.persistent_search_view.view.*
 
 class PersistentSearchView @JvmOverloads constructor(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = 0
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) : CardView(context, attrs, defStyleAttr) {
 
     private var iconMode = 0

@@ -6,7 +6,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import com.threes.scenespotinseoul.R
 import com.threes.scenespotinseoul.data.model.Media
 import com.threes.scenespotinseoul.ui.main.adapter.MediaCategoryAdapter

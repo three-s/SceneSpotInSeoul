@@ -14,7 +14,12 @@ import com.threes.scenespotinseoul.ui.main.adapter.SearchResultCategoryAdapter
 import com.threes.scenespotinseoul.ui.media.MediaDetailActivity
 import com.threes.scenespotinseoul.ui.scene.SceneDetailActivity
 import com.threes.scenespotinseoul.ui.search.SearchViewModel.Companion.TYPE_EXACTLY
-import com.threes.scenespotinseoul.utilities.*
+import com.threes.scenespotinseoul.utilities.DIR_BOTTOM
+import com.threes.scenespotinseoul.utilities.EXTRA_MEDIA_ID
+import com.threes.scenespotinseoul.utilities.EXTRA_SCENE_ID
+import com.threes.scenespotinseoul.utilities.EXTRA_SEARCH_KEYWORD
+import com.threes.scenespotinseoul.utilities.ItemOffsetDecoration
+import com.threes.scenespotinseoul.utilities.OFFSET_NORMAL
 import kotlinx.android.synthetic.main.activity_search.*
 
 class SearchActivity : AppCompatActivity() {
