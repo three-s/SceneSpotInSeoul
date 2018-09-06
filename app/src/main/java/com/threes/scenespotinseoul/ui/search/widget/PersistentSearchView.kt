@@ -23,7 +23,6 @@ class PersistentSearchView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : CardView(context, attrs, defStyleAttr) {
 
-    private var editTextFocus = false
     private var iconMode = 0
     private var isExpanded = false
     private var autoCompleteAdapter: SearchAutoCompleteAdapter
@@ -80,6 +79,7 @@ class PersistentSearchView @JvmOverloads constructor(
             collapseSearchView()
             clearAutoComplete()
             hideKeyboard()
+            clearEditTextFocus()
             autoCompleteSelectListener?.invoke(it)
         }
 
@@ -94,6 +94,7 @@ class PersistentSearchView @JvmOverloads constructor(
                     collapseSearchView()
                     clearAutoComplete()
                     hideKeyboard()
+                    clearEditTextFocus()
                     editActionListener?.invoke(view.text.toString())
                     true
                 }
@@ -134,6 +135,16 @@ class PersistentSearchView @JvmOverloads constructor(
         edit_search.requestFocus()
     }
 
+    fun setAutoCompletedText(autoCompletedText: String) {
+        edit_search.removeTextChangedListener(searchTextWatcher)
+        edit_search.setText(autoCompletedText)
+        edit_search.addTextChangedListener(searchTextWatcher)
+    }
+
+    private fun clearEditTextFocus() {
+        edit_search.clearFocus()
+    }
+
     private fun showBackButton() {
         if (iconMode == NONE || iconMode == BACK) {
             iv_search_icon.visibility = INVISIBLE
@@ -146,12 +157,6 @@ class PersistentSearchView @JvmOverloads constructor(
             iv_search_icon.visibility = VISIBLE
             btn_back.visibility = INVISIBLE
         }
-    }
-
-    private fun setAutoCompletedText(autoCompletedText: String) {
-        edit_search.removeTextChangedListener(searchTextWatcher)
-        edit_search.setText(autoCompletedText)
-        edit_search.addTextChangedListener(searchTextWatcher)
     }
 
     private fun clearAutoComplete() {

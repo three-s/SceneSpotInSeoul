@@ -43,7 +43,9 @@ class SearchActivity : AppCompatActivity() {
             }
         })
         if (intent.hasExtra(EXTRA_SEARCH_KEYWORD)) {
-            viewModel.requestSearch(TYPE_EXACTLY, intent.getStringExtra(EXTRA_SEARCH_KEYWORD))
+            val keyword = intent.getStringExtra(EXTRA_SEARCH_KEYWORD)
+            search_view.setAutoCompletedText(keyword)
+            viewModel.requestSearch(TYPE_EXACTLY, keyword)
         } else {
             search_view.requestEditTextFocus()
         }
