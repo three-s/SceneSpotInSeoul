@@ -15,7 +15,6 @@ import android.view.ViewGroup
 import com.threes.scenespotinseoul.R
 import com.threes.scenespotinseoul.data.model.Media
 import com.threes.scenespotinseoul.ui.main.adapter.MediaCategoryAdapter
-import com.threes.scenespotinseoul.ui.main.adapter.SearchResultCategoryAdapter
 import com.threes.scenespotinseoul.ui.media.MediaDetailActivity
 import com.threes.scenespotinseoul.ui.search.SearchActivity
 import com.threes.scenespotinseoul.utilities.DIR_BOTTOM
@@ -28,7 +27,6 @@ class MainFragment : Fragment() {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var mediaCategoryAdapter: MediaCategoryAdapter
-    private lateinit var searchResultCategoryAdapter: SearchResultCategoryAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +34,7 @@ class MainFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
-        inflater.inflate(R.layout.fragment_main, container, false)
+            inflater.inflate(R.layout.fragment_main, container, false)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -44,18 +42,6 @@ class MainFragment : Fragment() {
         initViews()
         viewModel.mediaCategory.observe(this, Observer {
             mediaCategoryAdapter.submitList(it)
-        })
-        viewModel.showSearchResult.observe(this, Observer {
-            if (it == true) {
-                searchResultCategoryAdapter.submitData(
-                    viewModel.searchResultMediaData,
-                    viewModel.searchResultSceneData,
-                    viewModel.searchResultLocationData
-                )
-                list_media_category.adapter = searchResultCategoryAdapter
-            } else {
-                list_media_category.adapter = mediaCategoryAdapter
-            }
         })
     }
 
