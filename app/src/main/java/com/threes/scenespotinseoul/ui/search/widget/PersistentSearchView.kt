@@ -1,9 +1,10 @@
-package com.threes.scenespotinseoul.ui.main.widget
+package com.threes.scenespotinseoul.ui.search.widget
 
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.content.Context
+import android.support.annotation.IntDef
 import android.support.v7.widget.CardView
 import android.support.v7.widget.LinearLayoutManager
 import android.text.Editable
@@ -22,6 +23,7 @@ class PersistentSearchView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : CardView(context, attrs, defStyleAttr) {
 
+    private var iconMode = 0
     private var isExpanded = false
     private var autoCompleteAdapter: SearchAutoCompleteAdapter
     private var searchTextWatcher: TextWatcher = object : TextWatcher {
@@ -47,7 +49,24 @@ class PersistentSearchView @JvmOverloads constructor(
     var backButtonClickListener: ((View) -> Unit)? = null
 
     init {
+        context.theme.obtainStyledAttributes(
+                attrs,
+                R.styleable.SearchView,
+                0, 0).apply {
+            try {
+                iconMode = getInteger(R.styleable.SearchView_iconMode, 0)
+            } finally {
+                recycle()
+            }
+        }
+
         View.inflate(context, R.layout.persistent_search_view, this)
+
+        when (iconMode) {
+            BACK -> showBackButton()
+            SEARCH -> hideBackButton()
+            else -> hideBackButton()
+        }
 
         radius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2F, resources.displayMetrics)
         useCompatPadding = true
@@ -60,6 +79,7 @@ class PersistentSearchView @JvmOverloads constructor(
             collapseSearchView()
             clearAutoComplete()
             hideKeyboard()
+            clearEditTextFocus()
             autoCompleteSelectListener?.invoke(it)
         }
 
@@ -74,6 +94,7 @@ class PersistentSearchView @JvmOverloads constructor(
                     collapseSearchView()
                     clearAutoComplete()
                     hideKeyboard()
+                    clearEditTextFocus()
                     editActionListener?.invoke(view.text.toString())
                     true
                 }
@@ -104,20 +125,38 @@ class PersistentSearchView @JvmOverloads constructor(
         })
     }
 
-    private fun showBackButton() {
-        iv_search_icon.visibility = INVISIBLE
-        btn_back.visibility = VISIBLE
+    fun setIconMode(@IconMode newIconMode: Int) {
+        this.iconMode = newIconMode
+        invalidate()
+        requestLayout()
     }
 
-    private fun hideBackButton() {
-        iv_search_icon.visibility = VISIBLE
-        btn_back.visibility = INVISIBLE
+    fun requestEditTextFocus() {
+        edit_search.requestFocus()
     }
 
-    private fun setAutoCompletedText(autoCompletedText: String) {
+    fun setAutoCompletedText(autoCompletedText: String) {
         edit_search.removeTextChangedListener(searchTextWatcher)
         edit_search.setText(autoCompletedText)
         edit_search.addTextChangedListener(searchTextWatcher)
+    }
+
+    private fun clearEditTextFocus() {
+        edit_search.clearFocus()
+    }
+
+    private fun showBackButton() {
+        if (iconMode == NONE || iconMode == BACK) {
+            iv_search_icon.visibility = INVISIBLE
+            btn_back.visibility = VISIBLE
+        }
+    }
+
+    private fun hideBackButton() {
+        if (iconMode == NONE || iconMode == SEARCH) {
+            iv_search_icon.visibility = VISIBLE
+            btn_back.visibility = INVISIBLE
+        }
     }
 
     private fun clearAutoComplete() {
@@ -144,5 +183,19 @@ class PersistentSearchView @JvmOverloads constructor(
     private fun hideKeyboard() {
         val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(windowToken, 0)
+    }
+
+    @Retention(AnnotationRetention.SOURCE)
+    @IntDef(
+            NONE,
+            SEARCH,
+            BACK
+    )
+    annotation class IconMode
+
+    companion object {
+        const val NONE = 0
+        const val SEARCH = 1
+        const val BACK = 2
     }
 }

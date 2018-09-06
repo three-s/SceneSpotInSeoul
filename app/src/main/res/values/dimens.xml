@@ -7,4 +7,5 @@
   <dimen name="list_media_height">144dp</dimen>
   <dimen name="search_collapse_height">48dp</dimen>
   <dimen name="search_content_margin">72dp</dimen>
+  <dimen name="search_result_margin">72dp</dimen>
 </resources>
