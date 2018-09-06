@@ -55,7 +55,6 @@ class PersistentSearchView @JvmOverloads constructor(
                 R.styleable.SearchView,
                 0, 0).apply {
             try {
-                editTextFocus = getBoolean(R.styleable.SearchView_editTextFocus, false)
                 iconMode = getInteger(R.styleable.SearchView_iconMode, 0)
             } finally {
                 recycle()
@@ -86,10 +85,6 @@ class PersistentSearchView @JvmOverloads constructor(
 
         list_search_autocomplete.layoutManager = LinearLayoutManager(context)
         list_search_autocomplete.adapter = autoCompleteAdapter
-
-        if (editTextFocus) {
-            edit_search.requestFocus()
-        }
 
         edit_search.addTextChangedListener(searchTextWatcher)
 
@@ -133,6 +128,10 @@ class PersistentSearchView @JvmOverloads constructor(
         this.iconMode = newIconMode
         invalidate()
         requestLayout()
+    }
+
+    fun requestEditTextFocus() {
+        edit_search.requestFocus()
     }
 
     private fun showBackButton() {

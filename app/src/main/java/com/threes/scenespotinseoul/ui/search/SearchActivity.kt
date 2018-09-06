@@ -44,6 +44,8 @@ class SearchActivity : AppCompatActivity() {
         })
         if (intent.hasExtra(EXTRA_SEARCH_KEYWORD)) {
             viewModel.requestSearch(TYPE_EXACTLY, intent.getStringExtra(EXTRA_SEARCH_KEYWORD))
+        } else {
+            search_view.requestEditTextFocus()
         }
     }
 

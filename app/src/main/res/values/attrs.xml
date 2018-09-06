@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <declare-styleable name="SearchView">
-    <attr name="editTextFocus" format="boolean"/>
     <attr name="iconMode" format="enum">
       <enum name="none" value="0" />
       <enum name="search" value="1" />
