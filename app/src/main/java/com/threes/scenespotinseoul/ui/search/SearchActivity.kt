@@ -33,12 +33,12 @@ class SearchActivity : AppCompatActivity() {
         viewModel = ViewModelProviders.of(this).get(SearchViewModel::class.java)
         initViews()
         viewModel.showSearchResult.observe(this, Observer {
-            if (it == true) {
-                searchResultCategoryAdapter.submitData(
-                        viewModel.searchResultMediaData,
-                        viewModel.searchResultSceneData,
-                        viewModel.searchResultLocationData
-                )
+            searchResultCategoryAdapter.submitData(
+                    viewModel.searchResultMediaData,
+                    viewModel.searchResultSceneData,
+                    viewModel.searchResultLocationData
+            )
+            if (list_search_result.adapter == null) {
                 list_search_result.adapter = searchResultCategoryAdapter
             }
         })

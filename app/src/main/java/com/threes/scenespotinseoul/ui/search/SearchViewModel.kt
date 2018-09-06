@@ -20,7 +20,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
     private var executors: AppExecutors = AppExecutors()
 
     private val _tagAutoCompleteData = MutableLiveData<List<String>>()
-    private val _showSearchResult = MutableLiveData<Boolean>()
+    private val _showSearchResult = MutableLiveData<String>()
 
     val tagAutoCompleteData: LiveData<List<String>>
         get() = _tagAutoCompleteData
@@ -29,7 +29,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
     var searchResultLocationData: List<Location> = listOf()
     var searchResultSceneData: List<Scene> = listOf()
 
-    val showSearchResult: LiveData<Boolean>
+    val showSearchResult: LiveData<String>
         get() = _showSearchResult
 
     fun loadTagAutoComplete(keyword: String) {
@@ -71,7 +71,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
                         searchResultMediaData = media
                         searchResultLocationData = locations
                         searchResultSceneData = scenes
-                        _showSearchResult.value = true
+                        _showSearchResult.value = keyword
                     }
                 }
             }
@@ -98,7 +98,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
                         searchResultMediaData = media
                         searchResultLocationData = locations
                         searchResultSceneData = scenes
-                        _showSearchResult.value = true
+                        _showSearchResult.value = keyword
                     }
                 }
             }
