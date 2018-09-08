@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -105,11 +106,11 @@ public class MediaDetailActivity extends AppCompatActivity {
               () -> {
                 MediaSceneAdapter adapter_scene = new MediaSceneAdapter(scenes);
                 recyclerView_scene.setAdapter(adapter_scene);
-                recyclerView_scene.setLayoutManager(new GridLayoutManager(this, 3));
+                recyclerView_scene.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
                 recyclerView_scene.setHasFixedSize(true);
                 MediaLocationAdapter adapter = new MediaLocationAdapter(locations);
                 recyclerView_location.setAdapter(adapter);
-                recyclerView_location.setLayoutManager(new GridLayoutManager(this, 3));
+                recyclerView_location.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
                 recyclerView_location.setHasFixedSize(true);
 
                 // 미디어 대표 이미지 세팅

@@ -6,12 +6,13 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -110,11 +111,11 @@ public class LocationDetailActivity extends AppCompatActivity {
               () -> {
                 LocationSceneAdapter adapter_scene = new LocationSceneAdapter(scenes);
                 recyclerView_scene.setAdapter(adapter_scene);
-                recyclerView_scene.setLayoutManager(new GridLayoutManager(this, 3));
+                recyclerView_scene.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
                 recyclerView_scene.setHasFixedSize(true);
                 LocationMediaAdapter adapter_media = new LocationMediaAdapter(medias);
                 recyclerView_media.setAdapter(adapter_media);
-                recyclerView_media.setLayoutManager(new GridLayoutManager(this, 3));
+                recyclerView_media.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
                 recyclerView_media.setHasFixedSize(true);
 
                 //LocationMediaAdapter
