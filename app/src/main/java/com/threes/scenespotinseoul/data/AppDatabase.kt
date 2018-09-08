@@ -1,11 +1,9 @@
 package com.threes.scenespotinseoul.data
 
-import android.arch.persistence.db.SupportSQLiteDatabase
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.content.Context
-import android.util.Log
 import com.threes.scenespotinseoul.data.dao.DataInfoDao
 import com.threes.scenespotinseoul.data.dao.LocationDao
 import com.threes.scenespotinseoul.data.dao.LocationTagDao
@@ -23,7 +21,6 @@ import com.threes.scenespotinseoul.data.model.Scene
 import com.threes.scenespotinseoul.data.model.SceneTag
 import com.threes.scenespotinseoul.data.model.Tag
 import com.threes.scenespotinseoul.utilities.DATABASE_NAME
-import com.threes.scenespotinseoul.utilities.runOnDiskIO
 
 @Database(
     entities = [
@@ -72,15 +69,6 @@ abstract class AppDatabase : RoomDatabase() {
 
         private fun buildDatabase(context: Context): AppDatabase {
             return Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
-                .addCallback(object : Callback() {
-                    override fun onCreate(db: SupportSQLiteDatabase) {
-                        super.onCreate(db)
-                        runOnDiskIO {
-                            AppDataRepository(context).populateFromResources()
-                        }
-                        Log.d("AppDatabase", "Pre-Populate data from resources.")
-                    }
-                })
                 .fallbackToDestructiveMigration()
                 .build()
         }

@@ -7,7 +7,10 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import com.threes.scenespotinseoul.MainActivity
+import com.threes.scenespotinseoul.data.AppDataRepository
+import com.threes.scenespotinseoul.utilities.runOnDiskIO
 
 class SplashActivity : AppCompatActivity() {
 
@@ -16,9 +19,10 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sharedPref = getPreferences(Context.MODE_PRIVATE)
-        if (!checkFirstRun()) {
+        if (checkFirstRun()) {
+            initDatabase()
+            sharedPref.edit().putBoolean(KEY_FIRST_RUN, false).apply()
             requestPermission()
-            sharedPref.edit().putBoolean(KEY_FIRST_RUN, true).apply()
         } else {
             navigateMain()
         }
@@ -29,7 +33,14 @@ class SplashActivity : AppCompatActivity() {
         navigateMain()
     }
 
-    private fun checkFirstRun(): Boolean = sharedPref.getBoolean(KEY_FIRST_RUN, false)
+    private fun initDatabase() {
+        Log.d("AppDatabase", "Pre-Populate data from resources.")
+        runOnDiskIO {
+            AppDataRepository(this).populateFromResources()
+        }
+    }
+
+    private fun checkFirstRun(): Boolean = sharedPref.getBoolean(KEY_FIRST_RUN, true)
 
     private fun requestPermission() {
         ActivityCompat.requestPermissions(this,

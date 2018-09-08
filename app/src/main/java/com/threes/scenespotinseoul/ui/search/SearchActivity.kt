@@ -11,11 +11,11 @@ import com.threes.scenespotinseoul.data.model.Location
 import com.threes.scenespotinseoul.data.model.Media
 import com.threes.scenespotinseoul.data.model.Scene
 import com.threes.scenespotinseoul.ui.location.LocationDetailActivity
-import com.threes.scenespotinseoul.ui.main.MainViewModel
 import com.threes.scenespotinseoul.ui.main.adapter.SearchResultCategoryAdapter
 import com.threes.scenespotinseoul.ui.media.MediaDetailActivity
 import com.threes.scenespotinseoul.ui.scene.SceneDetailActivity
 import com.threes.scenespotinseoul.ui.search.SearchViewModel.Companion.TYPE_EXACTLY
+import com.threes.scenespotinseoul.ui.search.SearchViewModel.Companion.TYPE_SIMILAR
 import com.threes.scenespotinseoul.utilities.DIR_BOTTOM
 import com.threes.scenespotinseoul.utilities.EXTRA_LOCATION_ID
 import com.threes.scenespotinseoul.utilities.EXTRA_MEDIA_ID
@@ -73,10 +73,10 @@ class SearchActivity : AppCompatActivity() {
             viewModel.loadTagAutoComplete(keyword)
         }
         search_view.editActionListener = {
-            viewModel.requestSearch(MainViewModel.TYPE_SIMILAR, it)
+            viewModel.requestSearch(TYPE_SIMILAR, it)
         }
         search_view.autoCompleteSelectListener = {
-            viewModel.requestSearch(MainViewModel.TYPE_EXACTLY, it)
+            viewModel.requestSearch(TYPE_EXACTLY, it)
         }
         search_view.backButtonClickListener = {
             finish()

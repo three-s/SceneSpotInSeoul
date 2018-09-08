@@ -4,7 +4,6 @@ import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
-import android.support.annotation.StringDef
 import com.threes.scenespotinseoul.data.AppDatabase
 import com.threes.scenespotinseoul.ui.main.adapter.MediaCategory
 import com.threes.scenespotinseoul.utilities.runOnDiskIO
@@ -19,35 +18,21 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val mediaCategory: LiveData<List<MediaCategory>>
         get() = _mediaCategoryData
 
-    init {
-        loadMediaCategory()
-    }
+    val mediaCount: LiveData<Int> = db.mediaDao().getNumberOfRows()
 
     fun loadMediaCategory() {
         runOnDiskIO {
-            val media = db.mediaDao().loadAll()
+            val categories = arrayOf("예능", "드라마")
+            val mediaCategories = mutableListOf<MediaCategory>()
+            categories.forEach { it ->
+                val tag = db.tagDao().loadByName(it)
+                val mediaTags = db.mediaTagDao().loadByTagId(tag?.id!!)
+                val media = mediaTags.map { db.mediaDao().loadById(it.mediaId) }
+                mediaCategories.add(MediaCategory(it, media))
+            }
             runOnMain {
-                _mediaCategoryData.value = listOf(
-                    MediaCategory("Category 1", media),
-                    MediaCategory("Category 2", media),
-                    MediaCategory("Category 3", media),
-                    MediaCategory("Category 4", media),
-                    MediaCategory("Category 5", media),
-                    MediaCategory("Category 6", media),
-                    MediaCategory("Category 7", media)
-                )
+                _mediaCategoryData.value = mediaCategories
             }
         }
-    }
-    @Retention(AnnotationRetention.SOURCE)
-    @StringDef(
-        TYPE_SIMILAR,
-        TYPE_EXACTLY
-    )
-    annotation class RequestType
-
-    companion object {
-        const val TYPE_SIMILAR = "type_similar"
-        const val TYPE_EXACTLY = "type_exactly"
     }
 }
