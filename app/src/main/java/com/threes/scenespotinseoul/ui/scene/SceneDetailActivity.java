@@ -2,9 +2,11 @@ package com.threes.scenespotinseoul.ui.scene;
 
 import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnDiskIO;
 import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnMain;
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_LOCATION_ID;
 import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SCENE_ID;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -17,11 +19,14 @@ import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.media.ExifInterface;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -32,6 +37,8 @@ import com.threes.scenespotinseoul.data.AppDatabase;
 import com.threes.scenespotinseoul.data.model.Scene;
 import com.threes.scenespotinseoul.data.model.SceneTag;
 import com.threes.scenespotinseoul.data.model.Tag;
+import com.threes.scenespotinseoul.ui.map.MapFragment;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -57,8 +64,11 @@ public class SceneDetailActivity extends AppCompatActivity {
   private TextView guid;
   private Uri photoUri;
   private FloatingActionButton fab;
-
+    private ActionBar mActionBar;
   private int mSceneId;
+  //map에 전달한 location id 값
+  int idfromScenetoMap;
+
 
   public void onCreate(Bundle savedInstanceStat) {
     super.onCreate(savedInstanceStat);
@@ -70,9 +80,17 @@ public class SceneDetailActivity extends AppCompatActivity {
     guid = findViewById(R.id.guide);
     fab = findViewById(R.id.fab);
 
-    Intent intent = getIntent();
+
+      mActionBar = getSupportActionBar();
+      mActionBar.setDisplayHomeAsUpEnabled(true);
+      mActionBar.setHomeButtonEnabled(true);
+
+
+
+      Intent intent = getIntent();
     if (intent != null && intent.hasExtra(EXTRA_SCENE_ID)) {
       mSceneId = intent.getIntExtra(EXTRA_SCENE_ID, 0);
+
       if (mSceneId == 0) {
         Log.e("DetailActivity", "Can't receive scene id");
         finish();
@@ -85,12 +103,16 @@ public class SceneDetailActivity extends AppCompatActivity {
               scene -> {
                 if (scene != null) {
                   getTags(db, scene);
+
                   SceneName.setText(scene.getDesc());
+                  idfromScenetoMap = scene.getLocationId();
                   Glide.with(this)
                       .load(Uri.parse(scene.getImage()))
                       .apply(new RequestOptions().centerCrop())
                       .into(mediaM);
+
                   guid.setVisibility(View.VISIBLE);
+
                   if (scene.isCaptured()) {
                     guid.setVisibility(View.GONE);
                     Glide.with(this)
@@ -104,6 +126,9 @@ public class SceneDetailActivity extends AppCompatActivity {
 
     fab.setOnClickListener(
         v -> {
+            Intent Mapintent = new Intent(this , DetailToMapActivity.class);
+            intent.putExtra(EXTRA_LOCATION_ID, idfromScenetoMap);
+            this.startActivity(intent);
           // startActivity(new Intent(DetailActivity.class, ));
         });
 
@@ -232,23 +257,23 @@ public class SceneDetailActivity extends AppCompatActivity {
         });
   }
 
-  private int exifOrientationToDegrees(int exifOrientation) {
-    switch (exifOrientation) {
-      case ExifInterface.ORIENTATION_ROTATE_90:
-        return 90;
-      case ExifInterface.ORIENTATION_ROTATE_180:
-        return 180;
-      case ExifInterface.ORIENTATION_ROTATE_270:
-        return 270;
-    }
-    return 0;
-  }
-
-  private Bitmap rotate(Bitmap src, float degree) {
-    Matrix matrix = new Matrix();
-    matrix.postRotate(degree);
-    return Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
-  }
+//  private int exifOrientationToDegrees(int exifOrientation) {
+//    switch (exifOrientation) {
+//      case ExifInterface.ORIENTATION_ROTATE_90:
+//        return 90;
+//      case ExifInterface.ORIENTATION_ROTATE_180:
+//        return 180;
+//      case ExifInterface.ORIENTATION_ROTATE_270:
+//        return 270;
+//    }
+//    return 0;
+//  }
+//
+//  private Bitmap rotate(Bitmap src, float degree) {
+//    Matrix matrix = new Matrix();
+//    matrix.postRotate(degree);
+//    return Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
+//  }
 
   private String getRealPathFromURI(Uri contentUri) {
     int column_index = 0;
@@ -261,4 +286,15 @@ public class SceneDetailActivity extends AppCompatActivity {
     }
     return cursor.getString(column_index);
   }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }
+
+
