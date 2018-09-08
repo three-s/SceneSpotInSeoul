@@ -67,6 +67,9 @@ public class MapFragment extends Fragment {
   private CardView cardView;
   private Handler handler = new Handler();
 
+
+
+
   @SuppressLint("ClickableViewAccessibility")
   @Nullable
   @Override
