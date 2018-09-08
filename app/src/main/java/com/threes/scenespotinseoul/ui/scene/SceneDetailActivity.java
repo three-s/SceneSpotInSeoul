@@ -32,6 +32,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.threes.scenespotinseoul.R;
 import com.threes.scenespotinseoul.data.AppDatabase;
 import com.threes.scenespotinseoul.data.model.Scene;
@@ -70,6 +71,9 @@ public class SceneDetailActivity extends AppCompatActivity {
   int idfromScenetoMap;
 
 
+
+
+
   public void onCreate(Bundle savedInstanceStat) {
     super.onCreate(savedInstanceStat);
     setContentView(R.layout.activity_scene_detail);
@@ -81,13 +85,14 @@ public class SceneDetailActivity extends AppCompatActivity {
     fab = findViewById(R.id.fab);
 
 
-      mActionBar = getSupportActionBar();
-      mActionBar.setDisplayHomeAsUpEnabled(true);
-      mActionBar.setHomeButtonEnabled(true);
+
+    mActionBar = getSupportActionBar();
+    mActionBar.setDisplayHomeAsUpEnabled(true);
+    mActionBar.setHomeButtonEnabled(true);
 
 
 
-      Intent intent = getIntent();
+    Intent intent = getIntent();
     if (intent != null && intent.hasExtra(EXTRA_SCENE_ID)) {
       mSceneId = intent.getIntExtra(EXTRA_SCENE_ID, 0);
 
@@ -124,6 +129,10 @@ public class SceneDetailActivity extends AppCompatActivity {
               });
     }
 
+
+
+
+
     fab.setOnClickListener(
         v -> {
             Intent Mapintent = new Intent(this , DetailToMapActivity.class);
@@ -134,7 +143,8 @@ public class SceneDetailActivity extends AppCompatActivity {
 
     pic.setOnClickListener(
         v -> {
-          CharSequence info[] = new CharSequence[] {"사진을 찍어 업로드", "갤러리에서 업로드", "취소"};
+            AppDatabase db = AppDatabase.getInstance(this);
+          CharSequence info[] = new CharSequence[] {"사진을 찍어 업로드", "갤러리에서 업로드","갤러리에서 보기", "업로드된 사진 내리기","취소"};
           AlertDialog.Builder builder = new AlertDialog.Builder(SceneDetailActivity.this);
           builder.setTitle("사진 업로드");
           builder.setItems(
@@ -165,9 +175,46 @@ public class SceneDetailActivity extends AppCompatActivity {
                       selectGallery();
                     }
                     break;
+
+
                   case 2:
+                    db.sceneDao()
+                            .loadByIdWithLive(mSceneId)
+                            .observe(
+                                      this,
+                                      scene -> {
+                                          //Log.v("사진내리고 URL", scene.getCapturedImage());
+                                          if (scene.getCapturedImage() != null) {
+                                              String url = scene.getCapturedImage();
+                                              Intent gintent = new Intent(Intent.ACTION_VIEW,Uri.parse(url));
+                                              startActivity(gintent);
+                                          }
+                                          else{
+                                              Snackbar.make(v, "이전에 등록된 사진이 없습니다.", Snackbar.LENGTH_SHORT).show();
+                                          }
+                                      });
+
+                    break;
+
+
+                  case 3:
+                      //pic.setImageBitmap(null);
+                    runOnDiskIO(
+                              () -> {
+                                  Scene scene = db.sceneDao().loadById(mSceneId);
+                                  scene.setCaptured(false);
+                                  scene.setCapturedImage(null);
+                                  db.sceneDao().update(scene);
+                              });
+                    pic.setImageResource(0);
+                    guid.setVisibility(View.VISIBLE);
+                    break;
+
+                  case 4:
                     dialog.dismiss();
                     break;
+
+
                 }
                 dialog.dismiss();
               });
