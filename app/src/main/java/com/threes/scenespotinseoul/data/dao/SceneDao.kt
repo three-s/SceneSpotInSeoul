@@ -32,6 +32,9 @@ interface SceneDao {
     @Query("SELECT * FROM scenes WHERE mediaId = :mediaId")
     fun loadByMediaId(mediaId: Int): List<Scene>
 
+    @Query("SELECT * FROM scenes WHERE locationId = :locationId")
+    fun loadByLocationId(locationId: Int): List<Scene>
+
     @Query("SELECT * FROM scenes WHERE locationId = :locationId AND mediaId = :mediaId")
     fun loadByLocationAndMediaId(locationId: Int, mediaId: Int): List<Scene>
 
