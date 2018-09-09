@@ -9,7 +9,6 @@ import com.threes.scenespotinseoul.data.AppDatabase
 import com.threes.scenespotinseoul.data.model.Location
 import com.threes.scenespotinseoul.data.model.Media
 import com.threes.scenespotinseoul.data.model.Scene
-import com.threes.scenespotinseoul.ui.main.MainViewModel
 import com.threes.scenespotinseoul.utilities.AppExecutors
 import com.threes.scenespotinseoul.utilities.runOnDiskIO
 import com.threes.scenespotinseoul.utilities.runOnMain
@@ -47,7 +46,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
 
     fun requestSearch(@RequestType requestType: String, keyword: String) {
         when (requestType) {
-            MainViewModel.TYPE_EXACTLY -> {
+            TYPE_EXACTLY -> {
                 runOnDiskIO {
                     val tag = db.tagDao().loadByName(keyword.trim())
                     val tagId = tag?.id!!

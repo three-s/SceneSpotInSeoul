@@ -40,6 +40,11 @@ class MainFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         initViews()
+        viewModel.mediaCount.observe(this, Observer {
+            if (it != null && it > 0) {
+                viewModel.loadMediaCategory()
+            }
+        })
         viewModel.mediaCategory.observe(this, Observer {
             mediaCategoryAdapter.submitList(it)
         })
