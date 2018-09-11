@@ -13,8 +13,8 @@ interface DataInfoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(dataInfo: DataInfo): Long
 
-    @Query("SELECT * FROM data_info WHERE id = 0")
-    fun load(): DataInfo?
+    @Query("SELECT * FROM data_info WHERE name = :tableName")
+    fun load(tableName: String): DataInfo?
 
     @Update
     fun update(dataInfo: DataInfo)

@@ -5,6 +5,6 @@ import android.arch.persistence.room.PrimaryKey
 
 @Entity(tableName = "data_info")
 data class DataInfo(
-    @PrimaryKey val id: Int = 0,
+    @PrimaryKey val name: String,
     var updatedDate: Long
 )

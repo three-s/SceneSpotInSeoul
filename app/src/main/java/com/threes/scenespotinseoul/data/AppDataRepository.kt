@@ -2,7 +2,6 @@ package com.threes.scenespotinseoul.data
 
 import android.content.Context
 import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
 import com.threes.scenespotinseoul.R
 import com.threes.scenespotinseoul.data.AppDataHelper.findLocationIdByName
 import com.threes.scenespotinseoul.data.AppDataHelper.findMediaIdByName
@@ -10,9 +9,13 @@ import com.threes.scenespotinseoul.data.AppDataHelper.insertLocation
 import com.threes.scenespotinseoul.data.AppDataHelper.insertMedia
 import com.threes.scenespotinseoul.data.AppDataHelper.insertScene
 import com.threes.scenespotinseoul.data.model.DataInfo
-import com.threes.scenespotinseoul.data.model.Location
-import com.threes.scenespotinseoul.data.model.Media
 import com.threes.scenespotinseoul.data.model.Scene
+import com.threes.scenespotinseoul.data.remote.model.LocationWrapper
+import com.threes.scenespotinseoul.data.remote.model.MediaWrapper
+import com.threes.scenespotinseoul.data.remote.model.SceneWrapper
+import com.threes.scenespotinseoul.utilities.LOCATION_TABLE
+import com.threes.scenespotinseoul.utilities.MEDIA_TABLE
+import com.threes.scenespotinseoul.utilities.SCENE_TABLE
 
 class AppDataRepository(private var context: Context) {
 
@@ -26,7 +29,6 @@ class AppDataRepository(private var context: Context) {
         writeMedia(gson, mediaStream.bufferedReader().use { it.readText() })
         val sceneStream = context.resources.openRawResource(R.raw.data_scene)
         writeScene(gson, sceneStream.bufferedReader().use { it.readText() })
-        writeDataInfo()
     }
 
     fun populateFromRemote() {
@@ -38,6 +40,7 @@ class AppDataRepository(private var context: Context) {
         locations.forEach {
             insertLocation(db, it.location, it.tags)
         }
+        writeDataInfo(LOCATION_TABLE)
     }
 
     private fun writeMedia(gson: Gson, data: String) {
@@ -45,6 +48,7 @@ class AppDataRepository(private var context: Context) {
         media.forEach {
             insertMedia(db, it.media, it.tags)
         }
+        writeDataInfo(MEDIA_TABLE)
     }
 
     private fun writeScene(gson: Gson, data: String) {
@@ -59,12 +63,13 @@ class AppDataRepository(private var context: Context) {
                     image = it.sceneContent.image
             ), it.tags)
         }
+        writeDataInfo(SCENE_TABLE)
     }
 
-    private fun writeDataInfo() {
-        val info = db.dataInfoDao().load()
+    private fun writeDataInfo(tableName: String) {
+        val info = db.dataInfoDao().load(tableName)
         if (info == null) {
-            db.dataInfoDao().insert(DataInfo(updatedDate = System.currentTimeMillis()))
+            db.dataInfoDao().insert(DataInfo(tableName, updatedDate = System.currentTimeMillis()))
         } else {
             info.updatedDate = System.currentTimeMillis()
             db.dataInfoDao().update(info)
