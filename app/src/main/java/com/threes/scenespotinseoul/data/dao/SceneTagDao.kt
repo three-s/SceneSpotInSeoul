@@ -16,7 +16,7 @@ interface SceneTagDao {
     fun insertAll(sceneTags: List<SceneTag>): List<Long>
 
     @Query("SELECT * FROM scene_tags WHERE sceneId = :sceneId")
-    fun loadBySceneId(sceneId: Int): List<SceneTag>
+    fun loadBySceneId(sceneId: String): List<SceneTag>
 
     @Query("SELECT * FROM scene_tags WHERE tagId = :tagId")
     fun loadByTagId(tagId: Int): List<SceneTag>

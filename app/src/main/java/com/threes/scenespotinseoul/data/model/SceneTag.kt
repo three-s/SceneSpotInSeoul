@@ -3,9 +3,10 @@ package com.threes.scenespotinseoul.data.model
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.ForeignKey
 import android.arch.persistence.room.Index
+import com.threes.scenespotinseoul.utilities.SCENE_TAG_TABLE
 
 @Entity(
-    tableName = "scene_tags",
+    tableName = SCENE_TAG_TABLE,
     primaryKeys = ["tagId", "sceneId"],
     indices = [Index("tagId"), Index("sceneId")],
     foreignKeys = [
@@ -16,12 +17,12 @@ import android.arch.persistence.room.Index
         ),
         ForeignKey(
             entity = Scene::class,
-            parentColumns = arrayOf("id"),
+            parentColumns = arrayOf("uuid"),
             childColumns = arrayOf("sceneId")
         )
     ]
 )
 data class SceneTag(
     val tagId: Int,
-    val sceneId: Int
+    val sceneId: String
 )

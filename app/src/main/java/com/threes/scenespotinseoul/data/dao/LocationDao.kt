@@ -20,8 +20,8 @@ interface LocationDao {
     @Query("SELECT * FROM locations WHERE ROWID = :rowId")
     fun loadByRowId(rowId: Long): Location
 
-    @Query("SELECT * FROM locations WHERE id = :locationId")
-    fun loadById(locationId: Int): Location
+    @Query("SELECT * FROM locations WHERE uuid = :locationId")
+    fun loadById(locationId: String): Location
 
     @Query("SELECT * FROM locations WHERE name = :name")
     fun loadByName(name: String): Location

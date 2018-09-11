@@ -16,7 +16,7 @@ interface MediaTagDao {
     fun insertAll(mediaTags: List<MediaTag>): List<Long>
 
     @Query("SELECT * FROM media_tags WHERE mediaId = :mediaId")
-    fun loadByMediaId(mediaId: Int): List<MediaTag>
+    fun loadByMediaId(mediaId: String): List<MediaTag>
 
     @Query("SELECT * FROM media_tags WHERE tagId = :tagId")
     fun loadByTagId(tagId: Int): List<MediaTag>

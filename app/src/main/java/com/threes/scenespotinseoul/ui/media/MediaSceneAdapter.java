@@ -1,7 +1,5 @@
 package com.threes.scenespotinseoul.ui.media;
 
-import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SCENE_ID;
-
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -15,7 +13,10 @@ import com.bumptech.glide.request.RequestOptions;
 import com.threes.scenespotinseoul.R;
 import com.threes.scenespotinseoul.data.model.Scene;
 import com.threes.scenespotinseoul.ui.scene.SceneDetailActivity;
+
 import java.util.List;
+
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SCENE_ID;
 
 public class MediaSceneAdapter extends RecyclerView.Adapter<MediaSceneAdapter.mediaViewHolder> {
 
@@ -49,7 +50,7 @@ public class MediaSceneAdapter extends RecyclerView.Adapter<MediaSceneAdapter.me
         v -> {
           // 명장면 상세 액티비티로 장면 아이디 값 넘김
           Intent intent = new Intent(context, SceneDetailActivity.class);
-          intent.putExtra(EXTRA_SCENE_ID, scene_relation_L.get(position).getId());
+          intent.putExtra(EXTRA_SCENE_ID, scene_relation_L.get(position).getUuid());
           context.startActivity(intent);
         });
   }

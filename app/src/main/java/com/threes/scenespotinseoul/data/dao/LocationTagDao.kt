@@ -16,7 +16,7 @@ interface LocationTagDao {
     fun insertAll(locationTags: List<LocationTag>): List<Long>
 
     @Query("SELECT * FROM location_tags WHERE locationId = :locationId")
-    fun loadByLocationId(locationId: Int): List<LocationTag>
+    fun loadByLocationId(locationId: String): List<LocationTag>
 
     @Query("SELECT * FROM location_tags WHERE tagId = :tagId")
     fun loadByTagId(tagId: Int): List<LocationTag>

@@ -19,8 +19,8 @@ interface MediaDao {
     @Query("SELECT * FROM media WHERE ROWID = :rowId")
     fun loadByRowId(rowId: Long): Media
 
-    @Query("SELECT * FROM media WHERE id = :mediaId")
-    fun loadById(mediaId: Int): Media
+    @Query("SELECT * FROM media WHERE uuid = :mediaId")
+    fun loadById(mediaId: String): Media
 
     @Query("SELECT * FROM media WHERE name = :name")
     fun loadByName(name: String): Media

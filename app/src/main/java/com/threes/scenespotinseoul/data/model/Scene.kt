@@ -4,27 +4,29 @@ import android.arch.persistence.room.Entity
 import android.arch.persistence.room.ForeignKey
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
+import com.threes.scenespotinseoul.utilities.SCENE_TABLE
+import java.util.UUID
 
 @Entity(
-    tableName = "scenes",
+    tableName = SCENE_TABLE,
     indices = [Index("mediaId"), Index("locationId")],
     foreignKeys = [
         ForeignKey(
             entity = Media::class,
-            parentColumns = arrayOf("id"),
+            parentColumns = arrayOf("uuid"),
             childColumns = arrayOf("mediaId")
         ),
         ForeignKey(
             entity = Location::class,
-            parentColumns = arrayOf("id"),
+            parentColumns = arrayOf("uuid"),
             childColumns = arrayOf("locationId")
         )
     ]
 )
 data class Scene(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val mediaId: Int,
-    val locationId: Int,
+    @PrimaryKey val uuid: String = UUID.randomUUID().toString(),
+    val mediaId: String,
+    val locationId: String,
     val desc: String,
     val image: String,
     var isCaptured: Boolean = false,

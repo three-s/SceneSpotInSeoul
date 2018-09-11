@@ -2,10 +2,11 @@ package com.threes.scenespotinseoul.data.model
 
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
+import com.threes.scenespotinseoul.utilities.LOCATION_TABLE
 
-@Entity(tableName = "locations")
+@Entity(tableName = LOCATION_TABLE)
 data class Location(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey val uuid: String,
     val lat: Double,
     val lon: Double,
     val name: String,

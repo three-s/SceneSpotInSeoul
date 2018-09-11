@@ -8,19 +8,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.threes.scenespotinseoul.R;
-import com.threes.scenespotinseoul.data.model.Scene;
 import com.threes.scenespotinseoul.data.model.Location;
-import com.threes.scenespotinseoul.ui.scene.SceneDetailActivity;
 import com.threes.scenespotinseoul.ui.location.LocationDetailActivity;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Iterator;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 
 import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_LOCATION_ID;
 
@@ -63,7 +60,7 @@ public class MediaLocationAdapter extends RecyclerView.Adapter<MediaLocationAdap
         v -> {
           // 명장면 상세 액티비티로 장면 아이디 값 넘김
           Intent intent = new Intent(context, LocationDetailActivity.class);
-          intent.putExtra(EXTRA_LOCATION_ID, location_relation_L.get(position).getId());
+          intent.putExtra(EXTRA_LOCATION_ID, location_relation_L.get(position).getUuid());
           context.startActivity(intent);
         });
   }
