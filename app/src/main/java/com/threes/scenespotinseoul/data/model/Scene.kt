@@ -2,6 +2,7 @@ package com.threes.scenespotinseoul.data.model
 
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.ForeignKey
+import android.arch.persistence.room.ForeignKey.CASCADE
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import com.threes.scenespotinseoul.utilities.SCENE_TABLE
@@ -14,12 +15,14 @@ import java.util.UUID
         ForeignKey(
             entity = Media::class,
             parentColumns = arrayOf("uuid"),
-            childColumns = arrayOf("mediaId")
+            childColumns = arrayOf("mediaId"),
+            onDelete = CASCADE
         ),
         ForeignKey(
             entity = Location::class,
             parentColumns = arrayOf("uuid"),
-            childColumns = arrayOf("locationId")
+            childColumns = arrayOf("locationId"),
+            onDelete = CASCADE
         )
     ]
 )
@@ -28,7 +31,8 @@ data class Scene(
     val mediaId: String,
     val locationId: String,
     val desc: String,
-    val image: String,
-    var isCaptured: Boolean = false,
+    val image: String
+) {
+    var isCaptured: Boolean = false
     var capturedImage: String? = null
-)
+}

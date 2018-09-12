@@ -1,6 +1,7 @@
 package com.threes.scenespotinseoul.data.dao
 
 import android.arch.persistence.room.Dao
+import android.arch.persistence.room.Delete
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
@@ -19,5 +20,8 @@ interface LocationTagDao {
     fun loadByLocationId(locationId: String): List<LocationTag>
 
     @Query("SELECT * FROM location_tags WHERE tagId = :tagId")
-    fun loadByTagId(tagId: Int): List<LocationTag>
+    fun loadByTagId(tagId: Long): List<LocationTag>
+
+    @Delete
+    fun deleteAll(locationTags: List<LocationTag>)
 }

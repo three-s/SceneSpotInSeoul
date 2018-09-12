@@ -2,6 +2,7 @@ package com.threes.scenespotinseoul.data.dao
 
 import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.Dao
+import android.arch.persistence.room.Delete
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
@@ -24,7 +25,7 @@ interface SceneDao {
     fun loadByRowIdWithLive(rowId: Long): LiveData<Scene>
 
     @Query("SELECT * FROM scenes WHERE uuid = :sceneId")
-    fun loadById(sceneId: String): Scene
+    fun loadById(sceneId: String): Scene?
 
     @Query("SELECT * FROM scenes WHERE uuid = :sceneId")
     fun loadByIdWithLive(sceneId: String): LiveData<Scene>
@@ -49,4 +50,7 @@ interface SceneDao {
 
     @Update
     fun update(scene: Scene)
+
+    @Delete
+    fun delete(scene: Scene)
 }

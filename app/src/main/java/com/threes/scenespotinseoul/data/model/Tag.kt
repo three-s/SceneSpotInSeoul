@@ -10,6 +10,6 @@ import com.threes.scenespotinseoul.utilities.TAG_TABLE
     indices = [Index("name", unique = true)]
 )
 data class Tag(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String
 )

@@ -2,6 +2,7 @@ package com.threes.scenespotinseoul.data.model
 
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.ForeignKey
+import android.arch.persistence.room.ForeignKey.CASCADE
 import android.arch.persistence.room.Index
 import com.threes.scenespotinseoul.utilities.SCENE_TAG_TABLE
 
@@ -13,16 +14,18 @@ import com.threes.scenespotinseoul.utilities.SCENE_TAG_TABLE
         ForeignKey(
             entity = Tag::class,
             parentColumns = arrayOf("id"),
-            childColumns = arrayOf("tagId")
+            childColumns = arrayOf("tagId"),
+            onDelete = CASCADE
         ),
         ForeignKey(
             entity = Scene::class,
             parentColumns = arrayOf("uuid"),
-            childColumns = arrayOf("sceneId")
+            childColumns = arrayOf("sceneId"),
+            onDelete = CASCADE
         )
     ]
 )
 data class SceneTag(
-    val tagId: Int,
+    val tagId: Long,
     val sceneId: String
 )

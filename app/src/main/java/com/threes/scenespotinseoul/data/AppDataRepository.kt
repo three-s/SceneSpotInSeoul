@@ -23,37 +23,39 @@ class AppDataRepository(private var context: Context) {
 
     fun populateFromResources() {
         val gson = Gson()
+        // Write location
         val locationStream = context.resources.openRawResource(R.raw.data_location)
-        writeLocation(gson, locationStream.bufferedReader().use { it.readText() })
+        val locationString = locationStream.bufferedReader().use { it.readText() }
+        val locationWrappers = gson.fromJson(locationString, Array<LocationWrapper>::class.java)
+        writeLocations(locationWrappers.toList())
+        // Write media
         val mediaStream = context.resources.openRawResource(R.raw.data_media)
-        writeMedia(gson, mediaStream.bufferedReader().use { it.readText() })
+        val mediaString = mediaStream.bufferedReader().use { it.readText() }
+        val mediaWrappers = gson.fromJson(mediaString, Array<MediaWrapper>::class.java)
+        writeMedia(mediaWrappers.toList())
+        // Write scenes
         val sceneStream = context.resources.openRawResource(R.raw.data_scene)
-        writeScene(gson, sceneStream.bufferedReader().use { it.readText() })
+        val sceneString = sceneStream.bufferedReader().use { it.readText() }
+        val scenesWrappers = gson.fromJson(sceneString, Array<SceneWrapper>::class.java)
+        writeScenes(scenesWrappers.toList())
     }
 
-    fun populateFromRemote() {
-        throw UnsupportedOperationException()
-    }
-
-    private fun writeLocation(gson: Gson, data: String) {
-        val locations = gson.fromJson(data, Array<LocationWrapper>::class.java)
-        locations.forEach {
+    private fun writeLocations(locationWrappers: List<LocationWrapper>) {
+        locationWrappers.forEach {
             insertLocation(db, it.location, it.tags)
         }
         writeDataInfo(LOCATION_TABLE)
     }
 
-    private fun writeMedia(gson: Gson, data: String) {
-        val media = gson.fromJson(data, Array<MediaWrapper>::class.java)
-        media.forEach {
+    private fun writeMedia(mediaWrappers: List<MediaWrapper>) {
+        mediaWrappers.forEach {
             insertMedia(db, it.media, it.tags)
         }
         writeDataInfo(MEDIA_TABLE)
     }
 
-    private fun writeScene(gson: Gson, data: String) {
-        val scenes = gson.fromJson(data, Array<SceneWrapper>::class.java)
-        scenes.forEach {
+    private fun writeScenes(sceneWrappers: List<SceneWrapper>) {
+        sceneWrappers.forEach {
             val mediaId = findMediaIdByName(db, it.mediaName)
             val locationId = findLocationIdByName(db, it.locationName)
             insertScene(db, Scene(
@@ -75,17 +77,4 @@ class AppDataRepository(private var context: Context) {
             db.dataInfoDao().update(info)
         }
     }
-
-    data class LocationWrapper(@SerializedName("data") val location: Location, val tags: List<String>)
-
-    data class MediaWrapper(@SerializedName("data") val media: Media, val tags: List<String>)
-
-    data class SceneContent(val desc: String, val image: String)
-
-    data class SceneWrapper(
-        @SerializedName("data") val sceneContent: SceneContent,
-        @SerializedName("related_location") val locationName: String,
-        @SerializedName("related_media") val mediaName: String,
-        val tags: List<String>
-    )
 }
