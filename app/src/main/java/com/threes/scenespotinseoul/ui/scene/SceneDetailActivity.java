@@ -1,10 +1,5 @@
 package com.threes.scenespotinseoul.ui.scene;
 
-import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnDiskIO;
-import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnMain;
-import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_LOCATION_ID;
-import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SCENE_ID;
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -32,11 +27,17 @@ import com.threes.scenespotinseoul.data.AppDatabase;
 import com.threes.scenespotinseoul.data.model.Scene;
 import com.threes.scenespotinseoul.data.model.SceneTag;
 import com.threes.scenespotinseoul.data.model.Tag;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnDiskIO;
+import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnMain;
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_LOCATION_ID;
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SCENE_ID;
 
 public class SceneDetailActivity extends AppCompatActivity {
 
@@ -50,7 +51,7 @@ public class SceneDetailActivity extends AppCompatActivity {
           Manifest.permission.ACCESS_FINE_LOCATION
       };
   //map에 전달한 location id 값
-  int idfromScenetoMap;
+  private String idfromScenetoMap;
   private ImageView mediaM;
   private ImageView pic;
   private TextView SceneName;
@@ -59,7 +60,7 @@ public class SceneDetailActivity extends AppCompatActivity {
   private Uri photoUri;
   private FloatingActionButton fab;
   private ActionBar mActionBar;
-  private int mSceneId;
+  private String mSceneId;
 
   public void onCreate(Bundle savedInstanceStat) {
     super.onCreate(savedInstanceStat);
@@ -77,9 +78,9 @@ public class SceneDetailActivity extends AppCompatActivity {
 
     Intent intent = getIntent();
     if (intent != null && intent.hasExtra(EXTRA_SCENE_ID)) {
-      mSceneId = intent.getIntExtra(EXTRA_SCENE_ID, 0);
+      mSceneId = intent.getStringExtra(EXTRA_SCENE_ID);
 
-      if (mSceneId == 0) {
+      if (mSceneId == null) {
         Log.e("DetailActivity", "Can't receive scene id");
         finish();
       }
@@ -210,7 +211,7 @@ public class SceneDetailActivity extends AppCompatActivity {
   private void getTags(AppDatabase db, Scene scene) {
     runOnDiskIO(
         () -> {
-          List<SceneTag> st = db.sceneTagDao().loadBySceneId(scene.getId());
+          List<SceneTag> st = db.sceneTagDao().loadBySceneId(scene.getUuid());
           List<Tag> tags = new ArrayList<>();
           for (int i = 0; i < st.size(); i++) {
             tags.add(db.tagDao().loadById(st.get(i).getTagId()));

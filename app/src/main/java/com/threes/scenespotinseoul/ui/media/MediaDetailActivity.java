@@ -1,16 +1,11 @@
 package com.threes.scenespotinseoul.ui.media;
 
-import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnDiskIO;
-import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnMain;
-import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_MEDIA_ID;
-
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -23,19 +18,20 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.threes.scenespotinseoul.R;
 import com.threes.scenespotinseoul.data.AppDatabase;
-import com.threes.scenespotinseoul.data.model.Media;
-import com.threes.scenespotinseoul.data.model.MediaTag;
-import com.threes.scenespotinseoul.data.model.Location;
-import com.threes.scenespotinseoul.data.model.Scene;
-import com.threes.scenespotinseoul.data.model.Tag;
+import com.threes.scenespotinseoul.data.model.*;
 import com.volokh.danylo.hashtaghelper.HashTagHelper;
+
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashSet;
+import java.util.List;
+
+import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnDiskIO;
+import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnMain;
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_MEDIA_ID;
 
 public class MediaDetailActivity extends AppCompatActivity {
 
-  private int media_id;
+  private String media_id;
 
   private Bitmap bt;
 
@@ -62,7 +58,7 @@ public class MediaDetailActivity extends AppCompatActivity {
 
     Intent intent = getIntent();
     if (intent != null && intent.hasExtra(EXTRA_MEDIA_ID)) {
-      media_id = intent.getIntExtra(EXTRA_MEDIA_ID, 0);
+      media_id = intent.getStringExtra(EXTRA_MEDIA_ID);
     }
 
     // 해당 미디어 명장면 리사이클러뷰 처리
@@ -91,7 +87,7 @@ public class MediaDetailActivity extends AppCompatActivity {
           // List<Media> media = db.mediaDao().loadAll();
           Media mMedia = db.mediaDao().loadById(media_id);
           List<Scene> scenes = db.sceneDao().loadByMediaId(media_id);
-          List<MediaTag> mediaTags = db.mediaTagDao().loadByMediaId(mMedia.getId());
+          List<MediaTag> mediaTags = db.mediaTagDao().loadByMediaId(mMedia.getUuid());
           HashSet<Location> locations = new HashSet<>();
           for (Scene _scene : scenes){
               locations.add(db.locationDao().loadById(_scene.getLocationId()));

@@ -12,7 +12,7 @@ object AppDataHelper {
 
     fun insertLocation(db: AppDatabase, location: Location, tags: List<String>) {
         val locationRowId = db.locationDao().insert(location)
-        val locationId = db.locationDao().loadByRowId(locationRowId).id
+        val locationId = db.locationDao().loadByRowId(locationRowId).uuid
         tags.forEach {
             val tag = db.tagDao().loadByName(it)
             val tagId =
@@ -27,7 +27,7 @@ object AppDataHelper {
 
     fun insertMedia(db: AppDatabase, media: Media, tags: List<String>) {
         val mediaRowId = db.mediaDao().insert(media)
-        val mediaId = db.mediaDao().loadByRowId(mediaRowId).id
+        val mediaId = db.mediaDao().loadByRowId(mediaRowId).uuid
         tags.forEach {
             val tag = db.tagDao().loadByName(it)
             val tagId =
@@ -43,7 +43,7 @@ object AppDataHelper {
 
     fun insertScene(db: AppDatabase, scene: Scene, tags: List<String>) {
         val sceneRowId = db.sceneDao().insert(scene)
-        val sceneId = db.sceneDao().loadByRowId(sceneRowId).id
+        val sceneId = db.sceneDao().loadByRowId(sceneRowId).uuid
         tags.forEach {
             val tag = db.tagDao().loadByName(it)
             val tagId =
@@ -57,7 +57,7 @@ object AppDataHelper {
         }
     }
 
-    fun findLocationIdByName(db: AppDatabase, name: String): Int = db.locationDao().loadByName(name).id
+    fun findLocationIdByName(db: AppDatabase, name: String): String = db.locationDao().loadByName(name).uuid
 
-    fun findMediaIdByName(db: AppDatabase, name: String): Int = db.mediaDao().loadByName(name).id
+    fun findMediaIdByName(db: AppDatabase, name: String): String = db.mediaDao().loadByName(name).uuid
 }

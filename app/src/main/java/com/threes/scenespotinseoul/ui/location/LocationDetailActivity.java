@@ -37,7 +37,7 @@ import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnMa
 
 public class LocationDetailActivity extends AppCompatActivity {
 
-  private int location_id;
+  private String location_id;
 
   private Bitmap bt;
 
@@ -67,7 +67,7 @@ public class LocationDetailActivity extends AppCompatActivity {
     //TEST를 위한 주석처리
     Intent intent = getIntent();
     if (intent != null && intent.hasExtra(EXTRA_LOCATION_ID)) {
-      location_id = intent.getIntExtra(EXTRA_LOCATION_ID, 0);
+      location_id = intent.getStringExtra(EXTRA_LOCATION_ID);
     }
 
     // 해당 미디어 명장면 리사이클러뷰 처리
@@ -96,7 +96,7 @@ public class LocationDetailActivity extends AppCompatActivity {
           // List<Media> media = db.mediaDao().loadAll();
           Location mLocation = db.locationDao().loadById(location_id);
           List<Scene> scenes = db.sceneDao().loadByLocationId(location_id);
-          List<LocationTag> locationTags = db.locationTagDao().loadByLocationId(mLocation.getId());
+          List<LocationTag> locationTags = db.locationTagDao().loadByLocationId(mLocation.getUuid());
           HashSet<Media> medias = new HashSet<>();
           for (Scene _scene : scenes){
               medias.add(db.mediaDao().loadById(_scene.getMediaId()));
