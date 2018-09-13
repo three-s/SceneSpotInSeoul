@@ -28,7 +28,7 @@ class SearchResultCategoryAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchResultCategoryViewHolder {
         val viewHolder = SearchResultCategoryViewHolder(parent)
-        viewHolder.listResult.recycledViewPool = viewPool
+        viewHolder.listResult.setRecycledViewPool(viewPool)
         return viewHolder
     }
 

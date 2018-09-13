@@ -26,7 +26,7 @@ class MediaCategoryAdapter(itemCallback: DiffUtil.ItemCallback<MediaCategory> = 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaCategoryViewHolder {
         val viewHolder = MediaCategoryViewHolder(parent)
-        viewHolder.listMedia.recycledViewPool = viewPool
+        viewHolder.listMedia.setRecycledViewPool(viewPool)
         return viewHolder
     }
 

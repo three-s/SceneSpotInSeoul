@@ -4,8 +4,8 @@ sudo: required
 
 env:
   global:
-    - ANDROID_API=27
-    - BUILD_TOOLS=27.0.3
+    - ANDROID_API=28
+    - BUILD_TOOLS=28.0.2
 
 android:
   components:
