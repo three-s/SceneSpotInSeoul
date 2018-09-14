@@ -3,11 +3,14 @@
   <color name="colorPrimary">#FAFAFA</color>
   <color name="colorPrimaryLight">#FFFFFF</color>
   <color name="colorPrimaryDark">#C7C7C7</color>
-  <color name="colorAccent">#37474F</color>
-  <color name="colorAccentLight">#62727B</color>
-  <color name="colorAccentDark">#102027</color>
+  <color name="colorAccent">#d50000</color>
+  <color name="colorAccentLight">#ff5131</color>
+  <color name="colorAccentDark">#9b0000</color>
   <color name="colorOnPrimary">#000000</color>
+  <color name="colorOnPrimaryDisable">#78000000</color>
   <color name="colorOnSecondary">#FFFFFF</color>
+  <color name="imageOverlayTextBackground">#87000000</color>
+  <color name="textSubHeader">#87000000</color>
   <color name="activeFocusedIcon">#87000000</color>
   <color name="activeUnfocusedIcon">#54000000</color>
   <color name="inactiveIcon">#38000000</color>

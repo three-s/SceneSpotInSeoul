@@ -19,6 +19,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
+        setTitle(R.string.title_home)
         view_pager.adapter = MainPagerAdapter(supportFragmentManager, listOf(
             MainFragment(),
             MapFragment(),
@@ -28,14 +29,17 @@ class MainActivity : AppCompatActivity() {
         bottom_nav.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home -> {
+                    setTitle(R.string.title_home)
                     view_pager.setCurrentItem(0, false)
                     true
                 }
                 R.id.navigation_map -> {
+                    setTitle(R.string.title_map)
                     view_pager.setCurrentItem(1, false)
                     true
                 }
                 R.id.navigation_gallery -> {
+                    setTitle(R.string.title_gallery)
                     view_pager.setCurrentItem(2, false)
                     true
                 }
