@@ -1,5 +1,7 @@
 package com.threes.scenespotinseoul.ui.location;
 
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_MEDIA_ID;
+
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -8,18 +10,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.threes.scenespotinseoul.R;
 import com.threes.scenespotinseoul.data.model.Media;
 import com.threes.scenespotinseoul.ui.media.MediaDetailActivity;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-
-import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_MEDIA_ID;
 
 public class LocationMediaAdapter extends RecyclerView.Adapter<LocationMediaAdapter.mediaViewHolder> {
 
@@ -41,7 +41,7 @@ public class LocationMediaAdapter extends RecyclerView.Adapter<LocationMediaAdap
   public mediaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     View view =
         LayoutInflater.from(parent.getContext())
-            .inflate(R.layout.item_location_media_detail_recyclerview, parent, false);
+            .inflate(R.layout.item_content, parent, false);
     return new mediaViewHolder(view);
   }
 
@@ -51,10 +51,15 @@ public class LocationMediaAdapter extends RecyclerView.Adapter<LocationMediaAdap
 
     RequestOptions requestOptions = new RequestOptions().centerCrop();
 
+    Media curMedia = media_relation_L.get(position);
+
     Glide.with(context)
-        .load(media_relation_L.get(position).getImage())
+        .load(curMedia.getImage())
         .apply(requestOptions)
-        .into(holder.location_media_item_image);
+        .into(holder.ivImage);
+
+    holder.tvName.setText(curMedia.getName());
+
     holder.itemView.setOnClickListener(
         v -> {
           // 명장면 상세 액티비티로 장면 아이디 값 넘김
@@ -71,11 +76,13 @@ public class LocationMediaAdapter extends RecyclerView.Adapter<LocationMediaAdap
   }
 
   class mediaViewHolder extends RecyclerView.ViewHolder {
-    ImageView location_media_item_image;
+    ImageView ivImage;
+    TextView tvName;
 
     private mediaViewHolder(View itemView) {
       super(itemView);
-      location_media_item_image = itemView.findViewById(R.id.location_recycler_image_media);
+      ivImage = itemView.findViewById(R.id.iv_image);
+      tvName = itemView.findViewById(R.id.tv_name);
     }
   }
 }

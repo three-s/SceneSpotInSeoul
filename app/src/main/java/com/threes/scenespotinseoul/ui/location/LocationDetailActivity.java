@@ -1,5 +1,11 @@
 package com.threes.scenespotinseoul.ui.location;
 
+import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnDiskIO;
+import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnMain;
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_LOCATION_ID;
+import static com.threes.scenespotinseoul.utilities.ItemOffsetDecorationKt.DIR_RIGHT;
+import static com.threes.scenespotinseoul.utilities.ItemOffsetDecorationKt.OFFSET_NORMAL;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -12,10 +18,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.threes.scenespotinseoul.R;
@@ -25,15 +29,11 @@ import com.threes.scenespotinseoul.data.model.LocationTag;
 import com.threes.scenespotinseoul.data.model.Media;
 import com.threes.scenespotinseoul.data.model.Scene;
 import com.threes.scenespotinseoul.data.model.Tag;
+import com.threes.scenespotinseoul.utilities.ItemOffsetDecoration;
 import com.volokh.danylo.hashtaghelper.HashTagHelper;
-
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashSet;
-
-import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_LOCATION_ID;
-import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnDiskIO;
-import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnMain;
+import java.util.List;
 
 public class LocationDetailActivity extends AppCompatActivity {
 
@@ -72,7 +72,9 @@ public class LocationDetailActivity extends AppCompatActivity {
 
     // 해당 미디어 명장면 리사이클러뷰 처리
     RecyclerView recyclerView_scene = findViewById(R.id.location_recyclerView_scene);
+    recyclerView_scene.addItemDecoration(new ItemOffsetDecoration(DIR_RIGHT, OFFSET_NORMAL));
     RecyclerView recyclerView_media = findViewById(R.id.location_recyclerView_media);
+    recyclerView_media.addItemDecoration(new ItemOffsetDecoration(DIR_RIGHT, OFFSET_NORMAL));
 
     // 뒤로가기 버튼 추가
     mActionBar = getSupportActionBar();
@@ -133,22 +135,25 @@ public class LocationDetailActivity extends AppCompatActivity {
 
                 // 미디어 상세설명 세팅
                 mLocation_detail.setText(mLocation.getDesc());
-                int tLineCount = mLocation_detail.getLineCount();
-                mLocation_detail.setMaxLines(2);
-                mLocation_detail.setEllipsize(TextUtils.TruncateAt.END);
 
-                mLocation_detail.setOnClickListener(
-                    v -> {
-                      mLocation_detail.setMaxLines(tLineCount);
-                      mLocation_simpleText.setVisibility(View.VISIBLE);
-                    });
+                if (mLocation_detail.getLineCount() > 2) {
+                  int tLineCount = mLocation_detail.getLineCount();
+                  mLocation_detail.setMaxLines(2);
+                  mLocation_detail.setEllipsize(TextUtils.TruncateAt.END);
 
-                // 미디어 간략히보기 이벤트
-                mLocation_simpleText.setOnClickListener(
-                    v -> {
-                      mLocation_detail.setMaxLines(2);
-                      mLocation_simpleText.setVisibility(View.GONE);
-                    });
+                  mLocation_detail.setOnClickListener(
+                      v -> {
+                        mLocation_detail.setMaxLines(tLineCount);
+                        mLocation_simpleText.setVisibility(View.VISIBLE);
+                      });
+
+                  // 미디어 간략히보기 이벤트
+                  mLocation_simpleText.setOnClickListener(
+                      v -> {
+                        mLocation_detail.setMaxLines(2);
+                        mLocation_simpleText.setVisibility(View.GONE);
+                      });
+                }
 
                 // 미디어 해시티그 세팅
                 StringBuilder mTag = new StringBuilder();

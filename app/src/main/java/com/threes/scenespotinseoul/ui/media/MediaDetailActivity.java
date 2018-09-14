@@ -1,5 +1,11 @@
 package com.threes.scenespotinseoul.ui.media;
 
+import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnDiskIO;
+import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnMain;
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_MEDIA_ID;
+import static com.threes.scenespotinseoul.utilities.ItemOffsetDecorationKt.DIR_RIGHT;
+import static com.threes.scenespotinseoul.utilities.ItemOffsetDecorationKt.OFFSET_NORMAL;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -18,16 +24,16 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.threes.scenespotinseoul.R;
 import com.threes.scenespotinseoul.data.AppDatabase;
-import com.threes.scenespotinseoul.data.model.*;
+import com.threes.scenespotinseoul.data.model.Location;
+import com.threes.scenespotinseoul.data.model.Media;
+import com.threes.scenespotinseoul.data.model.MediaTag;
+import com.threes.scenespotinseoul.data.model.Scene;
+import com.threes.scenespotinseoul.data.model.Tag;
+import com.threes.scenespotinseoul.utilities.ItemOffsetDecoration;
 import com.volokh.danylo.hashtaghelper.HashTagHelper;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-
-import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnDiskIO;
-import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnMain;
-import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_MEDIA_ID;
 
 public class MediaDetailActivity extends AppCompatActivity {
 
@@ -48,7 +54,7 @@ public class MediaDetailActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_media_detail);
 
-    mMedia_image = findViewById(R.id.media_image);
+    mMedia_image = findViewById(R.id.iv_media);
     mMedia_hash_tag = findViewById(R.id.media_hash_tag);
     mMedia_title = findViewById(R.id.media_title);
     mMedia_detail = findViewById(R.id.media_detail);
@@ -63,7 +69,9 @@ public class MediaDetailActivity extends AppCompatActivity {
 
     // 해당 미디어 명장면 리사이클러뷰 처리
     RecyclerView recyclerView_scene = findViewById(R.id.media_recyclerView_scene);
+    recyclerView_scene.addItemDecoration(new ItemOffsetDecoration(DIR_RIGHT, OFFSET_NORMAL));
     RecyclerView recyclerView_location = findViewById(R.id.media_recyclerView_location);
+    recyclerView_location.addItemDecoration(new ItemOffsetDecoration(DIR_RIGHT, OFFSET_NORMAL));
 
     // 뒤로가기 버튼 추가
     mActionBar = getSupportActionBar();
@@ -120,22 +128,25 @@ public class MediaDetailActivity extends AppCompatActivity {
 
                 // 미디어 상세설명 세팅
                 mMedia_detail.setText(mMedia.getDesc());
-                int tLineCount = mMedia_detail.getLineCount();
-                mMedia_detail.setMaxLines(2);
-                mMedia_detail.setEllipsize(TextUtils.TruncateAt.END);
 
-                mMedia_detail.setOnClickListener(
-                    v -> {
-                      mMedia_detail.setMaxLines(tLineCount);
-                      mMedia_simpleText.setVisibility(View.VISIBLE);
-                    });
+                if (mMedia_detail.getLineCount() > 2) {
+                  int tLineCount = mMedia_detail.getLineCount();
+                  mMedia_detail.setMaxLines(2);
+                  mMedia_detail.setEllipsize(TextUtils.TruncateAt.END);
 
-                // 미디어 간략히보기 이벤트
-                mMedia_simpleText.setOnClickListener(
-                    v -> {
-                      mMedia_detail.setMaxLines(2);
-                      mMedia_simpleText.setVisibility(View.GONE);
-                    });
+                  mMedia_detail.setOnClickListener(
+                      v -> {
+                        mMedia_detail.setMaxLines(tLineCount);
+                        mMedia_simpleText.setVisibility(View.VISIBLE);
+                      });
+
+                  // 미디어 간략히보기 이벤트
+                  mMedia_simpleText.setOnClickListener(
+                      v -> {
+                        mMedia_detail.setMaxLines(2);
+                        mMedia_simpleText.setVisibility(View.GONE);
+                      });
+                }
 
                 // 미디어 해시티그 세팅
                 StringBuilder mTag = new StringBuilder();
