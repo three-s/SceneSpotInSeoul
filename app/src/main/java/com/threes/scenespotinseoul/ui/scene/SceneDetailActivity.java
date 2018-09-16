@@ -1,5 +1,10 @@
 package com.threes.scenespotinseoul.ui.scene;
 
+import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnDiskIO;
+import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnMain;
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_LOCATION_ID;
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SCENE_ID;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -27,17 +32,11 @@ import com.threes.scenespotinseoul.data.AppDatabase;
 import com.threes.scenespotinseoul.data.model.Scene;
 import com.threes.scenespotinseoul.data.model.SceneTag;
 import com.threes.scenespotinseoul.data.model.Tag;
-
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnDiskIO;
-import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnMain;
-import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_LOCATION_ID;
-import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SCENE_ID;
 
 public class SceneDetailActivity extends AppCompatActivity {
 
@@ -102,10 +101,10 @@ public class SceneDetailActivity extends AppCompatActivity {
 
                   guid.setVisibility(View.VISIBLE);
 
-                  if (scene.isCaptured()) {
+                  if (scene.isUploaded()) {
                     guid.setVisibility(View.GONE);
                     Glide.with(this)
-                        .load(Uri.parse(scene.getCapturedImage()))
+                        .load(Uri.parse(scene.getUploadedImage()))
                         .apply(new RequestOptions())
                         .into(pic);
                   }
@@ -162,9 +161,9 @@ public class SceneDetailActivity extends AppCompatActivity {
                         .observe(
                             this,
                             scene -> {
-                              //Log.v("사진내리고 URL", scene.getCapturedImage());
-                              if (scene.getCapturedImage() != null) {
-                                String url = scene.getCapturedImage();
+                              //Log.v("사진내리고 URL", scene.getUploadedImage());
+                              if (scene.getUploadedImage() != null) {
+                                String url = scene.getUploadedImage();
                                 Intent gintent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                                 startActivity(gintent);
                               } else {
@@ -179,8 +178,8 @@ public class SceneDetailActivity extends AppCompatActivity {
                     runOnDiskIO(
                         () -> {
                           Scene scene = db.sceneDao().loadById(mSceneId);
-                          scene.setCaptured(false);
-                          scene.setCapturedImage(null);
+                          scene.setUploaded(false);
+                          scene.setUploadedImage(null);
                           db.sceneDao().update(scene);
                         });
                     pic.setImageResource(0);
@@ -257,9 +256,12 @@ public class SceneDetailActivity extends AppCompatActivity {
     runOnDiskIO(
         () -> {
           Scene scene = db.sceneDao().loadById(mSceneId);
-          scene.setCaptured(true);
-          scene.setCapturedImage(photoUri.toString());
-          db.sceneDao().update(scene);
+          if (scene != null) {
+            scene.setUploaded(true);
+            scene.setUploadedImage(photoUri.toString());
+            scene.setUploadedDate(System.currentTimeMillis());
+            db.sceneDao().update(scene);
+          }
         });
   }
 
@@ -275,9 +277,12 @@ public class SceneDetailActivity extends AppCompatActivity {
     runOnDiskIO(
         () -> {
           Scene scene = db.sceneDao().loadById(mSceneId);
-          scene.setCaptured(true);
-          scene.setCapturedImage(imgUri.toString());
-          db.sceneDao().update(scene);
+          if (scene != null) {
+            scene.setUploaded(true);
+            scene.setUploadedImage(imgUri.toString());
+            scene.setUploadedDate(System.currentTimeMillis());
+            db.sceneDao().update(scene);
+          }
         });
   }
 

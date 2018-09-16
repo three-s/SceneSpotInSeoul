@@ -14,5 +14,5 @@ data class Location(
     val address: String,
     val image: String
 ) {
-    var isCaptured: Boolean = false
+    var isVisited: Boolean = false
 }

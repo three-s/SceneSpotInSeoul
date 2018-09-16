@@ -33,6 +33,7 @@ data class Scene(
     val desc: String,
     val image: String
 ) {
-    var isCaptured: Boolean = false
-    var capturedImage: String? = null
+    var isUploaded: Boolean = false
+    var uploadedImage: String? = null
+    var uploadedDate: Long = 0L
 }
