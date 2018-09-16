@@ -1,5 +1,7 @@
 package com.threes.scenespotinseoul.ui.gallery;
 
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SCENE_ID;
+
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -15,10 +17,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.threes.scenespotinseoul.R;
 import com.threes.scenespotinseoul.data.model.Scene;
 import com.threes.scenespotinseoul.ui.scene.SceneDetailActivity;
-
 import java.util.List;
-
-import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SCENE_ID;
 
 public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.GalleryViewHolder> {
 
@@ -39,11 +38,11 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.GalleryV
   @Override
   public void onBindViewHolder(@NonNull GalleryViewHolder holder, int position) {
     Context context = holder.itemView.getContext();
-    Log.v("캡쳐된디 이미지", captured.get(position).getCapturedImage());
+    Log.v("캡쳐된디 이미지", captured.get(position).getUploadedImage());
     RequestOptions requestOptions = new RequestOptions().centerCrop();
     if (captured != null) {
       Glide.with(context)
-          .load(Uri.parse(captured.get(position).getCapturedImage()))
+          .load(Uri.parse(captured.get(position).getUploadedImage()))
           .apply(requestOptions)
           .into(holder.image);
     }

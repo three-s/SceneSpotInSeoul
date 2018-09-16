@@ -99,7 +99,7 @@ class SyncDatabaseWorker : Worker() {
                 } else {
                     if (oldLocation != this) {
                         // 사용자 데이터를 새로 작성할 데이터에 저장
-                        this.isCaptured = oldLocation.isCaptured
+                        this.isVisited = oldLocation.isVisited
                         db.locationDao().update(this)
                     }
                 }
@@ -192,8 +192,9 @@ class SyncDatabaseWorker : Worker() {
                             mediaId = newMediaId,
                             locationId = newLocationId
                         )
-                        newScene.isCaptured = oldScene.isCaptured
-                        newScene.capturedImage = oldScene.capturedImage
+                        newScene.isUploaded = oldScene.isUploaded
+                        newScene.uploadedImage = oldScene.uploadedImage
+                        newScene.uploadedDate = oldScene.uploadedDate
                         db.sceneDao().update(newScene)
                     }
                 }
