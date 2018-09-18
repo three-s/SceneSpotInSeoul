@@ -39,11 +39,11 @@ interface SceneDao {
     @Query("SELECT * FROM scenes WHERE locationId = :locationId AND mediaId = :mediaId")
     fun loadByLocationAndMediaId(locationId: String, mediaId: String): List<Scene>
 
-    @Query("SELECT * FROM scenes WHERE isCaptured = 1")
-    fun loadAllAreCaptured(): List<Scene>
+    @Query("SELECT * FROM scenes WHERE isUploaded = 1 ORDER BY uploadedDate DESC")
+    fun loadAllAreUploaded(): List<Scene>
 
-    @Query("SELECT * FROM scenes WHERE isCaptured = 1")
-    fun loadAllAreCapturedWithLive(): LiveData<List<Scene>>
+    @Query("SELECT * FROM scenes WHERE isUploaded = 1 ORDER BY uploadedDate DESC")
+    fun loadAllAreUploadedWithLive(): LiveData<List<Scene>>
 
     @Query("SELECT * FROM scenes")
     fun loadAll(): List<Scene>

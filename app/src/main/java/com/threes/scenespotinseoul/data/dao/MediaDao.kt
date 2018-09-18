@@ -25,7 +25,7 @@ interface MediaDao {
     fun loadById(mediaId: String): Media?
 
     @Query("SELECT * FROM media WHERE name = :name")
-    fun loadByName(name: String): Media
+    fun loadByName(name: String): Media?
 
     @Query("SELECT * FROM media")
     fun loadAll(): List<Media>

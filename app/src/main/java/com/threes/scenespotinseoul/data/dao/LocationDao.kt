@@ -25,10 +25,10 @@ interface LocationDao {
     fun loadById(locationId: String): Location?
 
     @Query("SELECT * FROM locations WHERE name = :name")
-    fun loadByName(name: String): Location
+    fun loadByName(name: String): Location?
 
-    @Query("SELECT * FROM locations WHERE isCaptured = 1")
-    fun loadAllAreCaptured(): List<Location>
+    @Query("SELECT * FROM locations WHERE isVisited = 1")
+    fun loadAllAreVisited(): List<Location>
 
     @Query("SELECT * FROM locations")
     fun loadAll(): List<Location>

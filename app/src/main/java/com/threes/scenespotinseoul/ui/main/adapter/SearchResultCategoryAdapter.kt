@@ -40,6 +40,7 @@ class SearchResultCategoryAdapter(
                     tvCategoryName.text = context.getString(R.string.category_media)
                     if (media.isEmpty()) {
                         tvNoResults.visibility = VISIBLE
+                        listResult.adapter = null
                     } else {
                         tvNoResults.visibility = INVISIBLE
                         val adapter = SearchResultAdapter(media)
@@ -51,6 +52,7 @@ class SearchResultCategoryAdapter(
                     tvCategoryName.text = context.getString(R.string.category_scene)
                     if (scenes.isEmpty()) {
                         tvNoResults.visibility = VISIBLE
+                        listResult.adapter = null
                     } else {
                         tvNoResults.visibility = INVISIBLE
                         val adapter = SearchResultAdapter(scenes)
@@ -62,6 +64,7 @@ class SearchResultCategoryAdapter(
                     tvCategoryName.text = context.getString(R.string.category_location)
                     if (locations.isEmpty()) {
                         tvNoResults.visibility = VISIBLE
+                        listResult.adapter = null
                     } else {
                         tvNoResults.visibility = INVISIBLE
                         val adapter = SearchResultAdapter(locations)
