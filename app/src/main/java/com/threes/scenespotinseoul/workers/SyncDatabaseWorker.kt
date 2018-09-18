@@ -2,8 +2,7 @@ package com.threes.scenespotinseoul.workers
 
 import android.util.Log
 import androidx.work.Worker
-import com.threes.scenespotinseoul.data.AppDataHelper.findLocationIdByName
-import com.threes.scenespotinseoul.data.AppDataHelper.findMediaIdByName
+import com.threes.scenespotinseoul.BuildConfig
 import com.threes.scenespotinseoul.data.AppDatabase
 import com.threes.scenespotinseoul.data.model.DataInfo
 import com.threes.scenespotinseoul.data.model.LocationTag
@@ -43,7 +42,7 @@ class SyncDatabaseWorker : Worker() {
             var updatedTables = 0
             infoResponse.body()?.forEach {
                 val localInfo = db.dataInfoDao().load(it.name)
-                if (localInfo == null || isOutOfDate(localInfo, it)) {
+                if (localInfo == null || isOutOfDate(localInfo, it) || BuildConfig.DEBUG) {
                     Log.d(TAG, "${it.name} is out-of-date. Proceed Sync.")
                     when (it.name) {
                         LOCATION_TABLE -> {
@@ -165,8 +164,12 @@ class SyncDatabaseWorker : Worker() {
             with(it.sceneContent) {
                 val oldScene = db.sceneDao().loadById(sceneId)
                 if (oldScene == null) {
-                    val mediaId = findMediaIdByName(db, it.mediaName)
-                    val locationId = findLocationIdByName(db, it.locationName)
+                    val mediaId = db.mediaDao().loadByName(it.mediaName)?.uuid
+                    val locationId = db.locationDao().loadByName(it.locationName)?.uuid
+
+                    if (mediaId == null || locationId == null) {
+                        return@forEach
+                    }
 
                     db.sceneDao().insert(
                         Scene(
@@ -178,8 +181,12 @@ class SyncDatabaseWorker : Worker() {
                         )
                     )
                 } else {
-                    val newMediaId = findMediaIdByName(db, it.mediaName)
-                    val newLocationId = findLocationIdByName(db, it.locationName)
+                    val newMediaId = db.mediaDao().loadByName(it.mediaName)?.uuid
+                    val newLocationId = db.locationDao().loadByName(it.locationName)?.uuid
+
+                    if (newMediaId == null || newLocationId == null) {
+                        return@forEach
+                    }
 
                     if (oldScene.mediaId != newMediaId ||
                         oldScene.locationId != newLocationId ||
