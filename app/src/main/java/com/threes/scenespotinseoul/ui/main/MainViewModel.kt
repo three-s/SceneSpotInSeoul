@@ -27,7 +27,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             categories.forEach { it ->
                 val tag = db.tagDao().loadByName(it)
                 val mediaTags = db.mediaTagDao().loadByTagId(tag?.id!!)
-                val media = mediaTags.map { db.mediaDao().loadById(it.mediaId) }
+                val media = mediaTags.map { db.mediaDao().loadById(it.mediaId)!! }
                 mediaCategories.add(MediaCategory(it, media))
             }
             runOnMain {

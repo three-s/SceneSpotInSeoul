@@ -38,11 +38,11 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.GalleryV
   @Override
   public void onBindViewHolder(@NonNull GalleryViewHolder holder, int position) {
     Context context = holder.itemView.getContext();
-    Log.v("캡쳐된디 이미지", captured.get(position).getCapturedImage());
+    Log.v("캡쳐된디 이미지", captured.get(position).getUploadedImage());
     RequestOptions requestOptions = new RequestOptions().centerCrop();
     if (captured != null) {
       Glide.with(context)
-          .load(Uri.parse(captured.get(position).getCapturedImage()))
+          .load(Uri.parse(captured.get(position).getUploadedImage()))
           .apply(requestOptions)
           .into(holder.image);
     }
@@ -51,7 +51,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.GalleryV
         v -> {
           // 명장면 상세 액티비티로 장면 아이디 값 넘김
           Intent intent = new Intent(context, SceneDetailActivity.class);
-          intent.putExtra(EXTRA_SCENE_ID, captured.get(position).getId());
+          intent.putExtra(EXTRA_SCENE_ID, captured.get(position).getUuid());
           context.startActivity(intent);
         });
   }

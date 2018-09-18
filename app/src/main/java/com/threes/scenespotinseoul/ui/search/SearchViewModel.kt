@@ -53,17 +53,17 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
 
                     val mediaTags = db.mediaTagDao().loadByTagId(tagId)
                     val media = mediaTags.map {
-                        db.mediaDao().loadById(it.mediaId)
+                        db.mediaDao().loadById(it.mediaId)!!
                     }
 
                     val locationTags = db.locationTagDao().loadByTagId(tagId)
                     val locations = locationTags.map {
-                        db.locationDao().loadById(it.locationId)
+                        db.locationDao().loadById(it.locationId)!!
                     }
 
                     val sceneTags = db.sceneTagDao().loadByTagId(tagId)
                     val scenes = sceneTags.map {
-                        db.sceneDao().loadById(it.sceneId)
+                        db.sceneDao().loadById(it.sceneId)!!
                     }
 
                     runOnMain {
@@ -80,18 +80,18 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
 
                     val media = tags
                             .flatMap { db.mediaTagDao().loadByTagId(it.id) }
-                            .map { db.mediaDao().loadById(it.mediaId) }
-                            .distinctBy { it.id }
+                            .map { db.mediaDao().loadById(it.mediaId)!! }
+                            .distinctBy { it.uuid }
 
                     val locations = tags
                             .flatMap { db.locationTagDao().loadByTagId(it.id) }
-                            .map { db.locationDao().loadById(it.locationId) }
-                            .distinctBy { it.id }
+                            .map { db.locationDao().loadById(it.locationId)!! }
+                            .distinctBy { it.uuid }
 
                     val scenes = tags
                             .flatMap { db.sceneTagDao().loadByTagId(it.id) }
-                            .map { db.sceneDao().loadById(it.sceneId) }
-                            .distinctBy { it.id }
+                            .map { db.sceneDao().loadById(it.sceneId)!! }
+                            .distinctBy { it.uuid }
 
                     runOnMain {
                         searchResultMediaData = media

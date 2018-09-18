@@ -274,7 +274,7 @@ public class MapFragment extends Fragment {
             () -> {
               List<Location> locations = db.locationDao().loadAll();
               List<LocationTag> locationTags =
-                  db.locationTagDao().loadByLocationId(locations.get(id).getId());
+                  db.locationTagDao().loadByLocationId(locations.get(id).getUuid());
               List<Tag> tags = new ArrayList<>();
               for (int i = 0; i < locationTags.size(); i++) {
                 tags.add(db.tagDao().loadById(locationTags.get(i).getTagId()));

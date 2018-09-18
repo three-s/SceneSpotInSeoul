@@ -1,16 +1,17 @@
 package com.threes.scenespotinseoul.ui.splash
 
 import android.Manifest
+import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
 import com.threes.scenespotinseoul.MainActivity
-import com.threes.scenespotinseoul.data.AppDataRepository
-import com.threes.scenespotinseoul.utilities.runOnDiskIO
+import com.threes.scenespotinseoul.workers.SyncDatabaseWorker
 
 class SplashActivity : AppCompatActivity() {
 
@@ -20,24 +21,26 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         sharedPref = getPreferences(Context.MODE_PRIVATE)
         if (checkFirstRun()) {
-            initDatabase()
-            sharedPref.edit().putBoolean(KEY_FIRST_RUN, false).apply()
             requestPermission()
+            sharedPref.edit().putBoolean(KEY_FIRST_RUN, false).apply()
         } else {
-            navigateMain()
+            initDatabase()
         }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        navigateMain()
+        initDatabase()
     }
 
     private fun initDatabase() {
-        Log.d("AppDatabase", "Pre-Populate data from resources.")
-        runOnDiskIO {
-            AppDataRepository(this).populateFromResources()
-        }
+        val syncDatabaseWork = OneTimeWorkRequest.Builder(SyncDatabaseWorker::class.java).build()
+        WorkManager.getInstance().enqueue(syncDatabaseWork)
+        WorkManager.getInstance().getStatusById(syncDatabaseWork.id).observe(this, Observer {
+            if (it != null && it.state.isFinished) {
+                navigateMain()
+            }
+        })
     }
 
     private fun checkFirstRun(): Boolean = sharedPref.getBoolean(KEY_FIRST_RUN, true)

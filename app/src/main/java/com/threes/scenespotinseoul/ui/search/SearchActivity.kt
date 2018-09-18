@@ -85,19 +85,19 @@ class SearchActivity : AppCompatActivity() {
 
     private fun navigateMediaDetail(it: Media) {
         val intent = Intent(this, MediaDetailActivity::class.java)
-        intent.putExtra(EXTRA_MEDIA_ID, it.id)
+        intent.putExtra(EXTRA_MEDIA_ID, it.uuid)
         startActivity(intent)
     }
 
     private fun navigateSceneDetail(it: Scene) {
         val intent = Intent(this, SceneDetailActivity::class.java)
-        intent.putExtra(EXTRA_SCENE_ID, it.id)
+        intent.putExtra(EXTRA_SCENE_ID, it.uuid)
         startActivity(intent)
     }
 
     private fun navigateLocationDetail(it: Location) {
         val intent = Intent(this, LocationDetailActivity::class.java)
-        intent.putExtra(EXTRA_LOCATION_ID, it.id)
+        intent.putExtra(EXTRA_LOCATION_ID, it.uuid)
         startActivity(intent)
     }
 }

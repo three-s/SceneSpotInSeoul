@@ -81,7 +81,7 @@ class MainFragment : Fragment() {
 
     private fun navigateMediaDetail(it: Media) {
         val intent = Intent(context, MediaDetailActivity::class.java)
-        intent.putExtra(EXTRA_MEDIA_ID, it.id)
+        intent.putExtra(EXTRA_MEDIA_ID, it.uuid)
         startActivity(intent)
     }
 }

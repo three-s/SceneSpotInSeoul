@@ -1,6 +1,7 @@
 package com.threes.scenespotinseoul.data.dao
 
 import android.arch.persistence.room.Dao
+import android.arch.persistence.room.Delete
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
@@ -16,8 +17,11 @@ interface MediaTagDao {
     fun insertAll(mediaTags: List<MediaTag>): List<Long>
 
     @Query("SELECT * FROM media_tags WHERE mediaId = :mediaId")
-    fun loadByMediaId(mediaId: Int): List<MediaTag>
+    fun loadByMediaId(mediaId: String): List<MediaTag>
 
     @Query("SELECT * FROM media_tags WHERE tagId = :tagId")
-    fun loadByTagId(tagId: Int): List<MediaTag>
+    fun loadByTagId(tagId: Long): List<MediaTag>
+
+    @Delete
+    fun deleteAll(mediaTags: List<MediaTag>)
 }

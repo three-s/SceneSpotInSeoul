@@ -1,6 +1,7 @@
 package com.threes.scenespotinseoul.data.dao
 
 import android.arch.persistence.room.Dao
+import android.arch.persistence.room.Delete
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
@@ -19,7 +20,7 @@ interface TagDao {
     fun loadByRowId(rowId: Long): Tag
 
     @Query("SELECT * FROM tags WHERE id = :tagId")
-    fun loadById(tagId: Int): Tag
+    fun loadById(tagId: Long): Tag?
 
     @Query("SELECT * FROM tags WHERE name = :name")
     fun loadByName(name: String): Tag?
@@ -35,4 +36,7 @@ interface TagDao {
 
     @Query("SELECT * FROM tags LIMIT :limit OFFSET :offset")
     fun loadAll(limit: Int, offset: Int = 0): List<Tag>
+
+    @Delete
+    fun delete(tag: Tag)
 }

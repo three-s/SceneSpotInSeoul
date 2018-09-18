@@ -51,7 +51,7 @@ public class LocationSceneAdapter extends RecyclerView.Adapter<LocationSceneAdap
         v -> {
           // 명장면 상세 액티비티로 장면 아이디 값 넘김
           Intent intent = new Intent(context, SceneDetailActivity.class);
-          intent.putExtra(EXTRA_SCENE_ID, scene_relation_L.get(position).getId());
+          intent.putExtra(EXTRA_SCENE_ID, scene_relation_L.get(position).getUuid());
           context.startActivity(intent);
         });
   }

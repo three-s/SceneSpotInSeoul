@@ -25,7 +25,7 @@ public class GalleryFragment extends Fragment {
     recyclerView = view.findViewById(R.id.recycler);
     AppDatabase db = AppDatabase.getInstance(Objects.requireNonNull(getContext()));
     db.sceneDao()
-        .loadAllAreCapturedWithLive()
+        .loadAllAreUploadedWithLive()
         .observe(
             this,
             scene -> {

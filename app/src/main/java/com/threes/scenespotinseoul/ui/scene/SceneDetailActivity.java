@@ -6,20 +6,15 @@ import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_LOCATION_I
 import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SCENE_ID;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.media.ExifInterface;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
@@ -37,8 +32,6 @@ import com.threes.scenespotinseoul.data.AppDatabase;
 import com.threes.scenespotinseoul.data.model.Scene;
 import com.threes.scenespotinseoul.data.model.SceneTag;
 import com.threes.scenespotinseoul.data.model.Tag;
-import com.threes.scenespotinseoul.ui.map.MapFragment;
-
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -50,13 +43,14 @@ public class SceneDetailActivity extends AppCompatActivity {
   private static final int GALLERY_CODE = 1111;
   private static final int CAMERACODE = 531;
   private static final String[] PERMISSIONS =
-      new String[] {
-        Manifest.permission.CAMERA,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        Manifest.permission.READ_EXTERNAL_STORAGE,
-        Manifest.permission.ACCESS_FINE_LOCATION
+      new String[]{
+          Manifest.permission.CAMERA,
+          Manifest.permission.WRITE_EXTERNAL_STORAGE,
+          Manifest.permission.READ_EXTERNAL_STORAGE,
+          Manifest.permission.ACCESS_FINE_LOCATION
       };
-
+  //map에 전달한 location id 값
+  private String idfromScenetoMap;
   private ImageView mediaM;
   private ImageView pic;
   private TextView SceneName;
@@ -64,11 +58,8 @@ public class SceneDetailActivity extends AppCompatActivity {
   private TextView guid;
   private Uri photoUri;
   private FloatingActionButton fab;
-    private ActionBar mActionBar;
-  private int mSceneId;
-  //map에 전달한 location id 값
-  int idfromScenetoMap;
-
+  private ActionBar mActionBar;
+  private String mSceneId;
 
   public void onCreate(Bundle savedInstanceStat) {
     super.onCreate(savedInstanceStat);
@@ -80,18 +71,15 @@ public class SceneDetailActivity extends AppCompatActivity {
     guid = findViewById(R.id.guide);
     fab = findViewById(R.id.fab);
 
+    mActionBar = getSupportActionBar();
+    mActionBar.setDisplayHomeAsUpEnabled(true);
+    mActionBar.setHomeButtonEnabled(true);
 
-      mActionBar = getSupportActionBar();
-      mActionBar.setDisplayHomeAsUpEnabled(true);
-      mActionBar.setHomeButtonEnabled(true);
-
-
-
-      Intent intent = getIntent();
+    Intent intent = getIntent();
     if (intent != null && intent.hasExtra(EXTRA_SCENE_ID)) {
-      mSceneId = intent.getIntExtra(EXTRA_SCENE_ID, 0);
+      mSceneId = intent.getStringExtra(EXTRA_SCENE_ID);
 
-      if (mSceneId == 0) {
+      if (mSceneId == null) {
         Log.e("DetailActivity", "Can't receive scene id");
         finish();
       }
@@ -113,10 +101,10 @@ public class SceneDetailActivity extends AppCompatActivity {
 
                   guid.setVisibility(View.VISIBLE);
 
-                  if (scene.isCaptured()) {
+                  if (scene.isUploaded()) {
                     guid.setVisibility(View.GONE);
                     Glide.with(this)
-                        .load(Uri.parse(scene.getCapturedImage()))
+                        .load(Uri.parse(scene.getUploadedImage()))
                         .apply(new RequestOptions())
                         .into(pic);
                   }
@@ -126,15 +114,16 @@ public class SceneDetailActivity extends AppCompatActivity {
 
     fab.setOnClickListener(
         v -> {
-            Intent Mapintent = new Intent(this , DetailToMapActivity.class);
-            intent.putExtra(EXTRA_LOCATION_ID, idfromScenetoMap);
-            this.startActivity(intent);
-          // startActivity(new Intent(DetailActivity.class, ));
+          Intent mapIntent = new Intent(this, DetailToMapActivity.class);
+          mapIntent.putExtra(EXTRA_LOCATION_ID, idfromScenetoMap);
+          startActivity(mapIntent);
         });
 
     pic.setOnClickListener(
         v -> {
-          CharSequence info[] = new CharSequence[] {"사진을 찍어 업로드", "갤러리에서 업로드", "취소"};
+          AppDatabase db = AppDatabase.getInstance(this);
+          CharSequence info[] = new CharSequence[]{"사진을 찍어 업로드", "갤러리에서 업로드", "갤러리에서 보기",
+              "업로드된 사진 내리기", "취소"};
           AlertDialog.Builder builder = new AlertDialog.Builder(SceneDetailActivity.this);
           builder.setTitle("사진 업로드");
           builder.setItems(
@@ -165,9 +154,43 @@ public class SceneDetailActivity extends AppCompatActivity {
                       selectGallery();
                     }
                     break;
+
                   case 2:
+                    db.sceneDao()
+                        .loadByIdWithLive(mSceneId)
+                        .observe(
+                            this,
+                            scene -> {
+                              //Log.v("사진내리고 URL", scene.getUploadedImage());
+                              if (scene.getUploadedImage() != null) {
+                                String url = scene.getUploadedImage();
+                                Intent gintent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                                startActivity(gintent);
+                              } else {
+                                Snackbar.make(v, "이전에 등록된 사진이 없습니다.", Snackbar.LENGTH_SHORT).show();
+                              }
+                            });
+
+                    break;
+
+                  case 3:
+                    //pic.setImageBitmap(null);
+                    runOnDiskIO(
+                        () -> {
+                          Scene scene = db.sceneDao().loadById(mSceneId);
+                          scene.setUploaded(false);
+                          scene.setUploadedImage(null);
+                          db.sceneDao().update(scene);
+                        });
+                    pic.setImageResource(0);
+                    guid.setVisibility(View.VISIBLE);
+                    break;
+
+                  case 4:
                     dialog.dismiss();
                     break;
+
+
                 }
                 dialog.dismiss();
               });
@@ -187,7 +210,7 @@ public class SceneDetailActivity extends AppCompatActivity {
   private void getTags(AppDatabase db, Scene scene) {
     runOnDiskIO(
         () -> {
-          List<SceneTag> st = db.sceneTagDao().loadBySceneId(scene.getId());
+          List<SceneTag> st = db.sceneTagDao().loadBySceneId(scene.getUuid());
           List<Tag> tags = new ArrayList<>();
           for (int i = 0; i < st.size(); i++) {
             tags.add(db.tagDao().loadById(st.get(i).getTagId()));
@@ -233,9 +256,12 @@ public class SceneDetailActivity extends AppCompatActivity {
     runOnDiskIO(
         () -> {
           Scene scene = db.sceneDao().loadById(mSceneId);
-          scene.setCaptured(true);
-          scene.setCapturedImage(photoUri.toString());
-          db.sceneDao().update(scene);
+          if (scene != null) {
+            scene.setUploaded(true);
+            scene.setUploadedImage(photoUri.toString());
+            scene.setUploadedDate(System.currentTimeMillis());
+            db.sceneDao().update(scene);
+          }
         });
   }
 
@@ -251,9 +277,12 @@ public class SceneDetailActivity extends AppCompatActivity {
     runOnDiskIO(
         () -> {
           Scene scene = db.sceneDao().loadById(mSceneId);
-          scene.setCaptured(true);
-          scene.setCapturedImage(imgUri.toString());
-          db.sceneDao().update(scene);
+          if (scene != null) {
+            scene.setUploaded(true);
+            scene.setUploadedImage(imgUri.toString());
+            scene.setUploadedDate(System.currentTimeMillis());
+            db.sceneDao().update(scene);
+          }
         });
   }
 
@@ -287,14 +316,14 @@ public class SceneDetailActivity extends AppCompatActivity {
     return cursor.getString(column_index);
   }
 
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
+  public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case android.R.id.home:
+        finish();
+        return true;
     }
+    return super.onOptionsItemSelected(item);
+  }
 }
 
 
