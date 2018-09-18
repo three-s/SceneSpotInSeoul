@@ -11,6 +11,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -38,10 +40,15 @@ import com.threes.scenespotinseoul.data.AppDatabase;
 import com.threes.scenespotinseoul.data.model.Location;
 import com.threes.scenespotinseoul.data.model.LocationTag;
 import com.threes.scenespotinseoul.data.model.Tag;
+import com.threes.scenespotinseoul.ui.search.SearchActivity;
 import com.threes.scenespotinseoul.utilities.AppExecutors;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SEARCH_KEYWORD;
 
 public class MapFragment extends Fragment {
 
@@ -67,7 +74,7 @@ public class MapFragment extends Fragment {
   private CardView cardView;
   private Handler handler = new Handler();
 
-
+  private ArrayList<String> mTagLists;
 
 
   @SuppressLint("ClickableViewAccessibility")
@@ -99,6 +106,8 @@ public class MapFragment extends Fragment {
     image = rootView.findViewById(R.id.image);
     frameLayout = rootView.findViewById(R.id.detailLayout);
     cardView = rootView.findViewById(R.id.cardview);
+
+    mTagLists = new ArrayList<String>();
     return rootView;
   }
 
@@ -265,7 +274,7 @@ public class MapFragment extends Fragment {
     frameLayout.setVisibility(View.VISIBLE);
     cardView.setVisibility(View.VISIBLE);
     String imgurl;
-
+    mTagLists.clear();
     AppDatabase db = AppDatabase.getInstance(Objects.requireNonNull(getContext()));
     AppExecutors executors = new AppExecutors();
     executors
@@ -291,14 +300,60 @@ public class MapFragment extends Fragment {
                         StringBuilder tag_name = new StringBuilder();
                         for (Tag tag : tags) {
                           tag_name.append("#").append(tag.getName()).append(" ");
+                          mTagLists.add(tag.getName());
                         }
                         this.title.setText(locations.get(id).getName());
-                        this.tag.setText(tag_name.toString());
+                        //this.tag.setText(tag_name.toString());
                         Glide.with(getContext())
                             .load(locations.get(id).getImage())
                             .apply(RequestOptions.centerCropTransform())
                             .into(image);
+
+                        setContent();
                       });
             });
+
   }
+    private void setContent(){
+      Log.e("result.info","setcontent진입");
+        String tag = "";
+        int i;
+        for(i = 0 ; i <mTagLists.size(); i++){
+            tag += "#" + mTagLists.get(i) + " ";
+        }
+        Log.e("result.info",tag);
+        ArrayList<int[]> hashtagSpans = getSpans(tag, '#');
+        SpannableString tagsContent = new SpannableString(tag);
+        for(i = 0; i < hashtagSpans.size(); i++){
+            int[] span = hashtagSpans.get(i);
+            int hashTagStart = span[0];
+            int hashTagEnd = span[1];
+            Hashtag hashTag = new Hashtag(this.getContext());
+            hashTag.setOnClickEventListener(new Hashtag.ClickEventListener() {
+                @Override public void onClickEvent(String data) {
+                    Log.e("result.info",data);
+                    Intent intent = new Intent(getView().getContext(), SearchActivity.class);
+                    intent.putExtra(EXTRA_SEARCH_KEYWORD, data);
+                    startActivity(intent);
+                }
+            });
+            tagsContent.setSpan(hashTag, hashTagStart, hashTagEnd, 0); }
+        TextView tags_view = (TextView)getView().findViewById(R.id.tag);
+        if(tags_view != null) {
+            tags_view.setMovementMethod(LinkMovementMethod.getInstance());
+            tags_view.setText(tagsContent);
+        }
+    }
+    public ArrayList<int[]> getSpans(String body, char prefix) {
+        ArrayList<int[]> spans = new ArrayList<int[]>();
+        Pattern pattern = Pattern.compile(prefix + "\\w+");
+        Matcher matcher = pattern.matcher(body); // Check all occurrences
+        while (matcher.find()) {
+            int[] currentSpan = new int[2];
+            currentSpan[0] = matcher.start();
+            currentSpan[1] = matcher.end();
+            spans.add(currentSpan);
+        }
+        return spans;
+    }
 }
