@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import com.threes.scenespotinseoul.R
 import com.threes.scenespotinseoul.data.model.Location
 import com.threes.scenespotinseoul.data.model.Media
@@ -34,7 +33,6 @@ class SearchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-        var tag_name = getIntent().getStringExtra(EXTRA_SEARCH_KEYWORD);
         viewModel = ViewModelProviders.of(this).get(SearchViewModel::class.java)
         initViews()
         viewModel.showSearchResult.observe(this, Observer {
