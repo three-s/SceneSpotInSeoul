@@ -8,54 +8,19 @@
   <ImageView
     android:id="@+id/media_image"
     android:layout_width="match_parent"
-    android:layout_height="180dp"
+    android:layout_height="0dp"
+    android:background="@android:color/darker_gray"
+    app:layout_constraintBottom_toTopOf="@id/picture"
     app:layout_constraintTop_toTopOf="parent"/>
-
-  <TextView
-    android:id="@+id/Scenename"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/key_line_normal"
-    android:layout_marginStart="@dimen/key_line_normal"
-    android:textColor="@android:color/black"
-    android:textSize="24sp"
-    app:layout_constraintLeft_toLeftOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/media_image"
-    tools:text="박명수 딱따구리"/>
-
-  <TextView
-    android:id="@+id/tagView"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/key_line_small"
-    android:layout_marginStart="@dimen/key_line_normal"
-    android:textColor="@color/colorAccent"
-    android:textSize="14sp"
-    app:layout_constraintLeft_toLeftOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/Scenename"
-    tools:text="#유재석 #하하"/>
-
-  <View
-    android:id="@+id/line2"
-    android:layout_width="match_parent"
-    android:layout_height="1dp"
-    android:layout_marginTop="@dimen/key_line_normal"
-    android:layout_marginLeft="@dimen/key_line_normal"
-    android:layout_marginRight="@dimen/key_line_normal"
-    android:background="@color/dividerOnWhite"
-    app:layout_constraintLeft_toLeftOf="parent"
-    app:layout_constraintRight_toRightOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/tagView"/>
 
   <ImageView
     android:id="@+id/picture"
     android:layout_width="match_parent"
     android:layout_height="0dp"
-
     android:background="#D3D3D3"
     android:foreground="?attr/selectableItemBackground"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/line2"/>
+    app:layout_constraintBottom_toTopOf="@id/bottom_view"
+    app:layout_constraintTop_toBottomOf="@id/media_image"/>
 
   <TextView
     android:id="@+id/guide"
@@ -66,21 +31,58 @@
     android:drawableTint="@color/activeUnfocusedIcon"
     android:drawableTop="@drawable/layer_ic_add_photo"
     android:text="이 부분을 누르면 사진을 추가할 수 있습니다"
-    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintBottom_toBottomOf="@id/picture"
     app:layout_constraintLeft_toLeftOf="parent"
     app:layout_constraintRight_toRightOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/line2"/>
+    app:layout_constraintTop_toTopOf="@id/picture"/>
+
+  <View
+    android:id="@+id/bottom_view"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:background="@android:color/white"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintTop_toTopOf="@id/Scenename"/>
+
+  <TextView
+    android:id="@+id/Scenename"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/key_line_small"
+    android:layout_marginStart="@dimen/key_line_normal"
+    android:layout_marginEnd="@dimen/key_line_normal"
+    android:paddingTop="24dp"
+    android:textColor="@android:color/black"
+    android:textSize="24sp"
+    app:layout_constraintBottom_toTopOf="@+id/tagView"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintRight_toLeftOf="@id/fab"
+    tools:text="박명수 딱따구리"/>
+
+  <TextView
+    android:id="@+id/tagView"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="24dp"
+    android:layout_marginStart="@dimen/key_line_normal"
+    android:layout_marginEnd="@dimen/key_line_normal"
+    android:textColor="@color/colorAccent"
+    android:textSize="14sp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintRight_toLeftOf="@id/fab"
+    tools:text="#유재석 #하하"/>
 
   <android.support.design.widget.FloatingActionButton
     android:id="@+id/fab"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="@dimen/key_line_normal"
+    android:layout_margin="@dimen/key_line_normal"
     android:src="@drawable/ic_map"
     android:tint="@android:color/white"
     app:fabSize="normal"
-    app:layout_constraintBottom_toBottomOf="@id/media_image"
+    app:layout_constraintBottom_toTopOf="@id/bottom_view"
     app:layout_constraintRight_toRightOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/media_image"/>
+    app:layout_constraintTop_toTopOf="@id/bottom_view"/>
 
 </android.support.constraint.ConstraintLayout>

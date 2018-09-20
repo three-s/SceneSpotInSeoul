@@ -4,6 +4,7 @@ import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnDi
 import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnMain;
 import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_LOCATION_ID;
 import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SCENE_ID;
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SEARCH_KEYWORD;
 
 import android.Manifest;
 import android.content.Intent;
@@ -20,6 +21,9 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,6 +41,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import com.threes.scenespotinseoul.ui.map.Hashtag;
+import com.threes.scenespotinseoul.ui.search.SearchActivity;
 
 public class SceneDetailActivity extends AppCompatActivity {
 
@@ -61,7 +70,12 @@ public class SceneDetailActivity extends AppCompatActivity {
   private ActionBar mActionBar;
   private String mSceneId;
 
-  public void onCreate(Bundle savedInstanceStat) {
+
+
+    private ArrayList<String> mTagLists;
+
+
+    public void onCreate(Bundle savedInstanceStat) {
     super.onCreate(savedInstanceStat);
     setContentView(R.layout.activity_scene_detail);
     mediaM = findViewById(R.id.media_image);
@@ -74,6 +88,10 @@ public class SceneDetailActivity extends AppCompatActivity {
     mActionBar = getSupportActionBar();
     mActionBar.setDisplayHomeAsUpEnabled(true);
     mActionBar.setHomeButtonEnabled(true);
+
+
+    mTagLists = new ArrayList<String>();
+
 
     Intent intent = getIntent();
     if (intent != null && intent.hasExtra(EXTRA_SCENE_ID)) {
@@ -161,11 +179,12 @@ public class SceneDetailActivity extends AppCompatActivity {
                         .observe(
                             this,
                             scene -> {
-                              //Log.v("사진내리고 URL", scene.getUploadedImage());
+                              ;
                               if (scene.getUploadedImage() != null) {
-                                String url = scene.getUploadedImage();
-                                Intent gintent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                                startActivity(gintent);
+                                Log.v("전달한 id", mSceneId+"");
+                                Intent picintent = new Intent(this, PictureActivity.class);
+                                picintent.putExtra(EXTRA_SCENE_ID, mSceneId);
+                                getApplication().startActivity(picintent);
                               } else {
                                 Snackbar.make(v, "이전에 등록된 사진이 없습니다.", Snackbar.LENGTH_SHORT).show();
                               }
@@ -207,6 +226,48 @@ public class SceneDetailActivity extends AppCompatActivity {
     }
   }
 
+
+  private void setContent(){
+        String tag = "";
+
+        for(int i=0; i< mTagLists.size();i++){
+            tag = tag + "#" + mTagLists.get(i)+"";
+        }
+
+      ArrayList<int[]> hashtageSpans = getSpans(tag, '#');
+      SpannableString tagsContent = new SpannableString(tag);
+      for(int i=0; i< hashtageSpans.size();i++){
+          int[] span = hashtageSpans.get(i);
+          int hashTagStart = span[0];
+          int hashTagEnd = span[1];
+          Hashtag hashtag = new Hashtag(this);
+          hashtag.setOnClickEventListener(new Hashtag.ClickEventListener() {
+              @Override
+              public void onClickEvent(String data) {
+                  Intent intent = new Intent(getApplication(), SearchActivity.class);
+                  intent.putExtra(EXTRA_SEARCH_KEYWORD,data);
+                  startActivity(intent);
+              }
+          });
+          tagsContent.setSpan(hashtag,hashTagStart,hashTagEnd,0);
+          TagName.setMovementMethod(LinkMovementMethod.getInstance());
+          TagName.setText(tagsContent);
+      }
+
+  }
+  private ArrayList<int[]> getSpans(String body, char prefix){
+      ArrayList<int[]> spans = new ArrayList<int[]>();
+      Pattern pattern = Pattern.compile(prefix+"\\w+");
+      Matcher matcher = pattern.matcher(body);
+      while(matcher.find()){
+          int[] currentSpan = new int[2];
+          currentSpan[0] = matcher.start();
+          currentSpan[1] = matcher.end();
+          spans.add(currentSpan);
+      }
+      return spans;
+  }
+
   private void getTags(AppDatabase db, Scene scene) {
     runOnDiskIO(
         () -> {
@@ -214,14 +275,22 @@ public class SceneDetailActivity extends AppCompatActivity {
           List<Tag> tags = new ArrayList<>();
           for (int i = 0; i < st.size(); i++) {
             tags.add(db.tagDao().loadById(st.get(i).getTagId()));
+
           }
           runOnMain(
               () -> {
-                String textTag = null;
-                for (int i = 0; i < tags.size(); i++) {
-                  textTag = "" + tags.get(i).getName();
+                //String textTag = null;
+                StringBuilder tag_name = new StringBuilder();
+                for (Tag tag : tags) {
+                    tag_name.append("#").append(tag.getName()).append(" ");
+                    mTagLists.add(tag.getName());
                 }
-                TagName.setText(textTag);
+//                for (int i = 0; i < tags.size(); i++) {
+//                  textTag = "#" + tags.get(i).getName();
+//                  mTagLists.add(tag.getName());
+//                }
+                TagName.setText(tag_name);
+                setContent();
               });
         });
   }
@@ -286,35 +355,18 @@ public class SceneDetailActivity extends AppCompatActivity {
         });
   }
 
-//  private int exifOrientationToDegrees(int exifOrientation) {
-//    switch (exifOrientation) {
-//      case ExifInterface.ORIENTATION_ROTATE_90:
-//        return 90;
-//      case ExifInterface.ORIENTATION_ROTATE_180:
-//        return 180;
-//      case ExifInterface.ORIENTATION_ROTATE_270:
-//        return 270;
-//    }
-//    return 0;
-//  }
 //
-//  private Bitmap rotate(Bitmap src, float degree) {
-//    Matrix matrix = new Matrix();
-//    matrix.postRotate(degree);
-//    return Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
+//  private String getRealPathFromURI(Uri contentUri) {
+//    int column_index = 0;
+//    String[] proj = {MediaStore.Images.Media.DATA};
+//    Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
+//
+//    if (cursor.moveToFirst()) {
+//
+//      column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+//    }
+//    return cursor.getString(column_index);
 //  }
-
-  private String getRealPathFromURI(Uri contentUri) {
-    int column_index = 0;
-    String[] proj = {MediaStore.Images.Media.DATA};
-    Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
-
-    if (cursor.moveToFirst()) {
-
-      column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-    }
-    return cursor.getString(column_index);
-  }
 
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
