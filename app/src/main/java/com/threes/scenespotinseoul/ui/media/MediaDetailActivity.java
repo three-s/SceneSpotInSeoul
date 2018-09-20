@@ -10,18 +10,23 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.threes.scenespotinseoul.R;
 import com.threes.scenespotinseoul.data.AppDatabase;
 import com.threes.scenespotinseoul.data.model.Location;
@@ -30,7 +35,6 @@ import com.threes.scenespotinseoul.data.model.MediaTag;
 import com.threes.scenespotinseoul.data.model.Scene;
 import com.threes.scenespotinseoul.data.model.Tag;
 import com.threes.scenespotinseoul.utilities.ItemOffsetDecoration;
-import com.volokh.danylo.hashtaghelper.HashTagHelper;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -39,44 +43,44 @@ public class MediaDetailActivity extends AppCompatActivity {
 
   private String media_id;
 
-  private Bitmap bt;
-
   private ImageView mMedia_image;
   private TextView mMedia_hash_tag;
   private TextView mMedia_title;
   private TextView mMedia_detail;
-  private HashTagHelper mHashTagHelper;
-  private ActionBar mActionBar;
   private TextView mMedia_simpleText;
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_media_detail);
+    setContentView(R.layout.activity_details);
 
-    mMedia_image = findViewById(R.id.iv_media);
-    mMedia_hash_tag = findViewById(R.id.media_hash_tag);
-    mMedia_title = findViewById(R.id.media_title);
-    mMedia_detail = findViewById(R.id.media_detail);
-    mMedia_simpleText = findViewById(R.id.simple);
-    mMedia_simpleText.setText("간략히보기");
+    mMedia_image = findViewById(R.id.iv_hero);
+    mMedia_hash_tag = findViewById(R.id.tv_tag);
+    mMedia_title = findViewById(R.id.tv_title);
+    mMedia_detail = findViewById(R.id.tv_description);
+    mMedia_simpleText = findViewById(R.id.tv_simple);
+
+    TextView tvCategory1 = findViewById(R.id.tv_category1);
+    TextView tvCategory2 = findViewById(R.id.tv_category2);
+    ImageButton btnNavigateUp = findViewById(R.id.btn_navigate_up);
+    RecyclerView recyclerView_scene = findViewById(R.id.rv_category1);
+    RecyclerView recyclerView_location = findViewById(R.id.rv_category2);
+
+    tvCategory1.setText(R.string.category_media_scenes);
+    tvCategory2.setText(R.string.category_media_locations);
+
+    btnNavigateUp.setOnClickListener(view -> finish());
+
+    // 해당 미디어 명장면 리사이클러뷰 처리
+    recyclerView_scene.addItemDecoration(new ItemOffsetDecoration(DIR_RIGHT, OFFSET_NORMAL));
+    recyclerView_location.addItemDecoration(new ItemOffsetDecoration(DIR_RIGHT, OFFSET_NORMAL));
+
     mMedia_simpleText.setVisibility(View.GONE);
 
     Intent intent = getIntent();
     if (intent != null && intent.hasExtra(EXTRA_MEDIA_ID)) {
       media_id = intent.getStringExtra(EXTRA_MEDIA_ID);
     }
-
-    // 해당 미디어 명장면 리사이클러뷰 처리
-    RecyclerView recyclerView_scene = findViewById(R.id.media_recyclerView_scene);
-    recyclerView_scene.addItemDecoration(new ItemOffsetDecoration(DIR_RIGHT, OFFSET_NORMAL));
-    RecyclerView recyclerView_location = findViewById(R.id.media_recyclerView_location);
-    recyclerView_location.addItemDecoration(new ItemOffsetDecoration(DIR_RIGHT, OFFSET_NORMAL));
-
-    // 뒤로가기 버튼 추가
-    mActionBar = getSupportActionBar();
-    mActionBar.setDisplayHomeAsUpEnabled(true);
-    mActionBar.setHomeButtonEnabled(true);
 
     // 해시태그 헬퍼 시도해봄
     //        mHashTagHelper =
@@ -121,7 +125,32 @@ public class MediaDetailActivity extends AppCompatActivity {
                 RequestOptions requestOptions =
                     new RequestOptions().placeholder(android.R.color.darker_gray).centerCrop();
 
-                Glide.with(this).load(mMedia.getImage()).apply(requestOptions).into(mMedia_image);
+                Glide.with(this)
+                    .asBitmap()
+                    .load(mMedia.getImage())
+                    .apply(requestOptions)
+                    .listener(new RequestListener<Bitmap>() {
+                      @Override
+                      public boolean onLoadFailed(@Nullable GlideException e, Object model,
+                          Target<Bitmap> target, boolean isFirstResource) {
+                        return false;
+                      }
+
+                      @Override
+                      public boolean onResourceReady(Bitmap resource, Object model,
+                          Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
+                        if (resource != null) {
+                          Palette.from(resource).generate(palette -> {
+                            if (palette != null) {
+                                getWindow().setStatusBarColor(palette.getDarkVibrantColor(
+                                    ContextCompat.getColor(MediaDetailActivity.this, R.color.colorPrimaryDark)));
+                            }
+                          });
+                        }
+                        return false;
+                      }
+                    })
+                    .into(mMedia_image);
 
                 // 미디어 타이틀 세팅
                 mMedia_title.setText(mMedia.getName());
@@ -156,15 +185,5 @@ public class MediaDetailActivity extends AppCompatActivity {
                 mMedia_hash_tag.setText(mTag.toString());
               });
         });
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-      case android.R.id.home:
-        finish();
-        return true;
-    }
-    return super.onOptionsItemSelected(item);
   }
 }
