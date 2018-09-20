@@ -2,13 +2,14 @@
 buildscript {
     ext {
         // Sdk and tools
-        compileSdkVersion = 27
+        compileSdkVersion = 28
         minSdkVersion = 23
-        targetSdkVersion = 27
+        targetSdkVersion = 28
+        buildToolsVersion = '28.0.2'
 
         // App dependencies
-        kotlinVersion = '1.2.60'
-        supportLibraryVersion = '27.1.1'
+        kotlinVersion = '1.2.70'
+        supportLibraryVersion = '28.0.0-rc02'
         constraintLayoutVersion = '1.1.2'
         debugDbVersion = '1.0.4'
         roomVersion = '1.1.1'

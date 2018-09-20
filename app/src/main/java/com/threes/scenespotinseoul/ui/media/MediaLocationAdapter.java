@@ -1,5 +1,7 @@
 package com.threes.scenespotinseoul.ui.media;
 
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_LOCATION_ID;
+
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -8,20 +10,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.threes.scenespotinseoul.R;
 import com.threes.scenespotinseoul.data.model.Location;
 import com.threes.scenespotinseoul.ui.location.LocationDetailActivity;
-
+import com.threes.scenespotinseoul.ui.media.MediaLocationAdapter.LocationViewHolder;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_LOCATION_ID;
-
-public class MediaLocationAdapter extends RecyclerView.Adapter<MediaLocationAdapter.locationViewHolder> {
+public class MediaLocationAdapter extends RecyclerView.Adapter<LocationViewHolder> {
 
   private List<Location> location_relation_L;
   private Iterator<Location> location_relation_I;
@@ -38,23 +39,27 @@ public class MediaLocationAdapter extends RecyclerView.Adapter<MediaLocationAdap
 
   @NonNull
   @Override
-  public locationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+  public LocationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     View view =
         LayoutInflater.from(parent.getContext())
-            .inflate(R.layout.item_media_location_detail_recyclerview, parent, false);
-    return new locationViewHolder(view);
+            .inflate(R.layout.item_content, parent, false);
+    return new LocationViewHolder(view);
   }
 
   @Override
-  public void onBindViewHolder(@NonNull locationViewHolder holder, int position) {
+  public void onBindViewHolder(@NonNull LocationViewHolder holder, int position) {
     Context context = holder.itemView.getContext();
 
     RequestOptions requestOptions = new RequestOptions().centerCrop();
 
+    Location curLocation = location_relation_L.get(position);
+
     Glide.with(context)
-        .load(location_relation_L.get(position).getImage())
+        .load(curLocation.getImage())
         .apply(requestOptions)
-        .into(holder.media_location_item_image);
+        .into(holder.ivImage);
+
+    holder.tvName.setText(curLocation.getName());
 
     holder.itemView.setOnClickListener(
         v -> {
@@ -71,12 +76,14 @@ public class MediaLocationAdapter extends RecyclerView.Adapter<MediaLocationAdap
     else return 0;
   }
 
-  class locationViewHolder extends RecyclerView.ViewHolder {
-    ImageView media_location_item_image;
+  class LocationViewHolder extends RecyclerView.ViewHolder {
+    ImageView ivImage;
+    TextView tvName;
 
-    private locationViewHolder(View itemView) {
+    private LocationViewHolder(View itemView) {
       super(itemView);
-      media_location_item_image = itemView.findViewById(R.id.media_location_recycler_image);
+      ivImage = itemView.findViewById(R.id.iv_image);
+      tvName = itemView.findViewById(R.id.tv_name);
     }
   }
 }

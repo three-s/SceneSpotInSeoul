@@ -1,5 +1,7 @@
 package com.threes.scenespotinseoul.ui.media;
 
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SCENE_ID;
+
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -8,17 +10,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.threes.scenespotinseoul.R;
 import com.threes.scenespotinseoul.data.model.Scene;
+import com.threes.scenespotinseoul.ui.media.MediaSceneAdapter.SceneViewHolder;
 import com.threes.scenespotinseoul.ui.scene.SceneDetailActivity;
-
 import java.util.List;
 
-import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SCENE_ID;
-
-public class MediaSceneAdapter extends RecyclerView.Adapter<MediaSceneAdapter.mediaViewHolder> {
+public class MediaSceneAdapter extends RecyclerView.Adapter<SceneViewHolder> {
 
   private List<Scene> scene_relation_L;
 
@@ -28,23 +29,27 @@ public class MediaSceneAdapter extends RecyclerView.Adapter<MediaSceneAdapter.me
 
   @NonNull
   @Override
-  public mediaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+  public SceneViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     View view =
         LayoutInflater.from(parent.getContext())
-            .inflate(R.layout.item_media_scene_detail_recyclerview, parent, false);
-    return new mediaViewHolder(view);
+            .inflate(R.layout.item_content, parent, false);
+    return new SceneViewHolder(view);
   }
 
   @Override
-  public void onBindViewHolder(@NonNull mediaViewHolder holder, int position) {
+  public void onBindViewHolder(@NonNull SceneViewHolder holder, int position) {
     Context context = holder.itemView.getContext();
 
     RequestOptions requestOptions = new RequestOptions().centerCrop();
 
+    Scene curScene = scene_relation_L.get(position);
+
     Glide.with(context)
-        .load(scene_relation_L.get(position).getImage())
+        .load(curScene.getImage())
         .apply(requestOptions)
-        .into(holder.media_scene_item_image);
+        .into(holder.ivImage);
+
+    holder.tvName.setText(curScene.getDesc());
 
     holder.itemView.setOnClickListener(
         v -> {
@@ -61,12 +66,14 @@ public class MediaSceneAdapter extends RecyclerView.Adapter<MediaSceneAdapter.me
     else return 0;
   }
 
-  class mediaViewHolder extends RecyclerView.ViewHolder {
-    ImageView media_scene_item_image;
+  class SceneViewHolder extends RecyclerView.ViewHolder {
+    ImageView ivImage;
+    TextView tvName;
 
-    private mediaViewHolder(View itemView) {
+    private SceneViewHolder(View itemView) {
       super(itemView);
-      media_scene_item_image = itemView.findViewById(R.id.media_scene_recycler_image);
+      ivImage = itemView.findViewById(R.id.iv_image);
+      tvName = itemView.findViewById(R.id.tv_name);
     }
   }
 }

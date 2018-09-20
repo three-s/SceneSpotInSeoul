@@ -1,5 +1,7 @@
 package com.threes.scenespotinseoul.ui.map;
 
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SEARCH_KEYWORD;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -8,6 +10,7 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
@@ -18,7 +21,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -50,7 +52,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_LOCATION_ID;
-import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SEARCH_KEYWORD;
 
 public class MapFragment extends Fragment {
 
@@ -72,7 +73,7 @@ public class MapFragment extends Fragment {
 
   private TextView title, tag, godetail;
   private ImageView image;
-  private FrameLayout frameLayout;
+  private ConstraintLayout frameLayout;
   private CardView cardView;
   private Handler handler = new Handler();
 
@@ -174,7 +175,7 @@ public class MapFragment extends Fragment {
           public void onSingleTapUp(NMapView nMapView, MotionEvent motionEvent) {
             Log.e("result.info", "tab");
             frameLayout.setVisibility(View.INVISIBLE);
-            cardView.setVisibility(View.INVISIBLE);
+            cardView.setVisibility(View.GONE);
           }
         });
     // mylat = gps.getLocation().getLatitude();

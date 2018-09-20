@@ -1,5 +1,7 @@
 package com.threes.scenespotinseoul.ui.location;
 
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SCENE_ID;
+
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -8,16 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
+import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.threes.scenespotinseoul.R;
 import com.threes.scenespotinseoul.data.model.Scene;
 import com.threes.scenespotinseoul.ui.scene.SceneDetailActivity;
-
 import java.util.List;
-
-import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SCENE_ID;
 
 public class LocationSceneAdapter extends RecyclerView.Adapter<LocationSceneAdapter.sceneViewHolder> {
 
@@ -32,7 +31,7 @@ public class LocationSceneAdapter extends RecyclerView.Adapter<LocationSceneAdap
   public sceneViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     View view =
         LayoutInflater.from(parent.getContext())
-            .inflate(R.layout.item_location_scene_detail_recyclerview, parent, false);
+            .inflate(R.layout.item_content, parent, false);
     return new sceneViewHolder(view);
   }
 
@@ -42,10 +41,14 @@ public class LocationSceneAdapter extends RecyclerView.Adapter<LocationSceneAdap
 
     RequestOptions requestOptions = new RequestOptions().centerCrop();
 
+    Scene curScene = scene_relation_L.get(position);
+
     Glide.with(context)
-        .load(scene_relation_L.get(position).getImage())
+        .load(curScene.getImage())
         .apply(requestOptions)
-        .into(holder.location_media_item_image);
+        .into(holder.ivImage);
+
+    holder.tvName.setText(curScene.getDesc());
 
     holder.itemView.setOnClickListener(
         v -> {
@@ -63,11 +66,13 @@ public class LocationSceneAdapter extends RecyclerView.Adapter<LocationSceneAdap
   }
 
   class sceneViewHolder extends RecyclerView.ViewHolder {
-    ImageView location_media_item_image;
+    ImageView ivImage;
+    TextView tvName;
 
     private sceneViewHolder(View itemView) {
       super(itemView);
-      location_media_item_image = itemView.findViewById(R.id.location_recycler_image_scene);
+      ivImage = itemView.findViewById(R.id.iv_image);
+      tvName = itemView.findViewById(R.id.tv_name);
     }
   }
 }
