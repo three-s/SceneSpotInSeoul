@@ -38,7 +38,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.GalleryV
   @Override
   public void onBindViewHolder(@NonNull GalleryViewHolder holder, int position) {
     Context context = holder.itemView.getContext();
-    Log.v("캡쳐된디 이미지", captured.get(position).getUploadedImage());
+    Log.v("캡쳐된 이미지", captured.get(position).getUploadedImage());
     RequestOptions requestOptions = new RequestOptions().centerCrop();
     if (captured != null) {
       Glide.with(context)
