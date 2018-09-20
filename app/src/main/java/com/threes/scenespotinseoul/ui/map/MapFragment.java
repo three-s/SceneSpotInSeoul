@@ -40,6 +40,7 @@ import com.threes.scenespotinseoul.data.AppDatabase;
 import com.threes.scenespotinseoul.data.model.Location;
 import com.threes.scenespotinseoul.data.model.LocationTag;
 import com.threes.scenespotinseoul.data.model.Tag;
+import com.threes.scenespotinseoul.ui.location.LocationDetailActivity;
 import com.threes.scenespotinseoul.ui.search.SearchActivity;
 import com.threes.scenespotinseoul.utilities.AppExecutors;
 import java.util.ArrayList;
@@ -48,6 +49,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_LOCATION_ID;
 import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SEARCH_KEYWORD;
 
 public class MapFragment extends Fragment {
@@ -75,7 +77,7 @@ public class MapFragment extends Fragment {
   private Handler handler = new Handler();
 
   private ArrayList<String> mTagLists;
-
+  private String location_id;
 
   @SuppressLint("ClickableViewAccessibility")
   @Nullable
@@ -101,8 +103,11 @@ public class MapFragment extends Fragment {
     godetail = rootView.findViewById(R.id.godetail);
     godetail.setOnClickListener(
         view -> {
-          // 상세보기 화면 인텐트 전환
+          Intent intent = new Intent(this.getContext(), LocationDetailActivity.class);
+          intent.putExtra(EXTRA_LOCATION_ID, location_id);
+          startActivity(intent);
         });
+    location_id = null;
     image = rootView.findViewById(R.id.image);
     frameLayout = rootView.findViewById(R.id.detailLayout);
     cardView = rootView.findViewById(R.id.cardview);
@@ -309,13 +314,13 @@ public class MapFragment extends Fragment {
                             .apply(RequestOptions.centerCropTransform())
                             .into(image);
 
+                        location_id = locations.get(id).getUuid();
                         setContent();
                       });
             });
 
   }
     private void setContent(){
-      Log.e("result.info","setcontent진입");
         String tag = "";
         int i;
         for(i = 0 ; i <mTagLists.size(); i++){
