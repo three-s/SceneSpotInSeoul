@@ -108,6 +108,7 @@ public class SceneDetailActivity extends AppCompatActivity {
               this,
               scene -> {
                 if (scene != null) {
+                  mTagLists.clear();
                   getTags(db, scene);
 
                   SceneName.setText(scene.getDesc());
@@ -137,85 +138,85 @@ public class SceneDetailActivity extends AppCompatActivity {
           startActivity(mapIntent);
         });
 
-    pic.setOnClickListener(
-        v -> {
-          AppDatabase db = AppDatabase.getInstance(this);
-          CharSequence info[] = new CharSequence[]{"사진을 찍어 업로드", "갤러리에서 업로드", "갤러리에서 보기",
-              "업로드된 사진 내리기", "취소"};
-          AlertDialog.Builder builder = new AlertDialog.Builder(SceneDetailActivity.this);
-          builder.setTitle("사진 업로드");
-          builder.setItems(
-              info,
-              (dialog, which) -> {
-                switch (which) {
-                  case 0:
-                    int permissionCheck1 =
-                        ContextCompat.checkSelfPermission(SceneDetailActivity.this, PERMISSIONS[0]);
-                    int permissionCheck2 =
-                        ContextCompat.checkSelfPermission(SceneDetailActivity.this, PERMISSIONS[1]);
-                    int permissionCheck3 =
-                        ContextCompat.checkSelfPermission(SceneDetailActivity.this, PERMISSIONS[2]);
-                    if (permissionCheck1 == PackageManager.PERMISSION_DENIED
-                        && permissionCheck2 == PackageManager.PERMISSION_DENIED
-                        && permissionCheck3 == PackageManager.PERMISSION_DENIED) {
-                      Snackbar.make(v, "권한이 없어서 기능을 이용할 수 없습니다.", Snackbar.LENGTH_SHORT).show();
-                    } else {
-                      selectPhoto();
-                    }
-                    break;
-                  case 1:
-                    permissionCheck3 =
-                        ContextCompat.checkSelfPermission(SceneDetailActivity.this, PERMISSIONS[2]);
-                    if (permissionCheck3 == PackageManager.PERMISSION_DENIED) {
-                      Snackbar.make(v, "권한이 없어서 기능을 이용할 수 없습니다.", Snackbar.LENGTH_SHORT).show();
-                    } else {
-                      selectGallery();
-                    }
-                    break;
-
-                  case 2:
-                    db.sceneDao()
-                        .loadByIdWithLive(mSceneId)
-                        .observe(
-                            this,
-                            scene -> {
-                              ;
-                              if (scene.getUploadedImage() != null) {
-                                Log.v("전달한 id", mSceneId+"");
-                                Intent picintent = new Intent(this, PictureActivity.class);
-                                picintent.putExtra(EXTRA_SCENE_ID, mSceneId);
-                                getApplication().startActivity(picintent);
-                              } else {
-                                Snackbar.make(v, "이전에 등록된 사진이 없습니다.", Snackbar.LENGTH_SHORT).show();
-                              }
+        pic.setOnClickListener(
+                v -> {
+                    AppDatabase db = AppDatabase.getInstance(this);
+                    CharSequence info[] = new CharSequence[]{"사진을 찍어 업로드", "갤러리에서 업로드", "갤러리에서 보기",
+                            "업로드된 사진 내리기", "취소"};
+                    AlertDialog.Builder builder = new AlertDialog.Builder(SceneDetailActivity.this);
+                    builder.setTitle("사진 업로드");
+                    builder.setItems(
+                            info,
+                            (dialog, which) -> {
+                                int permissionCheck1;int permissionCheck2;int permissionCheck3;
+                                if(which == 0){
+                                    Log.v("선택한 것","사진을 찍어 업로드"+which);
+                                    permissionCheck1 =
+                                            ContextCompat.checkSelfPermission(SceneDetailActivity.this, PERMISSIONS[0]);
+                                    permissionCheck2 =
+                                            ContextCompat.checkSelfPermission(SceneDetailActivity.this, PERMISSIONS[1]);
+                                    permissionCheck3 =
+                                            ContextCompat.checkSelfPermission(SceneDetailActivity.this, PERMISSIONS[2]);
+                                    if (permissionCheck1 == PackageManager.PERMISSION_DENIED
+                                            && permissionCheck2 == PackageManager.PERMISSION_DENIED
+                                            && permissionCheck3 == PackageManager.PERMISSION_DENIED) {
+                                        Snackbar.make(v, "권한이 없어서 기능을 이용할 수 없습니다.", Snackbar.LENGTH_SHORT).show();
+                                    } else {
+                                        selectPhoto();
+                                    }
+                                }
+                                else if(which == 1){
+                                    Log.v("선택한 것","갤러리에서 업로드"+which);
+                                    permissionCheck3 =
+                                            ContextCompat.checkSelfPermission(SceneDetailActivity.this, PERMISSIONS[2]);
+                                    if (permissionCheck3 == PackageManager.PERMISSION_DENIED) {
+                                        Snackbar.make(v, "권한이 없어서 기능을 이용할 수 없습니다.", Snackbar.LENGTH_SHORT).show();
+                                    } else {
+                                        selectGallery();
+                                    }
+                                }
+                                else if(which==2){
+                                    Log.v("선택한 것","갤러리에서 보기"+which);
+                                    runOnDiskIO(
+                                            () -> {
+                                                Scene scene = db.sceneDao().loadById(mSceneId);
+                                                if(scene.getUploadedImage()==null){
+                                                    Snackbar.make(v, "사진이 없습니다.", Snackbar.LENGTH_SHORT).show();
+                                                }
+                                                else{
+                                                    Log.v("전달한 id", mSceneId+"");
+                                                    Intent picintent = new Intent(this, PictureActivity.class);
+                                                    picintent.putExtra(EXTRA_SCENE_ID, mSceneId);
+                                                    getApplication().startActivity(picintent);
+                                                }
+                                            });
+                                }
+                                else if(which == 3){
+                                    Log.v("선택한 것","사진 내리기"+which);
+                                    runOnDiskIO(
+                                            () -> {
+                                                Scene scene = db.sceneDao().loadById(mSceneId);
+                                                if(scene.getUploadedImage()==null){
+                                                    Snackbar.make(v, "이전에 올린 사진이 없습니다.", Snackbar.LENGTH_SHORT).show();
+                                                }
+                                                else{
+                                                    scene.setUploaded(false);
+                                                    scene.setUploadedImage(null);
+                                                    db.sceneDao().update(scene);
+                                                }
+                                            });
+                                    pic.setImageResource(0);
+                                    guid.setVisibility(View.VISIBLE);
+                                }
+                                else if(which == 4){
+                                    Log.v("선택한 것","취소"+which);
+                                    dialog.dismiss();
+                                }
+                                dialog.dismiss();
                             });
-
-                    break;
-
-                  case 3:
-                    //pic.setImageBitmap(null);
-                    runOnDiskIO(
-                        () -> {
-                          Scene scene = db.sceneDao().loadById(mSceneId);
-                          scene.setUploaded(false);
-                          scene.setUploadedImage(null);
-                          db.sceneDao().update(scene);
-                        });
-                    pic.setImageResource(0);
-                    guid.setVisibility(View.VISIBLE);
-                    break;
-
-                  case 4:
-                    dialog.dismiss();
-                    break;
-
-
-                }
-                dialog.dismiss();
-              });
-          builder.show();
-        });
-  }
+                    builder.show();
+                });
+    }
 
   @Override
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
