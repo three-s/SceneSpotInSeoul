@@ -30,7 +30,7 @@
 		<activity android:name=".ui.media.MediaDetailActivity" android:theme="@style/AppTheme.NoActionBar" />
 		<activity android:name=".ui.scene.SceneDetailActivity" android:theme="@style/AppTheme.NoActionBar" />
 		<activity android:name=".ui.scene.DetailToMapActivity"/>
-		<activity android:name=".ui.scene.PictureActivity"/>
+		<activity android:name=".ui.scene.PictureActivity" android:theme="@style/AppTheme.Picture"/>
 		<provider
 			android:name="android.support.v4.content.FileProvider"
 			android:authorities="com.threes.scenespotinseoul"
