@@ -2,7 +2,6 @@ package com.threes.scenespotinseoul.workers
 
 import android.util.Log
 import androidx.work.Worker
-import com.threes.scenespotinseoul.BuildConfig
 import com.threes.scenespotinseoul.data.AppDatabase
 import com.threes.scenespotinseoul.data.model.DataInfo
 import com.threes.scenespotinseoul.data.model.LocationTag
@@ -42,7 +41,7 @@ class SyncDatabaseWorker : Worker() {
             var updatedTables = 0
             infoResponse.body()?.forEach {
                 val localInfo = db.dataInfoDao().load(it.name)
-                if (localInfo == null || isOutOfDate(localInfo, it) || BuildConfig.DEBUG) {
+                if (localInfo == null || isOutOfDate(localInfo, it)) {
                     Log.d(TAG, "${it.name} is out-of-date. Proceed Sync.")
                     when (it.name) {
                         LOCATION_TABLE -> {

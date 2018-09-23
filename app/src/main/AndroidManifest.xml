@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="com.threes.scenespotinseoul">
 
+	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 	<uses-permission android:name="androdi.permission.CAMERA" />
@@ -28,9 +29,9 @@
 		<activity android:label="@string/app_name" android:name=".MainActivity" />
 		<activity android:name=".ui.location.LocationDetailActivity" android:theme="@style/AppTheme.NoActionBar" />
 		<activity android:name=".ui.media.MediaDetailActivity" android:theme="@style/AppTheme.NoActionBar" />
-		<activity android:name=".ui.scene.SceneDetailActivity" />
+		<activity android:name=".ui.scene.SceneDetailActivity" android:theme="@style/AppTheme.NoActionBar" />
 		<activity android:name=".ui.scene.DetailToMapActivity"/>
-		<activity android:name=".ui.scene.PictureActivity"/>
+		<activity android:name=".ui.scene.PictureActivity" android:theme="@style/AppTheme.Picture"/>
 		<provider
 			android:name="android.support.v4.content.FileProvider"
 			android:authorities="com.threes.scenespotinseoul"

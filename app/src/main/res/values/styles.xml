@@ -7,12 +7,21 @@
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorAccent">@color/colorAccent</item>
     <item name="actionBarStyle">@style/Widget.AppTheme.ActionBar</item>
+
   </style>
 
   <style name="AppTheme.NoActionBar" parent="Theme.MaterialComponents.Light.NoActionBar">
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorAccent">@color/colorAccent</item>
+  </style>
+
+  <style name="AppTheme.Picture" parent="Theme.MaterialComponents.NoActionBar">
+    <item name="colorPrimary">@color/colorPicturePrimary</item>
+    <item name="colorPrimaryDark">@color/colorPicturePrimaryDark</item>
+    <item name="colorAccent">@color/colorAccent</item>
+    <item name="android:windowTranslucentStatus">true</item>
+    <item name="android:windowTranslucentNavigation">true</item>
   </style>
 
   <style name="AppTheme.Splash" parent="AppTheme.NoActionBar">

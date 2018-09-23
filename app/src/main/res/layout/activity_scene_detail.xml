@@ -3,7 +3,8 @@
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
-  android:layout_height="match_parent">
+  android:layout_height="match_parent"
+  tools:context=".ui.scene.SceneDetailActivity">
 
   <ImageView
     android:id="@+id/media_image"
@@ -53,7 +54,7 @@
     android:layout_marginEnd="@dimen/key_line_normal"
     android:paddingTop="24dp"
     android:textColor="@android:color/black"
-    android:textSize="24sp"
+    android:textSize="30sp"
     app:layout_constraintBottom_toTopOf="@+id/tagView"
     app:layout_constraintLeft_toLeftOf="parent"
     app:layout_constraintRight_toLeftOf="@id/fab"
@@ -66,8 +67,8 @@
     android:layout_marginBottom="24dp"
     android:layout_marginStart="@dimen/key_line_normal"
     android:layout_marginEnd="@dimen/key_line_normal"
+    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
     android:textColor="@color/colorAccent"
-    android:textSize="14sp"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintLeft_toLeftOf="parent"
     app:layout_constraintRight_toLeftOf="@id/fab"
@@ -78,11 +79,30 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/key_line_normal"
-    android:src="@drawable/ic_map"
+    android:src="@drawable/ic_map_selected"
     android:tint="@android:color/white"
     app:fabSize="normal"
     app:layout_constraintBottom_toTopOf="@id/bottom_view"
     app:layout_constraintRight_toRightOf="parent"
     app:layout_constraintTop_toTopOf="@id/bottom_view"/>
+
+  <View
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="@drawable/shadow_bg"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintTop_toTopOf="parent"/>
+
+  <ImageButton
+    android:id="@+id/btn_navigate_up"
+    android:layout_width="?attr/actionBarSize"
+    android:layout_height="?attr/actionBarSize"
+    android:background="@android:color/transparent"
+    android:foreground="?selectableItemBackgroundBorderless"
+    android:src="@drawable/ic_round_arrow_back"
+    android:tint="@android:color/white"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    tools:ignore="ContentDescription"/>
 
 </android.support.constraint.ConstraintLayout>
