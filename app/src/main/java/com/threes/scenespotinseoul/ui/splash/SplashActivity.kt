@@ -55,6 +55,8 @@ class SplashActivity : AppCompatActivity() {
                 } else if (it.state == State.FAILED) {
                     if (checkFirstRun()) {
                         showDialogSyncFailedWhenFirst()
+                    } else {
+                        navigateMain()
                     }
                 }
             }
