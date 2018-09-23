@@ -31,6 +31,7 @@
     app:layout_constraintHorizontal_bias="0"
     app:layout_constraintLeft_toLeftOf="parent"
     app:layout_constraintRight_toRightOf="parent"
+    app:layout_goneMarginBottom="76dp"
     tools:text="TEST"/>
 
   <TextView

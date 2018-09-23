@@ -1,7 +1,14 @@
 package com.threes.scenespotinseoul.ui.scene;
 
-import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_FROM_SCENE;
+import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnDiskIO;
+import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnMain;
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_IMAGE_FLAGS;
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_LOCATION_ID;
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_MEDIA_ID;
 import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SCENE_ID;
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.LOCATION_TABLE;
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.MEDIA_TABLE;
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.SCENE_TABLE;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -13,7 +20,6 @@ import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.v7.app.AppCompatActivity;
 import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -26,10 +32,18 @@ import com.bumptech.glide.request.target.Target;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.threes.scenespotinseoul.R;
 import com.threes.scenespotinseoul.data.AppDatabase;
+import com.threes.scenespotinseoul.data.model.Location;
+import com.threes.scenespotinseoul.data.model.Media;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class PictureActivity extends AppCompatActivity {
+
+  public static final int FLAG_PARENT_DETAIL = 1;
+  public static final int FLAG_SCENE_IMAGE = 2;
+  public static final int FLAG_USER_IMAGE = 4;
+
+  private AppDatabase mDb;
 
   private PhotoView mPicture;
   private TextView mTvName;
@@ -40,23 +54,41 @@ public class PictureActivity extends AppCompatActivity {
   private ConstraintLayout mContainer;
 
   private boolean isImmersive;
-  private boolean isFromScene;
-  private String mSceneId;
+  private boolean isFromParent;
+  private boolean isShowDate;
+  private String mItemType;
+  private String mItemId;
+  private int mImageFlags;
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_picture);
     Intent intent = getIntent();
-    if (intent == null || !intent.hasExtra(EXTRA_SCENE_ID)) {
-      Log.e("PictureActivity", "Can't receive scene id");
-      finish();
+    if (intent != null) {
+      mDb = AppDatabase.getInstance(this);
+      if (intent.hasExtra(EXTRA_LOCATION_ID)) {
+        mItemType = LOCATION_TABLE;
+        mItemId = intent.getStringExtra(EXTRA_LOCATION_ID);
+        isFromParent = true;
+      } else if (intent.hasExtra(EXTRA_MEDIA_ID)) {
+        mItemType = MEDIA_TABLE;
+        mItemId = intent.getStringExtra(EXTRA_MEDIA_ID);
+        isFromParent = true;
+      } else if (intent.hasExtra(EXTRA_SCENE_ID) && intent.hasExtra(EXTRA_IMAGE_FLAGS)) {
+        mItemType = SCENE_TABLE;
+        mItemId = intent.getStringExtra(EXTRA_SCENE_ID);
+        mImageFlags = intent.getIntExtra(EXTRA_IMAGE_FLAGS, 0);
+        isFromParent = (mImageFlags & FLAG_PARENT_DETAIL) == FLAG_PARENT_DETAIL;
+        isShowDate = (mImageFlags & FLAG_USER_IMAGE) == FLAG_USER_IMAGE;
+      } else {
+        finish();
+      }
     } else {
-      mSceneId = intent.getStringExtra(EXTRA_SCENE_ID);
-      isFromScene = intent.getBooleanExtra(EXTRA_FROM_SCENE, false);
-      initViews();
-      loadPicture();
+      finish();
     }
+    initViews();
+    loadData();
   }
 
   private void initViews() {
@@ -70,13 +102,17 @@ public class PictureActivity extends AppCompatActivity {
     mBtnNavigateUp.setOnClickListener(view -> onBackPressed());
 
     mBtnToScene = findViewById(R.id.btn_to_scene);
-    if (!isFromScene) {
+    if (!isFromParent) {
       mBtnToScene.setVisibility(View.VISIBLE);
       mBtnToScene.setOnClickListener(view -> {
         Intent intent = new Intent(this, SceneDetailActivity.class);
-        intent.putExtra(EXTRA_SCENE_ID, mSceneId);
+        intent.putExtra(EXTRA_SCENE_ID, mItemId);
         startActivity(intent);
       });
+    }
+
+    if (!isShowDate) {
+      mTvDate.setVisibility(View.GONE);
     }
 
     mPicture.setOnClickListener(view -> {
@@ -93,39 +129,69 @@ public class PictureActivity extends AppCompatActivity {
     supportStartPostponedEnterTransition();
   }
 
-  private void loadPicture() {
-    AppDatabase db = AppDatabase.getInstance(this);
-    db.sceneDao()
-        .loadByIdWithLive(mSceneId)
-        .observe(this,
-            scene -> {
+  private void loadData() {
+    switch (mItemType) {
+      case MEDIA_TABLE:
+        runOnDiskIO(() -> {
+          Media media = mDb.mediaDao().loadById(mItemId);
+          runOnMain(() -> {
+            if (media != null) {
+              loadImage(media.getImage());
+              mTvName.setText(media.getName());
+            }
+          });
+        });
+        break;
+      case LOCATION_TABLE:
+        runOnDiskIO(() -> {
+          Location location = mDb.locationDao().loadById(mItemId);
+          runOnMain(() -> {
+            if (location != null) {
+              mTvName.setText(location.getName());
+              loadImage(location.getImage());
+            }
+          });
+        });
+        break;
+      case SCENE_TABLE:
+        mDb.sceneDao().loadByIdWithLive(mItemId)
+            .observe(this, scene -> {
               if (scene != null) {
-                Log.v("URI", scene.getUploadedImage());
-                RequestOptions options = new RequestOptions().optionalFitCenter();
-                Glide.with(this)
-                    .load(Uri.parse(scene.getUploadedImage()))
-                    .apply(options)
-                    .listener(new RequestListener<Drawable>() {
-                      @Override
-                      public boolean onLoadFailed(@Nullable GlideException e, Object model,
-                          Target<Drawable> target, boolean isFirstResource) {
-                        supportStartPostponedEnterTransition();
-                        return false;
-                      }
-
-                      @Override
-                      public boolean onResourceReady(Drawable resource, Object model,
-                          Target<Drawable> target, DataSource dataSource,
-                          boolean isFirstResource) {
-                        supportStartPostponedEnterTransition();
-                        return false;
-                      }
-                    })
-                    .into(mPicture);
                 mTvName.setText(scene.getDesc());
-                mTvDate.setText(formatDate(scene.getUploadedDate()));
+                if ((mImageFlags & FLAG_USER_IMAGE) == FLAG_USER_IMAGE) {
+                  mTvDate.setText(formatDate(scene.getUploadedDate()));
+                  loadImage(scene.getUploadedImage());
+                } else if ((mImageFlags & FLAG_SCENE_IMAGE) == FLAG_SCENE_IMAGE) {
+                  loadImage(scene.getImage());
+                }
               }
             });
+        break;
+    }
+  }
+
+  private void loadImage(String url) {
+    RequestOptions options = new RequestOptions().optionalFitCenter();
+    Glide.with(this)
+        .load(Uri.parse(url))
+        .apply(options)
+        .listener(new RequestListener<Drawable>() {
+          @Override
+          public boolean onLoadFailed(@Nullable GlideException e, Object model,
+              Target<Drawable> target, boolean isFirstResource) {
+            supportStartPostponedEnterTransition();
+            return false;
+          }
+
+          @Override
+          public boolean onResourceReady(Drawable resource, Object model,
+              Target<Drawable> target, DataSource dataSource,
+              boolean isFirstResource) {
+            supportStartPostponedEnterTransition();
+            return false;
+          }
+        })
+        .into(mPicture);
   }
 
   @SuppressLint("SimpleDateFormat")
@@ -140,9 +206,9 @@ public class PictureActivity extends AppCompatActivity {
     constraintSet.clone(mContainer);
     constraintSet.setVisibility(mShadowView.getId(), View.VISIBLE);
     constraintSet.setVisibility(mBtnNavigateUp.getId(), View.VISIBLE);
-    constraintSet.setVisibility(mBtnToScene.getId(), !isFromScene ? View.VISIBLE : View.GONE);
+    constraintSet.setVisibility(mBtnToScene.getId(), !isFromParent ? View.VISIBLE : View.GONE);
     constraintSet.setVisibility(mTvName.getId(), View.VISIBLE);
-    constraintSet.setVisibility(mTvDate.getId(), View.VISIBLE);
+    constraintSet.setVisibility(mTvDate.getId(), isShowDate ? View.VISIBLE : View.GONE);
     constraintSet.applyTo(mContainer);
   }
 

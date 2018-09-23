@@ -1,5 +1,7 @@
 package com.threes.scenespotinseoul.ui.gallery;
 
+import static com.threes.scenespotinseoul.ui.scene.PictureActivity.FLAG_USER_IMAGE;
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_IMAGE_FLAGS;
 import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SCENE_ID;
 
 import android.app.Activity;
@@ -58,6 +60,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.GalleryV
               .makeSceneTransitionAnimation(mActivity, holder.image, "transitionImage").toBundle();
           Intent intent = new Intent(context, PictureActivity.class);
           intent.putExtra(EXTRA_SCENE_ID, captured.get(position).getUuid());
+          intent.putExtra(EXTRA_IMAGE_FLAGS, FLAG_USER_IMAGE);
           context.startActivity(intent, options);
         });
   }

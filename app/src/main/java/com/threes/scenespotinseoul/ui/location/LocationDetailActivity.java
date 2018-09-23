@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
@@ -38,6 +39,7 @@ import com.threes.scenespotinseoul.data.model.Media;
 import com.threes.scenespotinseoul.data.model.Scene;
 import com.threes.scenespotinseoul.data.model.Tag;
 import com.threes.scenespotinseoul.ui.map.Hashtag;
+import com.threes.scenespotinseoul.ui.scene.PictureActivity;
 import com.threes.scenespotinseoul.ui.search.SearchActivity;
 import com.threes.scenespotinseoul.utilities.ItemOffsetDecoration;
 import java.util.ArrayList;
@@ -87,6 +89,16 @@ public class LocationDetailActivity extends AppCompatActivity {
     recyclerView_media.addItemDecoration(new ItemOffsetDecoration(DIR_RIGHT, OFFSET_NORMAL));
 
     mLocation_simpleText.setVisibility(View.GONE);
+
+    mLocation_image.setOnClickListener(view -> {
+      Bundle options = ActivityOptionsCompat
+          .makeSceneTransitionAnimation(this,
+              mLocation_image, "transitionImage"
+          ).toBundle();
+      Intent intent = new Intent(this, PictureActivity.class);
+      intent.putExtra(EXTRA_LOCATION_ID, location_id);
+      startActivity(intent, options);
+    });
 
     //TEST를 위한 주석처리
     Intent intent = getIntent();

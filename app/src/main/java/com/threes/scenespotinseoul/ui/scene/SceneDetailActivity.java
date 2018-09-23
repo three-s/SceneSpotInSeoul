@@ -1,8 +1,11 @@
 package com.threes.scenespotinseoul.ui.scene;
 
+import static com.threes.scenespotinseoul.ui.scene.PictureActivity.FLAG_PARENT_DETAIL;
+import static com.threes.scenespotinseoul.ui.scene.PictureActivity.FLAG_SCENE_IMAGE;
+import static com.threes.scenespotinseoul.ui.scene.PictureActivity.FLAG_USER_IMAGE;
 import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnDiskIO;
 import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnMain;
-import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_FROM_SCENE;
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_IMAGE_FLAGS;
 import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_LOCATION_ID;
 import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SCENE_ID;
 import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SEARCH_KEYWORD;
@@ -18,6 +21,7 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
@@ -90,6 +94,17 @@ public class SceneDetailActivity extends AppCompatActivity {
     ImageButton btnNavigateUp = findViewById(R.id.btn_navigate_up);
     btnNavigateUp.setOnClickListener(view -> finish());
 
+    mediaM.setOnClickListener(view -> {
+      Bundle options = ActivityOptionsCompat
+          .makeSceneTransitionAnimation(this,
+              mediaM, "transitionImage"
+          ).toBundle();
+      Intent picintent = new Intent(this, PictureActivity.class);
+      picintent.putExtra(EXTRA_SCENE_ID, mSceneId);
+      picintent.putExtra(EXTRA_IMAGE_FLAGS, FLAG_SCENE_IMAGE | FLAG_PARENT_DETAIL);
+      startActivity(picintent, options);
+    });
+
     mTagLists = new ArrayList<String>();
 
     Intent intent = getIntent();
@@ -130,7 +145,8 @@ public class SceneDetailActivity extends AppCompatActivity {
                             Palette.from(resource).generate(palette -> {
                               if (palette != null) {
                                 getWindow().setStatusBarColor(palette.getDarkVibrantColor(
-                                    ContextCompat.getColor(SceneDetailActivity.this, R.color.colorPrimaryDark)));
+                                    ContextCompat.getColor(SceneDetailActivity.this,
+                                        R.color.colorPrimaryDark)));
                               }
                             });
                           }
@@ -207,8 +223,9 @@ public class SceneDetailActivity extends AppCompatActivity {
                           Log.v("전달한 id", mSceneId + "");
                           Intent picintent = new Intent(this, PictureActivity.class);
                           picintent.putExtra(EXTRA_SCENE_ID, mSceneId);
-                          picintent.putExtra(EXTRA_FROM_SCENE, true);
-                          getApplication().startActivity(picintent);
+                          picintent
+                              .putExtra(EXTRA_IMAGE_FLAGS, FLAG_USER_IMAGE | FLAG_PARENT_DETAIL);
+                          startActivity(picintent);
                         }
                       });
                 } else if (which == 3) {
@@ -263,7 +280,7 @@ public class SceneDetailActivity extends AppCompatActivity {
       hashtag.setOnClickEventListener(new Hashtag.ClickEventListener() {
         @Override
         public void onClickEvent(String data) {
-          Intent intent = new Intent(getApplication(), SearchActivity.class);
+          Intent intent = new Intent(SceneDetailActivity.this, SearchActivity.class);
           intent.putExtra(EXTRA_SEARCH_KEYWORD, data);
           startActivity(intent);
         }

@@ -3,6 +3,7 @@ package com.threes.scenespotinseoul.ui.media;
 import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnDiskIO;
 import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnMain;
 import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_MEDIA_ID;
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SEARCH_KEYWORD;
 import static com.threes.scenespotinseoul.utilities.ItemOffsetDecorationKt.DIR_RIGHT;
 import static com.threes.scenespotinseoul.utilities.ItemOffsetDecorationKt.OFFSET_NORMAL;
 
@@ -10,6 +11,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
@@ -37,9 +39,9 @@ import com.threes.scenespotinseoul.data.model.MediaTag;
 import com.threes.scenespotinseoul.data.model.Scene;
 import com.threes.scenespotinseoul.data.model.Tag;
 import com.threes.scenespotinseoul.ui.map.Hashtag;
-import com.threes.scenespotinseoul.utilities.ItemOffsetDecoration;
+import com.threes.scenespotinseoul.ui.scene.PictureActivity;
 import com.threes.scenespotinseoul.ui.search.SearchActivity;
-import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SEARCH_KEYWORD;
+import com.threes.scenespotinseoul.utilities.ItemOffsetDecoration;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -87,6 +89,16 @@ public class MediaDetailActivity extends AppCompatActivity {
     mMedia_simpleText.setVisibility(View.GONE);
 
     mTagLists = new ArrayList<String>();
+
+    mMedia_image.setOnClickListener(view -> {
+      Bundle options = ActivityOptionsCompat
+          .makeSceneTransitionAnimation(this,
+              mMedia_image, "transitionImage"
+          ).toBundle();
+      Intent intent = new Intent(this, PictureActivity.class);
+      intent.putExtra(EXTRA_MEDIA_ID, media_id);
+      startActivity(intent, options);
+    });
 
     Intent intent = getIntent();
     if (intent != null && intent.hasExtra(EXTRA_MEDIA_ID)) {
