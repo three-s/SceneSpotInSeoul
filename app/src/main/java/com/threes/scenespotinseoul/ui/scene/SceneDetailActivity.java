@@ -9,11 +9,12 @@ import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SEARCH_KEY
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
@@ -21,21 +22,27 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Spannable;
+import android.support.v7.graphics.Palette;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.threes.scenespotinseoul.R;
 import com.threes.scenespotinseoul.data.AppDatabase;
 import com.threes.scenespotinseoul.data.model.Scene;
 import com.threes.scenespotinseoul.data.model.SceneTag;
 import com.threes.scenespotinseoul.data.model.Tag;
+import com.threes.scenespotinseoul.ui.map.Hashtag;
+import com.threes.scenespotinseoul.ui.search.SearchActivity;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -43,9 +50,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.threes.scenespotinseoul.ui.map.Hashtag;
-import com.threes.scenespotinseoul.ui.search.SearchActivity;
 
 public class SceneDetailActivity extends AppCompatActivity {
 
@@ -70,12 +74,9 @@ public class SceneDetailActivity extends AppCompatActivity {
   private ActionBar mActionBar;
   private String mSceneId;
 
+  private ArrayList<String> mTagLists;
 
-
-    private ArrayList<String> mTagLists;
-
-
-    public void onCreate(Bundle savedInstanceStat) {
+  public void onCreate(Bundle savedInstanceStat) {
     super.onCreate(savedInstanceStat);
     setContentView(R.layout.activity_scene_detail);
     mediaM = findViewById(R.id.media_image);
@@ -85,13 +86,10 @@ public class SceneDetailActivity extends AppCompatActivity {
     guid = findViewById(R.id.guide);
     fab = findViewById(R.id.fab);
 
-    mActionBar = getSupportActionBar();
-    mActionBar.setDisplayHomeAsUpEnabled(true);
-    mActionBar.setHomeButtonEnabled(true);
-
+    ImageButton btnNavigateUp = findViewById(R.id.btn_navigate_up);
+    btnNavigateUp.setOnClickListener(view -> finish());
 
     mTagLists = new ArrayList<String>();
-
 
     Intent intent = getIntent();
     if (intent != null && intent.hasExtra(EXTRA_SCENE_ID)) {
@@ -114,8 +112,30 @@ public class SceneDetailActivity extends AppCompatActivity {
                   SceneName.setText(scene.getDesc());
                   idfromScenetoMap = scene.getLocationId();
                   Glide.with(this)
+                      .asBitmap()
                       .load(Uri.parse(scene.getImage()))
                       .apply(new RequestOptions().centerCrop())
+                      .listener(new RequestListener<Bitmap>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model,
+                            Target<Bitmap> target, boolean isFirstResource) {
+                          return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Bitmap resource, Object model,
+                            Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
+                          if (resource != null) {
+                            Palette.from(resource).generate(palette -> {
+                              if (palette != null) {
+                                getWindow().setStatusBarColor(palette.getDarkVibrantColor(
+                                    ContextCompat.getColor(SceneDetailActivity.this, R.color.colorPrimaryDark)));
+                              }
+                            });
+                          }
+                          return false;
+                        }
+                      })
                       .into(mediaM);
 
                   guid.setVisibility(View.VISIBLE);
@@ -138,85 +158,81 @@ public class SceneDetailActivity extends AppCompatActivity {
           startActivity(mapIntent);
         });
 
-        pic.setOnClickListener(
-                v -> {
-                    AppDatabase db = AppDatabase.getInstance(this);
-                    CharSequence info[] = new CharSequence[]{"사진을 찍어 업로드", "갤러리에서 업로드", "갤러리에서 보기",
-                            "업로드된 사진 내리기", "취소"};
-                    AlertDialog.Builder builder = new AlertDialog.Builder(SceneDetailActivity.this);
-                    builder.setTitle("사진 업로드");
-                    builder.setItems(
-                            info,
-                            (dialog, which) -> {
-                                int permissionCheck1;int permissionCheck2;int permissionCheck3;
-                                if(which == 0){
-                                    Log.v("선택한 것","사진을 찍어 업로드"+which);
-                                    permissionCheck1 =
-                                            ContextCompat.checkSelfPermission(SceneDetailActivity.this, PERMISSIONS[0]);
-                                    permissionCheck2 =
-                                            ContextCompat.checkSelfPermission(SceneDetailActivity.this, PERMISSIONS[1]);
-                                    permissionCheck3 =
-                                            ContextCompat.checkSelfPermission(SceneDetailActivity.this, PERMISSIONS[2]);
-                                    if (permissionCheck1 == PackageManager.PERMISSION_DENIED
-                                            && permissionCheck2 == PackageManager.PERMISSION_DENIED
-                                            && permissionCheck3 == PackageManager.PERMISSION_DENIED) {
-                                        Snackbar.make(v, "권한이 없어서 기능을 이용할 수 없습니다.", Snackbar.LENGTH_SHORT).show();
-                                    } else {
-                                        selectPhoto();
-                                    }
-                                }
-                                else if(which == 1){
-                                    Log.v("선택한 것","갤러리에서 업로드"+which);
-                                    permissionCheck3 =
-                                            ContextCompat.checkSelfPermission(SceneDetailActivity.this, PERMISSIONS[2]);
-                                    if (permissionCheck3 == PackageManager.PERMISSION_DENIED) {
-                                        Snackbar.make(v, "권한이 없어서 기능을 이용할 수 없습니다.", Snackbar.LENGTH_SHORT).show();
-                                    } else {
-                                        selectGallery();
-                                    }
-                                }
-                                else if(which==2){
-                                    Log.v("선택한 것","갤러리에서 보기"+which);
-                                    runOnDiskIO(
-                                            () -> {
-                                                Scene scene = db.sceneDao().loadById(mSceneId);
-                                                if(scene.getUploadedImage()==null){
-                                                    Snackbar.make(v, "사진이 없습니다.", Snackbar.LENGTH_SHORT).show();
-                                                }
-                                                else{
-                                                    Log.v("전달한 id", mSceneId+"");
-                                                    Intent picintent = new Intent(this, PictureActivity.class);
-                                                    picintent.putExtra(EXTRA_SCENE_ID, mSceneId);
-                                                    getApplication().startActivity(picintent);
-                                                }
-                                            });
-                                }
-                                else if(which == 3){
-                                    Log.v("선택한 것","사진 내리기"+which);
-                                    runOnDiskIO(
-                                            () -> {
-                                                Scene scene = db.sceneDao().loadById(mSceneId);
-                                                if(scene.getUploadedImage()==null){
-                                                    Snackbar.make(v, "이전에 올린 사진이 없습니다.", Snackbar.LENGTH_SHORT).show();
-                                                }
-                                                else{
-                                                    scene.setUploaded(false);
-                                                    scene.setUploadedImage(null);
-                                                    db.sceneDao().update(scene);
-                                                }
-                                            });
-                                    pic.setImageResource(0);
-                                    guid.setVisibility(View.VISIBLE);
-                                }
-                                else if(which == 4){
-                                    Log.v("선택한 것","취소"+which);
-                                    dialog.dismiss();
-                                }
-                                dialog.dismiss();
-                            });
-                    builder.show();
-                });
-    }
+    pic.setOnClickListener(
+        v -> {
+          AppDatabase db = AppDatabase.getInstance(this);
+          CharSequence info[] = new CharSequence[]{"사진을 찍어 업로드", "갤러리에서 업로드", "갤러리에서 보기",
+              "업로드된 사진 내리기", "취소"};
+          AlertDialog.Builder builder = new AlertDialog.Builder(SceneDetailActivity.this);
+          builder.setTitle("사진 업로드");
+          builder.setItems(
+              info,
+              (dialog, which) -> {
+                int permissionCheck1;
+                int permissionCheck2;
+                int permissionCheck3;
+                if (which == 0) {
+                  Log.v("선택한 것", "사진을 찍어 업로드" + which);
+                  permissionCheck1 =
+                      ContextCompat.checkSelfPermission(SceneDetailActivity.this, PERMISSIONS[0]);
+                  permissionCheck2 =
+                      ContextCompat.checkSelfPermission(SceneDetailActivity.this, PERMISSIONS[1]);
+                  permissionCheck3 =
+                      ContextCompat.checkSelfPermission(SceneDetailActivity.this, PERMISSIONS[2]);
+                  if (permissionCheck1 == PackageManager.PERMISSION_DENIED
+                      && permissionCheck2 == PackageManager.PERMISSION_DENIED
+                      && permissionCheck3 == PackageManager.PERMISSION_DENIED) {
+                    Snackbar.make(v, "권한이 없어서 기능을 이용할 수 없습니다.", Snackbar.LENGTH_SHORT).show();
+                  } else {
+                    selectPhoto();
+                  }
+                } else if (which == 1) {
+                  Log.v("선택한 것", "갤러리에서 업로드" + which);
+                  permissionCheck3 =
+                      ContextCompat.checkSelfPermission(SceneDetailActivity.this, PERMISSIONS[2]);
+                  if (permissionCheck3 == PackageManager.PERMISSION_DENIED) {
+                    Snackbar.make(v, "권한이 없어서 기능을 이용할 수 없습니다.", Snackbar.LENGTH_SHORT).show();
+                  } else {
+                    selectGallery();
+                  }
+                } else if (which == 2) {
+                  Log.v("선택한 것", "갤러리에서 보기" + which);
+                  runOnDiskIO(
+                      () -> {
+                        Scene scene = db.sceneDao().loadById(mSceneId);
+                        if (scene.getUploadedImage() == null) {
+                          Snackbar.make(v, "사진이 없습니다.", Snackbar.LENGTH_SHORT).show();
+                        } else {
+                          Log.v("전달한 id", mSceneId + "");
+                          Intent picintent = new Intent(this, PictureActivity.class);
+                          picintent.putExtra(EXTRA_SCENE_ID, mSceneId);
+                          getApplication().startActivity(picintent);
+                        }
+                      });
+                } else if (which == 3) {
+                  Log.v("선택한 것", "사진 내리기" + which);
+                  runOnDiskIO(
+                      () -> {
+                        Scene scene = db.sceneDao().loadById(mSceneId);
+                        if (scene.getUploadedImage() == null) {
+                          Snackbar.make(v, "이전에 올린 사진이 없습니다.", Snackbar.LENGTH_SHORT).show();
+                        } else {
+                          scene.setUploaded(false);
+                          scene.setUploadedImage(null);
+                          db.sceneDao().update(scene);
+                        }
+                      });
+                  pic.setImageResource(0);
+                  guid.setVisibility(View.VISIBLE);
+                } else if (which == 4) {
+                  Log.v("선택한 것", "취소" + which);
+                  dialog.dismiss();
+                }
+                dialog.dismiss();
+              });
+          builder.show();
+        });
+  }
 
   @Override
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -228,45 +244,46 @@ public class SceneDetailActivity extends AppCompatActivity {
   }
 
 
-  private void setContent(){
-        String tag = "";
+  private void setContent() {
+    String tag = "";
 
-        for(int i=0; i< mTagLists.size();i++){
-            tag = tag + "#" + mTagLists.get(i)+"";
+    for (int i = 0; i < mTagLists.size(); i++) {
+      tag = tag + "#" + mTagLists.get(i) + "";
+    }
+
+    ArrayList<int[]> hashtageSpans = getSpans(tag, '#');
+    SpannableString tagsContent = new SpannableString(tag);
+    for (int i = 0; i < hashtageSpans.size(); i++) {
+      int[] span = hashtageSpans.get(i);
+      int hashTagStart = span[0];
+      int hashTagEnd = span[1];
+      Hashtag hashtag = new Hashtag(this);
+      hashtag.setOnClickEventListener(new Hashtag.ClickEventListener() {
+        @Override
+        public void onClickEvent(String data) {
+          Intent intent = new Intent(getApplication(), SearchActivity.class);
+          intent.putExtra(EXTRA_SEARCH_KEYWORD, data);
+          startActivity(intent);
         }
-
-      ArrayList<int[]> hashtageSpans = getSpans(tag, '#');
-      SpannableString tagsContent = new SpannableString(tag);
-      for(int i=0; i< hashtageSpans.size();i++){
-          int[] span = hashtageSpans.get(i);
-          int hashTagStart = span[0];
-          int hashTagEnd = span[1];
-          Hashtag hashtag = new Hashtag(this);
-          hashtag.setOnClickEventListener(new Hashtag.ClickEventListener() {
-              @Override
-              public void onClickEvent(String data) {
-                  Intent intent = new Intent(getApplication(), SearchActivity.class);
-                  intent.putExtra(EXTRA_SEARCH_KEYWORD,data);
-                  startActivity(intent);
-              }
-          });
-          tagsContent.setSpan(hashtag,hashTagStart,hashTagEnd,0);
-          TagName.setMovementMethod(LinkMovementMethod.getInstance());
-          TagName.setText(tagsContent);
-      }
+      });
+      tagsContent.setSpan(hashtag, hashTagStart, hashTagEnd, 0);
+      TagName.setMovementMethod(LinkMovementMethod.getInstance());
+      TagName.setText(tagsContent);
+    }
 
   }
-  private ArrayList<int[]> getSpans(String body, char prefix){
-      ArrayList<int[]> spans = new ArrayList<int[]>();
-      Pattern pattern = Pattern.compile(prefix+"\\w+");
-      Matcher matcher = pattern.matcher(body);
-      while(matcher.find()){
-          int[] currentSpan = new int[2];
-          currentSpan[0] = matcher.start();
-          currentSpan[1] = matcher.end();
-          spans.add(currentSpan);
-      }
-      return spans;
+
+  private ArrayList<int[]> getSpans(String body, char prefix) {
+    ArrayList<int[]> spans = new ArrayList<int[]>();
+    Pattern pattern = Pattern.compile(prefix + "\\w+");
+    Matcher matcher = pattern.matcher(body);
+    while (matcher.find()) {
+      int[] currentSpan = new int[2];
+      currentSpan[0] = matcher.start();
+      currentSpan[1] = matcher.end();
+      spans.add(currentSpan);
+    }
+    return spans;
   }
 
   private void getTags(AppDatabase db, Scene scene) {
@@ -283,8 +300,8 @@ public class SceneDetailActivity extends AppCompatActivity {
                 //String textTag = null;
                 StringBuilder tag_name = new StringBuilder();
                 for (Tag tag : tags) {
-                    tag_name.append("#").append(tag.getName()).append(" ");
-                    mTagLists.add(tag.getName());
+                  tag_name.append("#").append(tag.getName()).append(" ");
+                  mTagLists.add(tag.getName());
                 }
 //                for (int i = 0; i < tags.size(); i++) {
 //                  textTag = "#" + tags.get(i).getName();
@@ -368,15 +385,6 @@ public class SceneDetailActivity extends AppCompatActivity {
 //    }
 //    return cursor.getString(column_index);
 //  }
-
-  public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-      case android.R.id.home:
-        finish();
-        return true;
-    }
-    return super.onOptionsItemSelected(item);
-  }
 }
 
 
