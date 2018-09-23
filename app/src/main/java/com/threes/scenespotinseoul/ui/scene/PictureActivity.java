@@ -1,9 +1,11 @@
 package com.threes.scenespotinseoul.ui.scene;
 
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_FROM_SCENE;
 import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SCENE_ID;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,7 +18,11 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.threes.scenespotinseoul.R;
 import com.threes.scenespotinseoul.data.AppDatabase;
@@ -29,23 +35,49 @@ public class PictureActivity extends AppCompatActivity {
   private TextView mTvName;
   private TextView mTvDate;
   private ImageButton mBtnNavigateUp;
+  private ImageButton mBtnToScene;
   private View mShadowView;
   private ConstraintLayout mContainer;
 
   private boolean isImmersive;
+  private boolean isFromScene;
+  private String mSceneId;
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_picture);
+    Intent intent = getIntent();
+    if (intent == null || !intent.hasExtra(EXTRA_SCENE_ID)) {
+      Log.e("PictureActivity", "Can't receive scene id");
+      finish();
+    } else {
+      mSceneId = intent.getStringExtra(EXTRA_SCENE_ID);
+      isFromScene = intent.getBooleanExtra(EXTRA_FROM_SCENE, false);
+      initViews();
+      loadPicture();
+    }
+  }
+
+  private void initViews() {
     mPicture = findViewById(R.id.into_picture);
     mTvName = findViewById(R.id.tv_name);
     mTvDate = findViewById(R.id.tv_date);
     mContainer = findViewById(R.id.container);
-    mBtnNavigateUp = findViewById(R.id.btn_navigate_up);
     mShadowView = findViewById(R.id.shadow);
 
-    mBtnNavigateUp.setOnClickListener(view -> finish());
+    mBtnNavigateUp = findViewById(R.id.btn_navigate_up);
+    mBtnNavigateUp.setOnClickListener(view -> onBackPressed());
+
+    mBtnToScene = findViewById(R.id.btn_to_scene);
+    if (!isFromScene) {
+      mBtnToScene.setVisibility(View.VISIBLE);
+      mBtnToScene.setOnClickListener(view -> {
+        Intent intent = new Intent(this, SceneDetailActivity.class);
+        intent.putExtra(EXTRA_SCENE_ID, mSceneId);
+        startActivity(intent);
+      });
+    }
 
     mPicture.setOnClickListener(view -> {
       if (isImmersive) {
@@ -58,32 +90,42 @@ public class PictureActivity extends AppCompatActivity {
       isImmersive = !isImmersive;
     });
     showSystemUI();
+    supportStartPostponedEnterTransition();
+  }
 
-    Intent intent = getIntent();
-    //Log.e("받은intent", intent.hasExtra(EX)+"");
-    if (intent != null && intent.hasExtra(EXTRA_SCENE_ID)) {
-      String sceneId = intent.getStringExtra(EXTRA_SCENE_ID);
+  private void loadPicture() {
+    AppDatabase db = AppDatabase.getInstance(this);
+    db.sceneDao()
+        .loadByIdWithLive(mSceneId)
+        .observe(this,
+            scene -> {
+              if (scene != null) {
+                Log.v("URI", scene.getUploadedImage());
+                RequestOptions options = new RequestOptions().optionalFitCenter();
+                Glide.with(this)
+                    .load(Uri.parse(scene.getUploadedImage()))
+                    .apply(options)
+                    .listener(new RequestListener<Drawable>() {
+                      @Override
+                      public boolean onLoadFailed(@Nullable GlideException e, Object model,
+                          Target<Drawable> target, boolean isFirstResource) {
+                        supportStartPostponedEnterTransition();
+                        return false;
+                      }
 
-      if (sceneId == null) {
-        Log.e("PictureActivity", "Can't receive scene id");
-        finish();
-      }
-      AppDatabase db = AppDatabase.getInstance(this);
-      db.sceneDao()
-          .loadByIdWithLive(sceneId)
-          .observe(this,
-              scene -> {
-                if (scene != null) {
-                  Log.v("URI", scene.getUploadedImage());
-                  Glide.with(this)
-                      .load(Uri.parse(scene.getUploadedImage()))
-                      .apply(new RequestOptions().fitCenter())
-                      .into(mPicture);
-                  mTvName.setText(scene.getDesc());
-                  mTvDate.setText(formatDate(scene.getUploadedDate()));
-                }
-              });
-    }
+                      @Override
+                      public boolean onResourceReady(Drawable resource, Object model,
+                          Target<Drawable> target, DataSource dataSource,
+                          boolean isFirstResource) {
+                        supportStartPostponedEnterTransition();
+                        return false;
+                      }
+                    })
+                    .into(mPicture);
+                mTvName.setText(scene.getDesc());
+                mTvDate.setText(formatDate(scene.getUploadedDate()));
+              }
+            });
   }
 
   @SuppressLint("SimpleDateFormat")
@@ -98,6 +140,7 @@ public class PictureActivity extends AppCompatActivity {
     constraintSet.clone(mContainer);
     constraintSet.setVisibility(mShadowView.getId(), View.VISIBLE);
     constraintSet.setVisibility(mBtnNavigateUp.getId(), View.VISIBLE);
+    constraintSet.setVisibility(mBtnToScene.getId(), !isFromScene ? View.VISIBLE : View.GONE);
     constraintSet.setVisibility(mTvName.getId(), View.VISIBLE);
     constraintSet.setVisibility(mTvDate.getId(), View.VISIBLE);
     constraintSet.applyTo(mContainer);
@@ -109,6 +152,7 @@ public class PictureActivity extends AppCompatActivity {
     constraintSet.clone(mContainer);
     constraintSet.setVisibility(mShadowView.getId(), View.GONE);
     constraintSet.setVisibility(mBtnNavigateUp.getId(), View.GONE);
+    constraintSet.setVisibility(mBtnToScene.getId(), View.GONE);
     constraintSet.setVisibility(mTvName.getId(), View.GONE);
     constraintSet.setVisibility(mTvDate.getId(), View.GONE);
     constraintSet.applyTo(mContainer);

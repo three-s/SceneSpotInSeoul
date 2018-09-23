@@ -29,7 +29,7 @@ public class GalleryFragment extends Fragment {
         .observe(
             this,
             scene -> {
-              adapter = new GalleryAdapter(scene);
+              adapter = new GalleryAdapter(getActivity(), scene);
               recyclerView.setAdapter(adapter);
               recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
               recyclerView.setHasFixedSize(true);

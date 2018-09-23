@@ -2,6 +2,7 @@ package com.threes.scenespotinseoul.ui.scene;
 
 import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnDiskIO;
 import static com.threes.scenespotinseoul.utilities.AppExecutorsHelperKt.runOnMain;
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_FROM_SCENE;
 import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_LOCATION_ID;
 import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SCENE_ID;
 import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SEARCH_KEYWORD;
@@ -206,6 +207,7 @@ public class SceneDetailActivity extends AppCompatActivity {
                           Log.v("전달한 id", mSceneId + "");
                           Intent picintent = new Intent(this, PictureActivity.class);
                           picintent.putExtra(EXTRA_SCENE_ID, mSceneId);
+                          picintent.putExtra(EXTRA_FROM_SCENE, true);
                           getApplication().startActivity(picintent);
                         }
                       });
