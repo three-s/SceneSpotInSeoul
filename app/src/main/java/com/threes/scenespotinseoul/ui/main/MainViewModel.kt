@@ -22,7 +22,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun loadMediaCategory() {
         runOnDiskIO {
-            val categories = arrayOf("예능", "드라마")
+            val categories = arrayOf("예능", "드라마", "영화")
             val mediaCategories = mutableListOf<MediaCategory>()
             categories.forEach { it ->
                 val tag = db.tagDao().loadByName(it)
