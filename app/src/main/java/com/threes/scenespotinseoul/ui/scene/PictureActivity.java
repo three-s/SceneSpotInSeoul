@@ -160,7 +160,12 @@ public class PictureActivity extends AppCompatActivity {
                 mTvName.setText(scene.getDesc());
                 if ((mImageFlags & FLAG_USER_IMAGE) == FLAG_USER_IMAGE) {
                   mTvDate.setText(formatDate(scene.getUploadedDate()));
-                  loadImage(scene.getUploadedImage());
+                  String uploadedImage = scene.getUploadedImage();
+                  if (uploadedImage != null) {
+                    loadImage(uploadedImage);
+                  } else {
+                    onBackPressed();
+                  }
                 } else if ((mImageFlags & FLAG_SCENE_IMAGE) == FLAG_SCENE_IMAGE) {
                   loadImage(scene.getImage());
                 }
