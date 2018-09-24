@@ -11,6 +11,7 @@
   <string name="category_location_scenes">Best Scenes</string>
   <string name="category_location_media">Media</string>
   <string name="no_results">No results</string>
+  <string name="no_pictures">No pictures</string>
   <string name="hint_search">Search</string>
   <string name="sync_failed_when_first">Data sync failed, Check your network and re-run</string>
 </resources>
