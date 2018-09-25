@@ -42,6 +42,7 @@ import com.threes.scenespotinseoul.ui.map.Hashtag;
 import com.threes.scenespotinseoul.ui.scene.PictureActivity;
 import com.threes.scenespotinseoul.ui.search.SearchActivity;
 import com.threes.scenespotinseoul.utilities.ItemOffsetDecoration;
+import com.threes.scenespotinseoul.utilities.Utils;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -76,6 +77,7 @@ public class LocationDetailActivity extends AppCompatActivity {
     TextView tvCategory1 = findViewById(R.id.tv_category1);
     TextView tvCategory2 = findViewById(R.id.tv_category2);
     ImageButton btnNavigateUp = findViewById(R.id.btn_navigate_up);
+    ImageButton btnLaunchMap = findViewById(R.id.btn_launch);
     RecyclerView recyclerView_scene = findViewById(R.id.rv_category1);
     RecyclerView recyclerView_media = findViewById(R.id.rv_category2);
 
@@ -83,6 +85,16 @@ public class LocationDetailActivity extends AppCompatActivity {
     tvCategory2.setText(R.string.category_location_media);
 
     btnNavigateUp.setOnClickListener(view -> finish());
+
+    btnLaunchMap.setVisibility(View.VISIBLE);
+    btnLaunchMap.setOnClickListener(view -> runOnDiskIO(() -> {
+      Location location = AppDatabase.getInstance(this).locationDao().loadById(location_id);
+      runOnMain(() -> {
+        if (location != null) {
+          Utils.launchExternalMap(this, location);
+        }
+      });
+    }));
 
     // 해당 미디어 명장면 리사이클러뷰 처리
     recyclerView_scene.addItemDecoration(new ItemOffsetDecoration(DIR_RIGHT, OFFSET_NORMAL));

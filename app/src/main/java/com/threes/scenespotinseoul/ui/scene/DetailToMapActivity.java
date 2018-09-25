@@ -11,6 +11,8 @@ import android.support.v7.app.AppCompatCallback;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.view.ActionMode;
 import android.support.v7.view.ActionMode.Callback;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import com.nhn.android.maps.NMapActivity;
@@ -24,6 +26,7 @@ import com.threes.scenespotinseoul.data.AppDatabase;
 import com.threes.scenespotinseoul.data.model.Location;
 import com.threes.scenespotinseoul.ui.map.NMapPOIflagType;
 import com.threes.scenespotinseoul.ui.map.NMapViewerResourceProvider;
+import com.threes.scenespotinseoul.utilities.Utils;
 import java.util.Objects;
 
 /**
@@ -42,6 +45,8 @@ public class DetailToMapActivity extends NMapActivity implements AppCompatCallba
 
   private AppCompatDelegate mAppCompatDelegate;
 
+  private String location_id;
+
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -55,7 +60,7 @@ public class DetailToMapActivity extends NMapActivity implements AppCompatCallba
       supportActionBar.setHomeButtonEnabled(true);
     }
 
-    String location_id = getIntent().getStringExtra(EXTRA_LOCATION_ID);
+    location_id = getIntent().getStringExtra(EXTRA_LOCATION_ID);
 
     mapView = findViewById(R.id.mapView);
     mapView.setClientId(CLIENT_ID); // 클라이언트 아이디 값 설정
@@ -140,9 +145,18 @@ public class DetailToMapActivity extends NMapActivity implements AppCompatCallba
   }
 
   @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    MenuInflater inflater = getMenuInflater();
+    inflater.inflate(R.menu.menu_detail_to_map, menu);
+    return super.onCreateOptionsMenu(menu);
+  }
+
+  @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     if (item.getItemId() == android.R.id.home) {
       finish();
+    } else if (item.getItemId() == R.id.action_launch) {
+      launchMap();
     }
     return super.onOptionsItemSelected(item);
   }
@@ -161,5 +175,16 @@ public class DetailToMapActivity extends NMapActivity implements AppCompatCallba
   @Override
   public ActionMode onWindowStartingSupportActionMode(Callback callback) {
     return null;
+  }
+
+  private void launchMap() {
+    runOnDiskIO(() -> {
+      Location location = AppDatabase.getInstance(this).locationDao().loadById(location_id);
+      runOnMain(() -> {
+        if (location != null) {
+          Utils.launchExternalMap(this, location);
+        }
+      });
+    });
   }
 }

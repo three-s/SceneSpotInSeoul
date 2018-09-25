@@ -206,4 +206,18 @@
     app:layout_constraintTop_toTopOf="parent"
     tools:ignore="ContentDescription"/>
 
+  <ImageButton
+    android:id="@+id/btn_launch"
+    android:layout_width="?attr/actionBarSize"
+    android:layout_height="?attr/actionBarSize"
+    android:background="@android:color/transparent"
+    android:foreground="?selectableItemBackgroundBorderless"
+    android:src="@drawable/ic_map_launch"
+    android:tint="@android:color/white"
+    android:visibility="gone"
+    app:layout_constraintRight_toRightOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    tools:ignore="ContentDescription"
+    tools:visibility="visible"/>
+
 </android.support.constraint.ConstraintLayout>
