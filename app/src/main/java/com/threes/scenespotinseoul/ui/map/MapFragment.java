@@ -94,9 +94,14 @@ public class MapFragment extends Fragment {
         view -> {
           mylat = gps.getLocation().getLatitude();
           mylon = gps.getLocation().getLongitude();
-          Log.e("result.info", String.valueOf(mylon + " , " + mylat));
           mapController.setMapCenter(mylon, mylat);
           mapController.setZoomLevel(10);
+          NMapPOIdata nMapPOIdata = new NMapPOIdata(2,mMapViewerResourceProvider);
+          nMapPOIdata.removeAllPOIdata();
+          nMapPOIdata.beginPOIdata(1);
+          nMapPOIdata.addPOIitem(mylon, mylat, "내 위치", NMapPOIflagType.FROM,0);
+          nMapPOIdata.endPOIdata();
+          nMapOverlayManager.createPOIdataOverlay(nMapPOIdata, null);
         });
 
     title = rootView.findViewById(R.id.title);
@@ -178,20 +183,6 @@ public class MapFragment extends Fragment {
             cardView.setVisibility(View.GONE);
           }
         });
-    // mylat = gps.getLocation().getLatitude();
-    // mylon = gps.getLocation().getLongitude();
-    // List<Location> locations = new ArrayList<>();
-    /*
-    AppDatabase db = Room.databaseBuilder(getContext(),
-            AppDatabase.class, "database-name").allowMainThreadQueries().build();
-    //locations.add(new Location(10, 126.91, 37.7, "서울", "영화 촬영지", "", false));
-    //locations.add(new Location(11, 126.9, 37.71, "서울", "영화 촬영지", "", false));
-    //locations.add(new Location(12, 126.93, 37.72, "서울", "영화 촬영지", "", false));
-    //db.locationDao().insertAll(locations);
-    mapController.setMapCenter(126.91, 37.7);
-    locations = db.locationDao().loadAll();
-    */
-
     AppDatabase db = AppDatabase.getInstance(getContext());
     AppExecutors executors = new AppExecutors();
     executors
@@ -214,7 +205,7 @@ public class MapFragment extends Fragment {
                               locations.get(i).getLat(),
                               locations.get(i).getName(),
                               NMapPOIflagType.PIN,
-                              i);
+                              i+1);
                         }
                         poiData.endPOIdata();
                         nMapOverlayManager.createPOIdataOverlay(poiData, null);
@@ -262,9 +253,7 @@ public class MapFragment extends Fragment {
             NMapLocationManager locationManager, NGeoPoint myLocation) {
           //			if (mMapController != null) {
           //				mMapController.animateTo(myLocation);
-          //			}
-          Log.d("myLog", "myLocation  lat " + myLocation.getLatitude());
-          Log.d("myLog", "myLocation  lng " + myLocation.getLongitude());
+          //			}\
           return true;
         }
 
@@ -298,11 +287,6 @@ public class MapFragment extends Fragment {
                   .mainThread()
                   .execute(
                       () -> {
-                        // 메인 스레드에서 데이터 처리
-                        // List<LocationTag> locationtag =
-                        // db.locationTagDao().loadByLocationId(locations.get(id).getId());
-
-                        // List<Tag> tag = db.tagDao().loadAll();
                         StringBuilder tag_name = new StringBuilder();
                         for (Tag tag : tags) {
                           tag_name.append("#").append(tag.getName()).append(" ");
