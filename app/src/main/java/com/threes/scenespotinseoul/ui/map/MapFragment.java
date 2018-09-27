@@ -1,5 +1,6 @@
 package com.threes.scenespotinseoul.ui.map;
 
+import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_LOCATION_ID;
 import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_SEARCH_KEYWORD;
 
 import android.Manifest;
@@ -50,8 +51,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static com.threes.scenespotinseoul.utilities.ConstantsKt.EXTRA_LOCATION_ID;
 
 public class MapFragment extends Fragment {
 
@@ -266,6 +265,9 @@ public class MapFragment extends Fragment {
       };
 
   public void showLayout(int id) {
+    if (id == 0) {
+      return;
+    }
     frameLayout.setVisibility(View.VISIBLE);
     cardView.setVisibility(View.VISIBLE);
     String imgurl;

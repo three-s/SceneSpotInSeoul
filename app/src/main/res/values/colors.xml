@@ -22,4 +22,6 @@
   <color name="picture_description_background">#38000000</color>
   <color name="transparent_toolbar">#38000000</color>
   <color name="shadow">#38000000</color>
+  <color name="current_location">#2979FF</color>
+  <color name="current_location_selected">#2962FF</color>
 </resources>

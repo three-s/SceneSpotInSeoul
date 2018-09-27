@@ -181,7 +181,7 @@ public class NMapViewerResourceProvider extends NMapResourceProvider
 
     // Direction POI icons: From, To
     new ResourceIdsOnMap(
-        NMapPOIflagType.FROM, R.drawable.pubtrans_ic_mylocation_on, R.drawable.ic_map_start_over),
+        NMapPOIflagType.FROM, R.drawable.ic_current_location, R.drawable.ic_current_location_selected),
     new ResourceIdsOnMap(
         NMapPOIflagType.TO, R.drawable.ic_map_arrive, R.drawable.ic_map_arrive_over),
   };
