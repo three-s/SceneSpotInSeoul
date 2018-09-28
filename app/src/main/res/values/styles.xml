@@ -25,7 +25,7 @@
   </style>
 
   <style name="AppTheme.Splash" parent="AppTheme.NoActionBar">
-    <item name="android:windowBackground">@drawable/layer_splash</item>
+    <!--<item name="android:windowBackground">@drawable/layer_splash</item>-->
   </style>
 
   <style name="Widget.AppTheme.Main.CategoryText" parent="">
